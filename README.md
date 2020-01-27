@@ -7,7 +7,7 @@ GlassPlotter is a open source, desktop glass map viewer.  This application aims 
 
 
 ## Getting Started
-Package for Windows can be downloaded [here](https://github.com/heterophyllus/glassplotter/releases/tag/v0.1.1).
+Package for Windows can be downloaded [here](https://github.com/heterophyllus/glassplotter/releases).
   Just run GlassPlotter.exe.
 
 ## Resources
