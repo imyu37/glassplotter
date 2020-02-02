@@ -128,12 +128,47 @@ double Glass::index(double lambdamicron)
         return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) );
     case 12: //Extended 2
         return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4) + _dispcoefs[7]*pow(lambdamicron,6) );
-    case 13: //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
+    //case 13: //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
+    //    return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
     default:
         return 0;
     }
 }
+
+QString Glass::dispFormName()
+{
+    switch(_dispform){
+    case 1:
+        return "Schott";
+    case 2:
+        return "Sellmeier1";
+    case 3:
+        return "Herzberger";
+    case 4:
+        return "Sellmeier2";
+    case 5:
+        return "Conrady";
+    case 6:
+        return "Sellmeier3";
+    case 7:
+        return "Handbook of Optics1";
+    case 8:
+        return "Handbook of Optics2";
+    case 9:
+        return "Sellmeier4";
+    case 10:
+        return "Extended1";
+    case 11:
+        return "Sellmeier5";
+    case 12:
+        return "Extended2";
+    //case 13:
+    //    return "HIKARI";
+    default:
+        return "Unknown";
+    }
+}
+
 
 void Glass::setName(QString str)
 {

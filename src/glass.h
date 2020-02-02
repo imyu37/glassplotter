@@ -62,17 +62,29 @@ public:
     {
         return _supplyer;
     }
+    double nC() const
+    {
+        return _nC;
+    }
     double nd() const
     {
         return _nd;
     }
-    double vd() const
-    {
-        return _vd;
-    }
     double ne() const
     {
         return _ne;
+    }
+    double nF() const
+    {
+        return _nF;
+    }
+    double ng() const
+    {
+        return _ng;
+    }
+    double vd() const
+    {
+        return _vd;
     }
     double ve() const
     {
@@ -88,6 +100,7 @@ public:
     double lambdaMax(){ //micron
         return _lambdaMax;
     }
+    QString dispFormName();
 
     void computeProperties();
 

@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     //set default value
     _AGFdir = QApplication::applicationDirPath() + "/AGF";
 
@@ -53,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //mouse context menu
     _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(_customPlot,SIGNAL(customContextMenuRequested(QPoint)),
+    QObject::connect(_customPlot,SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(contextMenuRequest(QPoint)));
 
 
@@ -71,6 +70,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     _glassmapmanager->resetAxis(0);
     _glassmapmanager->replot();
+
+
+    /*******************************
+     * Table tab
+     * *****************************/
+    createComboSupplyers();
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -108,11 +116,11 @@ void MainWindow::createTableWidget()
     table->clear();
 
     // set table format 
-    table->setColumnCount( 4 );
+    table->setColumnCount( 3 );
     table->setRowCount( _glassmapmanager->catalogCount() );
 
     // set header
-    table->setHorizontalHeaderLabels( QStringList() << tr("CATALOG") << tr("") << tr("P") << tr("L" )  );
+    table->setHorizontalHeaderLabels( QStringList() << tr("CATALOG") << tr("P") << tr("L" )  );
 
     // set supplyers' names and checkboxes
     QString supplyername;
@@ -121,14 +129,12 @@ void MainWindow::createTableWidget()
     {
         supplyername = _glassmapmanager->catalog(i)->supplyer();
         table->setItem( i, ColumnSupplyer, new QTableWidgetItem(supplyername) ); //supplyer
+        table->item(i,ColumnSupplyer)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
         table->item(i,ColumnSupplyer)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-        table->setItem( i, ColumnColor, new QTableWidgetItem("")   ); // color
-        table->item(i,ColumnColor)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
-        table->item(i,ColumnColor)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        table->setItem( i, ColumnPlot, new QTableWidgetItem("")   );                   //plot
+        table->setItem( i, ColumnPlot, new QTableWidgetItem("")   );                   //plot        
         table->item(i,ColumnPlot)->setCheckState(Qt::Unchecked );
+
         table->setItem( i, ColumnLabel, new QTableWidgetItem("")   );                   //label
         table->item(i,ColumnLabel)->setCheckState(Qt::Unchecked );
 
@@ -136,8 +142,6 @@ void MainWindow::createTableWidget()
 
     }
 
-
-    table->setColumnWidth(ColumnColor,5);
     table->setColumnWidth(ColumnPlot,10);
     table->setColumnWidth(ColumnLabel,10);
 
@@ -180,6 +184,9 @@ void MainWindow::on_menu_File_LoadAGF_Triggered()
     _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
     _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
     createTableWidget();
+
+    createComboSupplyers();
+    createGlassTable(ui->comboBox_Supplyers->currentIndex());
 
     QMessageBox::information(this,tr("Load AGF folder"), tr("AGF loaded"));
 
@@ -257,4 +264,64 @@ void MainWindow::on_buttonResetViewClicked()
 void MainWindow::on_menu_Help_Abou_Triggered()
 {
     QMessageBox::about(this,tr("About"),tr(" GlassPlotter\n\n Copyright(c) 2020 Hiiragi(heterophyllus) "));
+}
+
+void MainWindow::createComboSupplyers()
+{
+    QObject::disconnect(ui->comboBox_Supplyers, SIGNAL(currentIndexChanged(int)),
+                     this, SLOT(createGlassTable(int)));
+
+    ui->comboBox_Supplyers->clear();
+    for(int i = 0;i < _glassmapmanager->catalogCount();i++)
+    {
+        ui->comboBox_Supplyers->addItem(_glassmapmanager->catalog(i)->supplyer());
+    }
+
+    QObject::connect(ui->comboBox_Supplyers, SIGNAL(currentIndexChanged(int)),
+                     this, SLOT(createGlassTable(int)));
+
+    //createGlassTable(ui->comboBox_Supplyers->currentIndex());
+}
+
+void MainWindow::createGlassTable(int catalogIndex)
+{
+    GlassCatalog* catalog = _glassmapmanager->catalog(catalogIndex);
+    QTableWidget *table = ui->tableWidget_GlassTable;
+    table->clear();
+
+    // set table format
+    table->setColumnCount(10);
+    table->setRowCount( catalog->glassCount() );
+    table->setHorizontalHeaderLabels( QStringList() << tr("GLASS") << tr("nd") << tr("vd") << tr("DispForm") << tr("nC") << tr("nd") << tr("ne") << tr("nF") << tr("ng")  );
+
+    for(int i = 0; i < catalog->glassCount(); i++)
+    {
+        table->setItem( i, 0, new QTableWidgetItem(catalog->glass(i)->name()) ); //glass name
+
+        table->setItem( i, 1, new QTableWidgetItem );
+        table->item(i,1)->setText(QString::number(catalog->glass(i)->nd()));
+
+        table->setItem( i, 2, new QTableWidgetItem );
+        table->item(i,2)->setText(QString::number(catalog->glass(i)->vd()));
+
+        table->setItem( i, 3, new QTableWidgetItem );
+        table->item(i,3)->setText(catalog->glass(i)->dispFormName());
+
+        table->setItem( i, 4, new QTableWidgetItem );
+        table->item(i,4)->setText(QString::number(catalog->glass(i)->nC()));
+
+        table->setItem( i, 5, new QTableWidgetItem );
+        table->item(i,5)->setText(QString::number(catalog->glass(i)->nd()));
+
+        table->setItem( i, 6, new QTableWidgetItem );
+        table->item(i,6)->setText(QString::number(catalog->glass(i)->ne()));
+
+        table->setItem( i, 7, new QTableWidgetItem );
+        table->item(i,7)->setText(QString::number(catalog->glass(i)->nF()));
+
+        table->setItem( i, 8, new QTableWidgetItem );
+        table->item(i,8)->setText(QString::number(catalog->glass(i)->ng()));
+
+    }
+
 }

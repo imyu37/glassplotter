@@ -23,6 +23,7 @@ public:
     ~MainWindow();
 
     void createTableWidget();
+    void createComboSupplyers();
 
 private slots:
     void on_cellChanged(int catalogIndex, int PlotOrLabel);
@@ -35,6 +36,9 @@ private slots:
 
     void contextMenuRequest(QPoint pos);
     void showGlassProperty();
+
+    //GlassTable tab
+    void createGlassTable(int catalogIndex);
 private:
     Ui::MainWindow *ui;
 
@@ -47,9 +51,8 @@ private:
     //QMenu* _contextMenu;
 
     static const int ColumnSupplyer = 0;
-    static const int ColumnColor    = 1;
-    static const int ColumnPlot     = 2;
-    static const int ColumnLabel    = 3;
+    static const int ColumnPlot     = 1;
+    static const int ColumnLabel    = 2;
 
 };
 #endif // MAINWINDOW_H
