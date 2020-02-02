@@ -8,6 +8,7 @@
 #include "qcustomplot.h"
 #include "glasscatalog.h"
 #include "glassmapmanager.h"
+#include "glasspropertydlg.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,13 +32,19 @@ private slots:
     void on_buttonResetViewClicked();
     void on_menu_File_LoadAGF_Triggered();
     void on_menu_Help_Abou_Triggered();
+
+    void contextMenuRequest(QPoint pos);
+    void showGlassProperty();
 private:
     Ui::MainWindow *ui;
+
 
     QCustomPlot* _customPlot;
     GlassMapManager* _glassmapmanager;
 
     QString _AGFdir;
+
+    //QMenu* _contextMenu;
 
     static const int ColumnSupplyer = 0;
     static const int ColumnColor    = 1;

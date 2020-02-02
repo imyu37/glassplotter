@@ -28,16 +28,23 @@
 QCPScatterChart::QCPScatterChart(QCustomPlot *customPlot)
 {  
     _customPlot = customPlot;
+    _pointSeries = _customPlot->addGraph();
     _textlabels.clear();
 }
 
 QCPScatterChart::~QCPScatterChart()
 {
-    _customPlot->removeGraph(_pointSeries);
+    /*
+    if(NULL!=_pointSeries){
+        _customPlot->removeGraph(_pointSeries);
+    }
     for(int i=0; i < _textlabels.size();i++)
     {
-        _customPlot->removeItem(_textlabels[i]);
+        if(NULL != _textlabels[i]){
+            _customPlot->removeItem(_textlabels[i]);
+        }
     }
+    */
 
     _pointSeries = NULL;
     _textlabels.clear();
@@ -90,7 +97,7 @@ QString QCPScatterChart::name()
 void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QString> str)
 {   
     //set data to points
-    _pointSeries = _customPlot->addGraph();
+    //_pointSeries = _customPlot->addGraph();
     _pointSeries->setData(x,y);
     _pointSeries->setLineStyle(QCPGraph::lsNone);
     _pointSeries->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,8));
@@ -105,6 +112,7 @@ void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QStr
         _textlabels.last()->position->setCoords(x[i],y[i]);
         _textlabels.last()->setPositionAlignment(Qt::AlignRight|Qt::AlignBottom);
         _textlabels.last()->setText(str[i]);
+        _textlabels.last()->setObjectName(str[i]); //used for mouse click
         _textlabels[i]->setVisible(false);
     }
 }

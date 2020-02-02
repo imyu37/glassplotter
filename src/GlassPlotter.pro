@@ -27,6 +27,7 @@ SOURCES += \
     glass.cpp \
     glasscatalog.cpp \
     glassmapmanager.cpp \
+    glasspropertydlg.cpp \
     main.cpp \
     mainwindow.cpp \
     qcpscatterchart.cpp \
@@ -36,11 +37,13 @@ HEADERS += \
     glass.h \
     glasscatalog.h \
     glassmapmanager.h \
+    glasspropertydlg.h \
     mainwindow.h \
     qcpscatterchart.h \
     qcustomplot.h
 
 FORMS += \
+    glasspropertydlg.ui \
     mainwindow.ui
 
 # Default rules for deployment.

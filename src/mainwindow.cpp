@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
     //set default value
     _AGFdir = QApplication::applicationDirPath() + "/AGF";
 
@@ -20,10 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //custom plot
     _customPlot = ui->widget;
-    _customPlot->setInteraction(QCP::iRangeDrag, true);
-    _customPlot->setInteraction(QCP::iRangeZoom, true);
-    _customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
-
     _glassmapmanager = new GlassMapManager(_customPlot);
 
     //create comboBox
@@ -54,6 +51,11 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->lineEdit_coef3,SIGNAL(textEdited(QString)),
                      this, SLOT(on_lineEdit_textEdited(QString)));
 
+    //mouse context menu
+    _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_customPlot,SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextMenuRequest(QPoint)));
+
 
     // read Zemax AGF in the folder
     if(!_glassmapmanager->readAllAGF(_AGFdir)){
@@ -76,6 +78,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::contextMenuRequest(QPoint pos)
+{
+    if(!_customPlot->selectedItems().isEmpty()){ //at least one textitem should be selected
+        QMenu* contextMenu;
+        contextMenu = new QMenu(this);
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
+        contextMenu->addAction("Show Property",this,SLOT(showGlassProperty()));
+        contextMenu->popup(_customPlot->mapToGlobal(pos));
+    }
+}
+
+void MainWindow::showGlassProperty()
+{
+    QString glassname = _customPlot->selectedItems().first()->objectName();
+    //GlassPropertyDlg *dlg = new GlassPropertyDlg;
+    GlassPropertyDlg *dlg = new GlassPropertyDlg(this);
+    dlg->plotDispersion(_glassmapmanager->glass(glassname));
+    dlg->show();
+}
+
 void MainWindow::createTableWidget()
 {
     //disconnect to avoid updating
@@ -94,6 +116,7 @@ void MainWindow::createTableWidget()
 
     // set supplyers' names and checkboxes
     QString supplyername;
+
     for (int i = 0; i< _glassmapmanager->catalogCount() ; i++)
     {
         supplyername = _glassmapmanager->catalog(i)->supplyer();
@@ -108,6 +131,9 @@ void MainWindow::createTableWidget()
         table->item(i,ColumnPlot)->setCheckState(Qt::Unchecked );
         table->setItem( i, ColumnLabel, new QTableWidgetItem("")   );                   //label
         table->item(i,ColumnLabel)->setCheckState(Qt::Unchecked );
+
+        //table->verticalHeaderItem(i)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
+
     }
 
 

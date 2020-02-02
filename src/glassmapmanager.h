@@ -45,6 +45,8 @@ public:
     int catalogCount();
     GlassCatalog* catalog(int index);
 
+    Glass* glass(QString name);
+
     QColor getColor(QString supplyer);
 
     void createGlassMapList(int plotType);

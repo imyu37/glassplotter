@@ -29,7 +29,6 @@ SpectralLine::SpectralLine()
 {
 
 }
-
 const double SpectralLine::C = 656.2725;
 const double SpectralLine::C_= 643.847;
 const double SpectralLine::d = 587.5618;
@@ -37,6 +36,7 @@ const double SpectralLine::e = 546.074;
 const double SpectralLine::F = 486.1327;
 const double SpectralLine::F_= 479.9914;
 const double SpectralLine::g = 435.8343;
+
 
 Glass::Glass()
 {
@@ -69,6 +69,9 @@ Glass::Glass()
 
     // CD
     _dispcoefs.clear();
+    for(int i = 0;i <10; i++){
+        _dispcoefs.append(0.0);
+    }
 
     // TD
     _thermaldata.clear();
@@ -82,11 +85,11 @@ Glass::Glass()
     _pr = 0;
 
     // LD
-    _lambdaMax = 800;
-    _lambdaMin = 200;
+    _lambdaMax = 700;
+    _lambdaMin = 400;
 
     // IT
-    // shoud be implemented
+    _int_trans.clear();
 
 }
 
@@ -125,6 +128,8 @@ double Glass::index(double lambdamicron)
         return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) );
     case 12: //Extended 2
         return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4) + _dispcoefs[7]*pow(lambdamicron,6) );
+    case 13: //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
+        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
     default:
         return 0;
     }
@@ -134,6 +139,11 @@ void Glass::setName(QString str)
 {
     _Name = str;
 }
+void Glass::setSupplyer(QString str)
+{
+    _supplyer = str;
+}
+
 void Glass::setNd(double value)
 {
     _nd = value;
@@ -149,12 +159,12 @@ void Glass::setPgF(double value)
 
 void Glass::computeProperties()
 {
-    _nC  = index( (SpectralLine::C)  *pow(10,-3));
-    _nC_ = index( (SpectralLine::C_) *pow(10,-3));
-    _ne  = index( (SpectralLine::e)  *pow(10,-3));
-    _nF  = index( (SpectralLine::F)  *pow(10,-3));
-    _nF_ = index( (SpectralLine::F_) *pow(10,-3));
-    _ng  = index( (SpectralLine::g)  *pow(10,-3));
+    _nC  = index( (SpectralLine::C)*pow(10,-3));
+    _nC_ = index( (SpectralLine::C_)*pow(10,-3));
+    _ne  = index( (SpectralLine::e)*pow(10,-3));
+    _nF  = index( (SpectralLine::F)*pow(10,-3));
+    _nF_ = index( (SpectralLine::F_)*pow(10,-3));
+    _ng  = index( (SpectralLine::g)*pow(10,-3));
 
     _ve  = (_ne - 1)/(_nF_-_nC_);
     _PgF = (_ng-_nF)/(_nF-_nC);
@@ -177,7 +187,32 @@ void Glass::setDeltaPgF(double value)
 
 void Glass::setDispCoef(QList<double> coefs)
 {
-    _dispcoefs = coefs;
+    for(int i = 0;i < _dispcoefs.size(); i++)
+    {
+        if(i < coefs.size()){
+            _dispcoefs[i] = coefs[i];
+        }else{
+            _dispcoefs[i] = 0.0;
+        }
+    }
+}
+
+void Glass::setLambdaMax(double value)
+{
+    _lambdaMax = value;
+}
+
+void Glass::setLambdaMin(double value)
+{
+    _lambdaMin = value;
+}
+
+void Glass::appendIntTrans(double lambdamicron, double trans)
+{
+    QPair<double, double> p;
+    p.first  = lambdamicron;
+    p.second = trans;
+    _int_trans.append(p);
 }
 
 void Glass::printProperty()

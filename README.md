@@ -8,7 +8,6 @@ GlassPlotter is a open source, desktop glass map viewer.  This application aims 
 
 ## Getting Started
 Package for Windows can be downloaded [here](https://github.com/heterophyllus/glassplotter/releases).
-  Just run GlassPlotter.exe.
 
 ## Resources
 This application extracts glass data from Zemax AGF file.  Each AGF file can be downloaded from the supplyer's web site. If Zemax has been installed, they are contained in the folder like Documents/Zemax/Glasscat.
@@ -37,7 +36,8 @@ This project is licensed under the GPL License - see the [LICENSE](LICENSE.md) f
 Contributions and feedbacks are always welcome.
 
 ## Acknowledgement
-This project is inspired by several preceding repositories.  I would like to express my respect for following remarkable ones.
+I would like to express my respect to following repositories which inspired this project.
+
 - [mjhoptics/opticalglass](https://github.com/mjhoptics/opticalglass) :
   glass map viewer with simple GUI, written in python.
 - [nzhagen/zemaxglass](https://github.com/nzhagen/zemaxglass) : python suite to utilize Zemax glass data.

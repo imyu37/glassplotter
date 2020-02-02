@@ -27,6 +27,10 @@
 GlassMapManager::GlassMapManager(QCustomPlot* customPlot)
 {
     _customPlot = customPlot;
+    _customPlot->setInteraction(QCP::iRangeDrag, true);
+    _customPlot->setInteraction(QCP::iRangeZoom, true);
+    _customPlot->setInteraction(QCP::iSelectItems, true);
+    _customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
 
     QCPRange xrange, yrange;
 
@@ -68,6 +72,29 @@ GlassCatalog* GlassMapManager::catalog(int index)
     return _catalogs[index];
 }
 
+
+// Search glass in current catalogs
+Glass* GlassMapManager::glass(QString name)
+{
+    QString supplyer;
+    for(int i = 0; i < _catalogs.count(); i++)
+    {
+        supplyer = _catalogs[i]->supplyer();
+        if(_glassmaps[supplyer]->textLabels().first()->visible()) // Selected label should be visible
+        {
+            for(int j = 0; j< _catalogs[i]->glassCount(); j++)
+            {
+                if(name == _catalogs[i]->glass(j)->name())
+                {
+                    return _catalogs[i]->glass(j);
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+
 bool GlassMapManager::readAllAGF(QString agfdir)
 {
     GlassCatalog *catalog;
@@ -90,7 +117,7 @@ bool GlassMapManager::readAllAGF(QString agfdir)
         catalog = new GlassCatalog;
         if(!catalog->loadAGF(fullpath))
         {
-            delete catalog;
+            //delete catalog;
             return false;
         }else{
             _catalogs.append(catalog);
@@ -171,7 +198,6 @@ void GlassMapManager::createGlassMapList(int plotType)
                 x.append(catalog->glass(i)->vd());
                 y.append(catalog->glass(i)->PgF());
                 str.append(catalog->glass(i)->name());
-
                 //qDebug("%s: %s: %f, %f",catalog->supplyer().toUtf8().data(),str.last().toUtf8().data(), x.last(),y.last());
             }
             break;

@@ -28,6 +28,7 @@
 
 #include <QString>
 #include <QList>
+#include <QPair>
 
 #include "math.h"
 
@@ -43,7 +44,6 @@ public:
     static const double F;
     static const double F_;
     static const double g;
-
 };
 
 class Glass
@@ -57,6 +57,10 @@ public:
     QString name()
     {
         return _Name;
+    }
+    QString supplyer()
+    {
+        return _supplyer;
     }
     double nd() const
     {
@@ -78,10 +82,17 @@ public:
     {
         return _PgF;
     }
+    double lambdaMin(){ //micron
+        return _lambdaMin;
+    }
+    double lambdaMax(){ //micron
+        return _lambdaMax;
+    }
 
     void computeProperties();
 
     void setName(QString str);
+    void setSupplyer(QString str);
     void setNd(double value);
     void setVd(double value);
     void setPgF(double value);
@@ -96,7 +107,10 @@ public:
     //void setIgnoreThermalExp(int value);
     //void setIgnoreThermalExp(bool value);
     void setDispCoef(QList<double> coefs);
+    void setLambdaMin(double value);
+    void setLambdaMax(double value);
     //void setthermalData(QList<double> list);
+    void appendIntTrans(double lambdamicron, double trans);
 
     // some function should be implemented here
 
@@ -120,6 +134,7 @@ public:
 
 private:
     QString _Name;
+    QString _supplyer;
 
     double _nC;
     double _nC_;
@@ -165,7 +180,7 @@ private:
     double _lambdaMin;
 
     // IT
-    // shoud be implemented
+    QList< QPair<double,double> > _int_trans;
 
 };
 

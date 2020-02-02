@@ -53,32 +53,32 @@ bool GlassCatalog::loadAGF(QString AGFpath)
         return false;
     }
 
+    int linecount = 0;
     QTextStream in(&file);
     QString linetext;
     QStringList lineparts;
     QList<double> dlist;
+    QPair<double, double> ITpair;
 
     Glass *g;
-
 
     _glasses.clear();
     _supplyer = QFileInfo(AGFpath).baseName();
 
     while (! in.atEnd()) {
         linetext = in.readLine();
-        //qDebug() << linetext;
+        linecount++;
 
         if(linetext.startsWith("NM")){
+            lineparts = linetext.simplified().split(" ");
             g = new Glass;
             _glasses.append(g);
-
-            lineparts = linetext.simplified().split(" ");
-
             _glasses.last()->setName(lineparts[1]);
+            _glasses.last()->setSupplyer(_supplyer);
             _glasses.last()->setDispForm(lineparts[2].toInt());
             _glasses.last()->setNd(lineparts[4].toDouble());
             _glasses.last()->setVd(lineparts[5].toDouble());
-            //_glasses.last().setExcludeSub();
+            //_glasses.last()->setExcludeSub();
         }
         else if (linetext.startsWith("ED")) {
             lineparts = linetext.simplified().split(" ");
@@ -92,11 +92,20 @@ bool GlassCatalog::loadAGF(QString AGFpath)
 
             dlist.clear();
             for(int i = 1;i<lineparts.size();i++){
-                dlist.push_back(lineparts[i].toDouble());
+                dlist.append(lineparts[i].toDouble());
             }
-            g->setDispCoef(dlist);
-
-            //_glasses.last().printProperty();
+            _glasses.last()->setDispCoef(dlist);
+        }
+        else if(linetext.startsWith("LD")){
+            lineparts = linetext.simplified().split(" ");
+            _glasses.last()->setLambdaMin(lineparts[1].toDouble());
+            _glasses.last()->setLambdaMax(lineparts[2].toDouble());
+        }
+        else if(linetext.startsWith("IT")){
+            lineparts = linetext.simplified().split(" ");
+            //ITpair.first  = lineparts[0].toDouble();
+            //ITpair.second = lineparts[1].toDouble();
+            _glasses.last()->appendIntTrans(lineparts[0].toDouble(),lineparts[1].toDouble());
         }
 
     }
