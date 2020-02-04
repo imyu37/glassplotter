@@ -3,18 +3,20 @@
 ![demo](image/screenshot.png)
 
 ## Overview
-GlassPlotter is a open source, desktop glass map viewer.  This application aims to be a comprehensive glass explorer, which would be helpful for diverse optical engineers.
+GlassPlotter is a open source, desktop glass map viewer.  This application aims to be a comprehensive glass explorer which would be helpful for diverse optical engineers.
 
 
 ## Getting Started
-Package for Windows can be downloaded [here](https://github.com/heterophyllus/glassplotter/releases).
+Binary packages can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
 ## Resources
-This application extracts glass data from Zemax AGF file.  Each AGF file can be downloaded from the supplyer's web site. If Zemax has been installed, they are contained in the folder like Documents/Zemax/Glasscat.
+This application extracts glass data from Zemax AGF file.  Each AGF file can be downloaded from the supplyer's web site. If Zemax has been installed, they are supposed to be in the folder like Documents/Zemax/Glasscat.
 
+
+Links to glass supplyers are listed in [SUPPLYERS.md](SUPPLYERS.md)
 
 ## Development
-This application is built with;
+This application is built with:
 - [Qt and QtCreator](https://www.qt.io)
 - [QCustomPlot](https://www.qcustomplot.com)
 
@@ -26,6 +28,7 @@ This project is under development and still far from completion.  Following feat
       - [x] vd-PgF
       - [x] User Defined Curve
   + [ ] Glass Dispersion Plot
+  + [ ] Internal Transmitance Plot
   + [ ] Glass Catalog View
   
 
@@ -36,7 +39,7 @@ This project is licensed under the GPL License - see the [LICENSE](LICENSE.md) f
 Contributions and feedbacks are always welcome.
 
 ## Acknowledgement
-I would like to express my respect to following repositories which inspired this project.
+This project got inspiration from the following repositories.
 
 - [mjhoptics/opticalglass](https://github.com/mjhoptics/opticalglass) :
   glass map viewer with simple GUI, written in python.
