@@ -1,5 +1,7 @@
 *.user
 *.pro.user
+*.app
+*.exe
 
 AGF/
 SUPPLYERS/

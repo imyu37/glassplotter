@@ -31,7 +31,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     qcpscatterchart.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    spectralline.cpp
 
 HEADERS += \
     glass.h \
@@ -40,7 +41,9 @@ HEADERS += \
     glasspropertydlg.h \
     mainwindow.h \
     qcpscatterchart.h \
-    qcustomplot.h
+    qcustomplot.h \
+    spectralline.h \
+    spline.h
 
 FORMS += \
     glasspropertydlg.ui \

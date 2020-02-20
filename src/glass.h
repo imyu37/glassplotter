@@ -32,19 +32,7 @@
 
 #include "math.h"
 
-
-class SpectralLine
-{
-public:
-    SpectralLine();
-    static const double C;
-    static const double C_;
-    static const double d;
-    static const double e;
-    static const double F;
-    static const double F_;
-    static const double g;
-};
+#include "spectralline.h"
 
 class Glass
 {
@@ -53,18 +41,19 @@ public:
     ~Glass();
 
     double index(double lambdamicron);
+    double index(QString spectral);
 
     QString name()
     {
-        return _Name;
+        return _name;
     }
     QString supplyer()
     {
         return _supplyer;
     }
-    double nC() const
+    QList<double> dispcoefs()
     {
-        return _nC;
+        return _dispcoefs;
     }
     double nd() const
     {
@@ -73,14 +62,6 @@ public:
     double ne() const
     {
         return _ne;
-    }
-    double nF() const
-    {
-        return _nF;
-    }
-    double ng() const
-    {
-        return _ng;
     }
     double vd() const
     {
@@ -94,6 +75,8 @@ public:
     {
         return _PgF;
     }
+    double Pxy(QString x, QString y);
+    double Pxy_(QString x, QString y);
     double lambdaMin(){ //micron
         return _lambdaMin;
     }
@@ -102,30 +85,40 @@ public:
     }
     QString dispFormName();
 
+    QVector<double> get_IT_wl();
+    QVector<double> get_IT_tr();
+
     void computeProperties();
 
-    void setName(QString str);
-    void setSupplyer(QString str);
-    void setNd(double value);
-    void setVd(double value);
-    void setPgF(double value);
-    void setExcludeSub(int value);
-    void setDispForm(int value);
-    //void setNIL(int value);
-    //void setStatus(int value);
-    //void setAvailability(int value);
-    void setTCE(double value);
-    //void setDensity(double value);
-    void setDeltaPgF(double value);
-    //void setIgnoreThermalExp(int value);
-    //void setIgnoreThermalExp(bool value);
+    void setName(QString str){
+        _name = str;
+    }
+    void setSupplyer(QString str){
+        _supplyer = str;
+    }
+    void setNd(double value){
+        _nd = value;
+    }
+    void setVd(double value){
+        _vd = value;
+    }
+    void setPgF(double value){
+        _PgF = value;
+    }
+    void setDispForm(int formnum){
+        _dispform = formnum;
+    }
     void setDispCoef(QList<double> coefs);
-    void setLambdaMin(double value);
-    void setLambdaMax(double value);
-    //void setthermalData(QList<double> list);
+    void setLambdaMin(double value){
+        _lambdaMin = value;
+    }
+    void setLambdaMax(double value){
+        _lambdaMax = value;
+    }
+
     void appendIntTrans(double lambdamicron, double trans);
 
-    // some function should be implemented here
+
 
     // dispersion formulas
     /*
@@ -142,37 +135,23 @@ public:
     double Extended2(double lambdamicron);
     */
 
-    // for debug
-    void printProperty();
-
 private:
-    QString _Name;
+
+    //fundamentals
+    QString _name;
     QString _supplyer;
-
-    double _nC;
-    double _nC_;
     double _nd;
-    double _ne;
-    double _nF;
-    double _nF_;
-    double _ng;
-
+    double _ne;   
     double _vd;
-    double _ve;
+    double _ve;   
     double _PgF;
 
     // NM
     int    _dispform;
-    int    _NIL;
-    int    _exclude_sub;
-    int    _status;
-    int    _availability;
 
-    // ED
-    double _tce;
-    double _density;
+    // ED    
     double _dPgF;
-    bool   _ignore_thermal_expand;
+
 
     // CD
     QList<double> _dispcoefs;
@@ -181,12 +160,7 @@ private:
     QList<double> _thermaldata;
 
     // OD
-    double _relcost;
-    double _cr;
-    double _fr;
-    double _sr;
-    double _ar;
-    double _pr;
+
 
     // LD
     double _lambdaMax;

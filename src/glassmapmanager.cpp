@@ -174,8 +174,6 @@ void GlassMapManager::createGlassMapList(int plotType)
                 x.append(catalog->glass(i)->vd());           
                 y.append(catalog->glass(i)->nd());
                 str.append(catalog->glass(i)->name());
-
-                //qDebug("%s: %s: %f, %f",catalog->supplyer().toUtf8().data(),str.last().toUtf8().data(), x.last(),y.last());
             }
             break;
         case 1:
@@ -186,8 +184,6 @@ void GlassMapManager::createGlassMapList(int plotType)
                 x.append(catalog->glass(i)->ve());
                 y.append(catalog->glass(i)->ne());
                 str.append(catalog->glass(i)->name());
-
-                //qDebug("%s: %s: %f, %f",catalog->supplyer().toUtf8().data(),str.last().toUtf8().data(), x.last(),y.last());
             }
             break;
         case 2: //ve-ne
@@ -198,7 +194,6 @@ void GlassMapManager::createGlassMapList(int plotType)
                 x.append(catalog->glass(i)->vd());
                 y.append(catalog->glass(i)->PgF());
                 str.append(catalog->glass(i)->name());
-                //qDebug("%s: %s: %f, %f",catalog->supplyer().toUtf8().data(),str.last().toUtf8().data(), x.last(),y.last());
             }
             break;
         }
@@ -220,7 +215,6 @@ void GlassMapManager::clearGlassMapList()
     {
         _customPlot->removeGraph(_glassmaps[_catalogs[i]->supplyer()]->pointSeries());
     }
-
     _customPlot->clearItems();
     _glassmaps.clear();
 }

@@ -3,33 +3,24 @@
 ![demo](image/screenshot.png)
 
 ## Overview
-GlassPlotter is a open source, desktop glass map viewer.  This application aims to be a comprehensive glass explorer which would be helpful for diverse optical engineers.
+GlassPlotter is a open source, desktop glass map viewer.  This application aims to be a comprehensive glass catalog explorer which would be helpful for diverse optical engineers.
 
+## Key Features
+- Overlay glass maps from multiple supplyers
+- Plot user defined curve on the glass map
+- Plot dispersion, internal transmittance of the selected glass
 
 ## Getting Started
 Binary packages can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
 ## Resources
-This application extracts glass data from Zemax AGF file.  Each AGF file can be downloaded from the supplyer's web site. If Zemax has been installed, they are supposed to be in the folder like Documents/Zemax/Glasscat.
-
-
-Links to glass supplyers are listed in [SUPPLYERS.md](SUPPLYERS.md)
+This application extracts glass data from Zemax AGF file.  Each of AGF files is available in the supplyer's web site. If Zemax has been installed to the computer, AGF files are supposed to be contained in the folder like Documents/Zemax/Glasscat.
 
 ## Development
 This application is built with:
-- [Qt and QtCreator](https://www.qt.io)
-- [QCustomPlot](https://www.qcustomplot.com)
-
-This project is under development and still far from completion.  Following features are going to be implemented.
-
-  + [ ] Glass Map
-      - [x] nd-vd
-      - [x] ne-ve
-      - [x] vd-PgF
-      - [x] User Defined Curve
-  + [ ] Glass Dispersion Plot
-  + [ ] Internal Transmitance Plot
-  + [ ] Glass Catalog View
+- [Qt and QtCreator](https://www.qt.io) : GUI library and IDE
+- [QCustomPlot](https://www.qcustomplot.com) : Graph plotting library
+- [spline](https://github.com/ttk592/spline) : cubic spline library
   
 
 ## License

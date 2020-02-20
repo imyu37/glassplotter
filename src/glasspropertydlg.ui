@@ -17,12 +17,20 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_Property">
       <attribute name="title">
        <string>Property</string>
       </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QTableWidget" name="tableWidget_Indices"/>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableWidget_PartialDispersion"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_Dispersion">
       <attribute name="title">
@@ -30,7 +38,17 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QCustomPlot" name="plotWidget" native="true"/>
+        <widget class="QCustomPlot" name="plotWidget_Dispersion" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_Transmittance">
+      <attribute name="title">
+       <string>Transmittance</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QCustomPlot" name="plotWidget_Transmittance" native="true"/>
        </item>
       </layout>
      </widget>

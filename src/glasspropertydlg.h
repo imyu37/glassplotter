@@ -4,7 +4,7 @@
 #include <QDialog>
 #include "qcustomplot.h"
 #include "glass.h"
-#include "glasscatalog.h"
+#include "spline.h"
 
 namespace Ui {
 class GlassPropertyDlg;
@@ -15,16 +15,27 @@ class GlassPropertyDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit GlassPropertyDlg(QWidget *parent = nullptr);
+    explicit GlassPropertyDlg(Glass *glass, QWidget *parent = nullptr);
     ~GlassPropertyDlg();
 
-    void plotDispersion(Glass *glass);
-    void plotInternalTransmittance(Glass *glass);
+
+    //Indices tab
+    void createIndicesTable();
+    void createPartialDispersionTable();
+
+    //Dispersion tab
+    void plotDispersion();
+
+    //Transmittance tab
+    void plotInternalTransmittance();
+
 
 private:
     Ui::GlassPropertyDlg *ui;
 
-    QCustomPlot* _customPlot;
+    QCustomPlot* _dispersionPlot;
+    QCustomPlot* _transmittancePlot;
+    Glass* _glass;
 
 };
 

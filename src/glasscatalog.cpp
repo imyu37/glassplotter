@@ -42,7 +42,6 @@ void GlassCatalog::clear()
     _supplyer = "";
 }
 
-
 bool GlassCatalog::loadAGF(QString AGFpath)
 {
     qDebug("Loading : %s", AGFpath.toUtf8().data());
@@ -58,7 +57,6 @@ bool GlassCatalog::loadAGF(QString AGFpath)
     QString linetext;
     QStringList lineparts;
     QList<double> dlist;
-    QPair<double, double> ITpair;
 
     Glass *g;
 
@@ -78,14 +76,9 @@ bool GlassCatalog::loadAGF(QString AGFpath)
             _glasses.last()->setDispForm(lineparts[2].toInt());
             _glasses.last()->setNd(lineparts[4].toDouble());
             _glasses.last()->setVd(lineparts[5].toDouble());
-            //_glasses.last()->setExcludeSub();
         }
         else if (linetext.startsWith("ED")) {
-            lineparts = linetext.simplified().split(" ");
-            //g.setTCE(lineparts[1].toDouble());
-            //g.setDensity(lineparts[3].toDouble());
-            //_glasses.last()->setDeltaPgF(lineparts[4].toDouble());
-            //g.setIgnoreThermalExp()
+            continue;
         }
         else if(linetext.startsWith("CD")){
             lineparts = linetext.simplified().split(" ");
@@ -103,9 +96,8 @@ bool GlassCatalog::loadAGF(QString AGFpath)
         }
         else if(linetext.startsWith("IT")){
             lineparts = linetext.simplified().split(" ");
-            //ITpair.first  = lineparts[0].toDouble();
-            //ITpair.second = lineparts[1].toDouble();
-            _glasses.last()->appendIntTrans(lineparts[0].toDouble(),lineparts[1].toDouble());
+            if(lineparts.size() < 3) continue; //eg. NIHON_KESSHO_KOGAKU CaF2
+            _glasses.last()->appendIntTrans(lineparts[1].toDouble(),lineparts[2].toDouble());
         }
 
     }

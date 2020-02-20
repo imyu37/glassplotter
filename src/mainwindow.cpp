@@ -101,8 +101,7 @@ void MainWindow::showGlassProperty()
 {
     QString glassname = _customPlot->selectedItems().first()->objectName();
     //GlassPropertyDlg *dlg = new GlassPropertyDlg;
-    GlassPropertyDlg *dlg = new GlassPropertyDlg(this);
-    dlg->plotDispersion(_glassmapmanager->glass(glassname));
+    GlassPropertyDlg *dlg = new GlassPropertyDlg(_glassmapmanager->glass(glassname),this);
     dlg->show();
 }
 
@@ -128,27 +127,25 @@ void MainWindow::createTableWidget()
     for (int i = 0; i< _glassmapmanager->catalogCount() ; i++)
     {
         supplyername = _glassmapmanager->catalog(i)->supplyer();
-        table->setItem( i, ColumnSupplyer, new QTableWidgetItem(supplyername) ); //supplyer
+        table->setItem( i, ColumnSupplyer, new QTableWidgetItem(supplyername) );     //supplyer
         table->item(i,ColumnSupplyer)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
         table->item(i,ColumnSupplyer)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-        table->setItem( i, ColumnPlot, new QTableWidgetItem("")   );                   //plot        
+        table->setItem( i, ColumnPlot, new QTableWidgetItem("")  );                   //plot
         table->item(i,ColumnPlot)->setCheckState(Qt::Unchecked );
 
-        table->setItem( i, ColumnLabel, new QTableWidgetItem("")   );                   //label
+        table->setItem( i, ColumnLabel, new QTableWidgetItem("")  );                  //label
         table->item(i,ColumnLabel)->setCheckState(Qt::Unchecked );
-
-        //table->verticalHeaderItem(i)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
 
     }
 
-    table->setColumnWidth(ColumnPlot,10);
-    table->setColumnWidth(ColumnLabel,10);
+    table->setColumnWidth(ColumnSupplyer,(table->width() - table->verticalHeader()->width()) /3);
+    table->setColumnWidth(ColumnPlot,    (table->width() - table->verticalHeader()->width()) /3);
+    table->setColumnWidth(ColumnLabel,   (table->width() - table->verticalHeader()->width()) /3);
 
     //re-connect
     QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
                      this, SLOT(on_cellChanged(int,int)));
-
 
     // update visible state
     bool pointstate;
@@ -288,11 +285,13 @@ void MainWindow::createGlassTable(int catalogIndex)
     GlassCatalog* catalog = _glassmapmanager->catalog(catalogIndex);
     QTableWidget *table = ui->tableWidget_GlassTable;
     table->clear();
+    table->setSortingEnabled(false); //sorting off
 
     // set table format
-    table->setColumnCount(10);
+    QStringList horizontalHeaderLabels = QStringList() << tr("GLASS") << tr("nd") << tr("vd") << tr("DispForm") << SpectralLine::spectralLineList();
     table->setRowCount( catalog->glassCount() );
-    table->setHorizontalHeaderLabels( QStringList() << tr("GLASS") << tr("nd") << tr("vd") << tr("DispForm") << tr("nC") << tr("nd") << tr("ne") << tr("nF") << tr("ng")  );
+    table->setColumnCount(horizontalHeaderLabels.count());
+    table->setHorizontalHeaderLabels(horizontalHeaderLabels);
 
     for(int i = 0; i < catalog->glassCount(); i++)
     {
@@ -307,21 +306,13 @@ void MainWindow::createGlassTable(int catalogIndex)
         table->setItem( i, 3, new QTableWidgetItem );
         table->item(i,3)->setText(catalog->glass(i)->dispFormName());
 
-        table->setItem( i, 4, new QTableWidgetItem );
-        table->item(i,4)->setText(QString::number(catalog->glass(i)->nC()));
-
-        table->setItem( i, 5, new QTableWidgetItem );
-        table->item(i,5)->setText(QString::number(catalog->glass(i)->nd()));
-
-        table->setItem( i, 6, new QTableWidgetItem );
-        table->item(i,6)->setText(QString::number(catalog->glass(i)->ne()));
-
-        table->setItem( i, 7, new QTableWidgetItem );
-        table->item(i,7)->setText(QString::number(catalog->glass(i)->nF()));
-
-        table->setItem( i, 8, new QTableWidgetItem );
-        table->item(i,8)->setText(QString::number(catalog->glass(i)->ng()));
+        for(int j = 0; j < SpectralLine::spectralLineList().count(); j++)
+        {
+            table->setItem( i, j+4, new QTableWidgetItem );
+            table->item(i,j+4)->setText(QString::number(catalog->glass(i)->index(SpectralLine::spectralLineList()[j])));
+        }
 
     }
+    table->setSortingEnabled(true);
 
 }

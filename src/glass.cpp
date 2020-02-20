@@ -25,47 +25,21 @@
 
 #include "glass.h"
 
-SpectralLine::SpectralLine()
-{
-
-}
-const double SpectralLine::C = 656.2725;
-const double SpectralLine::C_= 643.847;
-const double SpectralLine::d = 587.5618;
-const double SpectralLine::e = 546.074;
-const double SpectralLine::F = 486.1327;
-const double SpectralLine::F_= 479.9914;
-const double SpectralLine::g = 435.8343;
-
-
 Glass::Glass()
 {
-    _Name = "";
+    _name = "";
 
-    _nC  = 0;
-    _nC_ = 0;
     _nd  = 0;
     _ne  = 0;
-    _nF  = 0;
-    _nF_ = 0;
-    _ng  = 0;
-
     _vd  = 0;
     _ve  = 0;
     _PgF = 0;
 
     // NM
     _dispform = 1;
-    _NIL      = 0;
-    _exclude_sub = 0;
-    _status = 0;
-    _availability = 0;
 
-    // ED
-    _tce = 0;
-    _density = 0;
+    // ED 
     _dPgF = 0;
-    _ignore_thermal_expand = false;
 
     // CD
     _dispcoefs.clear();
@@ -77,12 +51,7 @@ Glass::Glass()
     _thermaldata.clear();
 
     // OD
-    _relcost = 0;
-    _cr = 0;
-    _fr = 0;
-    _sr = 0;
-    _ar = 0;
-    _pr = 0;
+
 
     // LD
     _lambdaMax = 700;
@@ -97,6 +66,7 @@ Glass::~Glass()
 {
     _dispcoefs.clear();
     _thermaldata.clear();
+    _int_trans.clear();
 }
 
 double Glass::index(double lambdamicron)
@@ -128,9 +98,59 @@ double Glass::index(double lambdamicron)
         return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) );
     case 12: //Extended 2
         return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4) + _dispcoefs[7]*pow(lambdamicron,6) );
-    //case 13: //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
-    //    return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
+    case 13: //Unknown
+        if(_supplyer.contains("HIKARI")){  //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
+            return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
+        }else{
+            return 0;
+        }
     default:
+        return 0;
+    }
+}
+
+double Glass::index(QString spectral)
+{
+    if(spectral == "t"){
+        return index(SpectralLine::t/1000);
+    }
+    else if(spectral == "s"){
+        return index(SpectralLine::s/1000);
+    }
+    else if(spectral == "r"){
+        return index(SpectralLine::r/1000);
+    }
+    else if(spectral == "C"){
+        return index(SpectralLine::C/1000);
+    }
+    else if(spectral == "C_"){
+        return index(SpectralLine::C_/1000);
+    }
+    else if(spectral == "D"){
+        return index(SpectralLine::D/1000);
+    }
+    else if(spectral == "d"){
+        return index(SpectralLine::d/1000);
+    }
+    else if(spectral == "e"){
+        return index(SpectralLine::e/1000);
+    }
+    else if(spectral == "F"){
+        return index(SpectralLine::F/1000);
+    }
+    else if(spectral == "F_"){
+        return index(SpectralLine::F_/1000);
+    }
+    else if(spectral == "g"){
+        return index(SpectralLine::g/1000);
+    }
+    else if(spectral == "h"){
+        return index(SpectralLine::h/1000);
+    }
+    else if(spectral == "i"){
+        return index(SpectralLine::i/1000);
+    }
+    else{
         return 0;
     }
 }
@@ -162,62 +182,56 @@ QString Glass::dispFormName()
         return "Sellmeier5";
     case 12:
         return "Extended2";
-    //case 13:
-    //    return "HIKARI";
+    case 13:
+        if(_supplyer.contains("HIKARI")){
+            return "HIKARI";
+        }else{
+            return "Unknown";
+        }
     default:
         return "Unknown";
     }
 }
 
-
-void Glass::setName(QString str)
+double Glass::Pxy(QString x, QString y)
 {
-    _Name = str;
-}
-void Glass::setSupplyer(QString str)
-{
-    _supplyer = str;
+    return (index(x) - index(y)) / ( index("F") - index("C") );
 }
 
-void Glass::setNd(double value)
+double Glass::Pxy_(QString x, QString y)
 {
-    _nd = value;
+    return (index(x) - index(y)) / ( index("F_") - index("C_") );
 }
-void Glass::setVd(double value)
+
+QVector<double> Glass::get_IT_wl()
 {
-    _vd = value;
+    QVector<double> wlvec;
+
+    for(int i = 0; i < _int_trans.size(); i++)
+    {
+        wlvec.append(_int_trans[i].first);
+    }
+    return wlvec;
 }
-void Glass::setPgF(double value)
+
+QVector<double> Glass::get_IT_tr()
 {
-    _PgF = value;
+    QVector<double> trvec;
+
+    for(int i = 0; i < _int_trans.size(); i++)
+    {
+        trvec.append(_int_trans[i].second);
+    }
+    return trvec;
 }
+
 
 void Glass::computeProperties()
 {
-    _nC  = index( (SpectralLine::C)*pow(10,-3));
-    _nC_ = index( (SpectralLine::C_)*pow(10,-3));
-    _ne  = index( (SpectralLine::e)*pow(10,-3));
-    _nF  = index( (SpectralLine::F)*pow(10,-3));
-    _nF_ = index( (SpectralLine::F_)*pow(10,-3));
-    _ng  = index( (SpectralLine::g)*pow(10,-3));
-
-    _ve  = (_ne - 1)/(_nF_-_nC_);
-    _PgF = (_ng-_nF)/(_nF-_nC);
-}
-
-void Glass::setDispForm(int value)
-{
-    _dispform = value;
-}
-
-void Glass::setTCE(double value)
-{
-    _tce = value;
-}
-
-void Glass::setDeltaPgF(double value)
-{
-    _dPgF = value;
+    _ne = index("e");
+    _ve = (index("e") - 1)/(index("F_") - index("C_"));
+    _vd = (index("d") - 1)/(index("F") - index("C"));
+    _PgF = Pxy("g","F");
 }
 
 void Glass::setDispCoef(QList<double> coefs)
@@ -231,17 +245,6 @@ void Glass::setDispCoef(QList<double> coefs)
         }
     }
 }
-
-void Glass::setLambdaMax(double value)
-{
-    _lambdaMax = value;
-}
-
-void Glass::setLambdaMin(double value)
-{
-    _lambdaMin = value;
-}
-
 void Glass::appendIntTrans(double lambdamicron, double trans)
 {
     QPair<double, double> p;
@@ -250,13 +253,3 @@ void Glass::appendIntTrans(double lambdamicron, double trans)
     _int_trans.append(p);
 }
 
-void Glass::printProperty()
-{
-    qDebug("%s : Nd= %f, Vd= %f, Pgf= %f", _Name.toUtf8().data(), _nd, _vd, _PgF);
-    qDebug("C:%f, F:%f, g:%f", _nC, _nF, _ng);
-    qDebug("dispform: %d", _dispform);
-    qDebug("disp coefs");
-    for(int i = 0; i < _dispcoefs.size(); i++){
-        qDebug("   C[%d]=%f", i, _dispcoefs.at(i));
-    }
-}
