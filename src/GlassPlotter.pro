@@ -24,29 +24,38 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    dispersionplotmanager.cpp \
     glass.cpp \
     glasscatalog.cpp \
+    glasscatalogmanager.cpp \
     glassmapmanager.cpp \
     glasspropertydlg.cpp \
+    glassselectiondlg.cpp \
     main.cpp \
     mainwindow.cpp \
     qcpscatterchart.cpp \
     qcustomplot.cpp \
-    spectralline.cpp
+    spectralline.cpp \
+    transmittanceplotmanager.cpp
 
 HEADERS += \
+    dispersionplotmanager.h \
     glass.h \
     glasscatalog.h \
+    glasscatalogmanager.h \
     glassmapmanager.h \
     glasspropertydlg.h \
+    glassselectiondlg.h \
     mainwindow.h \
     qcpscatterchart.h \
     qcustomplot.h \
     spectralline.h \
-    spline.h
+    spline.h \
+    transmittanceplotmanager.h
 
 FORMS += \
     glasspropertydlg.ui \
+    glassselectiondlg.ui \
     mainwindow.ui
 
 # Default rules for deployment.

@@ -38,6 +38,8 @@ Glass::Glass()
     // NM
     _dispform = 1;
 
+    _status = "No Data";
+
     // ED 
     _dPgF = 0;
 
@@ -48,7 +50,10 @@ Glass::Glass()
     }
 
     // TD
-    _thermaldata.clear();
+    _thermalcoefs.clear();
+    for(int i = 0; i < 7; i++){
+        _thermalcoefs.append(0.0);
+    }
 
     // OD
 
@@ -65,7 +70,7 @@ Glass::Glass()
 Glass::~Glass()
 {
     _dispcoefs.clear();
-    _thermaldata.clear();
+    _thermalcoefs.clear();
     _int_trans.clear();
 }
 
@@ -155,6 +160,65 @@ double Glass::index(QString spectral)
     }
 }
 
+double Glass::transmittance(double lambdamicron, double thickness)
+{
+    QVector<double> sx, sy;
+
+    for(int i = 0; i < _int_trans.size(); i++)
+    {
+        sx.append(_int_trans[i].first);
+        sy.append(_int_trans[i].second);
+    }
+
+    tk::spline s;
+    s.set_points(sx.toStdVector(), sy.toStdVector());
+    return s(lambdamicron);
+}
+
+QVector<double> Glass::transmittance(double start, double end, int stepcount)
+{
+    QVector<double> sx, sy;
+    QVector<double> y(stepcount);
+    double x;
+
+    for(int i = 0; i < _int_trans.size(); i++)
+    {
+        sx.append(_int_trans[i].first);
+        sy.append(_int_trans[i].second);
+    }
+
+    tk::spline s;
+    s.set_points(sx.toStdVector(), sy.toStdVector());
+
+    for(int i = 0; i < stepcount; i++)
+    {
+        x = start + (end-start)*(double)i/stepcount;
+        y[i]=(s(x));
+    }
+    return y;
+}
+
+QVector<double> Glass::transmittance(QVector<double> x)
+{
+    QVector<double> sx, sy;
+
+    for(int i = 0; i < _int_trans.size(); i++)
+    {
+        sx.append(_int_trans[i].first);
+        sy.append(_int_trans[i].second);
+    }
+    tk::spline s;
+    s.set_points(sx.toStdVector(), sy.toStdVector());
+
+    QVector<double> y;
+    for(int i = 0; i < x.count(); i++)
+    {
+        y.append(s(x[i]));
+    }
+    return y;
+}
+
+
 QString Glass::dispFormName()
 {
     switch(_dispform){
@@ -203,35 +267,38 @@ double Glass::Pxy_(QString x, QString y)
     return (index(x) - index(y)) / ( index("F_") - index("C_") );
 }
 
-QVector<double> Glass::get_IT_wl()
-{
-    QVector<double> wlvec;
-
-    for(int i = 0; i < _int_trans.size(); i++)
-    {
-        wlvec.append(_int_trans[i].first);
-    }
-    return wlvec;
-}
-
-QVector<double> Glass::get_IT_tr()
-{
-    QVector<double> trvec;
-
-    for(int i = 0; i < _int_trans.size(); i++)
-    {
-        trvec.append(_int_trans[i].second);
-    }
-    return trvec;
-}
-
 
 void Glass::computeProperties()
 {
     _ne = index("e");
     _ve = (index("e") - 1)/(index("F_") - index("C_"));
-    _vd = (index("d") - 1)/(index("F") - index("C"));
+    //_vd = (index("d") - 1)/(index("F") - index("C"));
     _PgF = Pxy("g","F");
+}
+
+void Glass::setStatus(QString str)
+{
+    _status = str;
+}
+void Glass::setStatus(int index)
+{
+    switch(index)
+    {
+    case 1:
+        _status = "Preferred";
+        break;
+    case 2:
+        _status = "Obsolete";
+        break;
+    case 3:
+        _status = "Special";
+        break;
+    case 4:
+        _status = "Melt";
+        break;
+    default:
+        _status = "No Data";
+    }
 }
 
 void Glass::setDispCoef(QList<double> coefs)
@@ -245,6 +312,21 @@ void Glass::setDispCoef(QList<double> coefs)
         }
     }
 }
+
+void Glass::setDispCoef(int index, double val)
+{
+    if(index < _dispcoefs.count()){
+        _dispcoefs[index] = val;
+    }
+}
+
+void Glass::setThermalCoef(int index, double val)
+{
+    if(index < _thermalcoefs.count()){
+        _thermalcoefs[index] = val;
+    }
+}
+
 void Glass::appendIntTrans(double lambdamicron, double trans)
 {
     QPair<double, double> p;

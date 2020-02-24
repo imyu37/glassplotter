@@ -26,51 +26,48 @@
 #define GLASSMAPMANAGER_H
 
 #include "qcpscatterchart.h"
-#include "glasscatalog.h"
+#include "glasscatalogmanager.h"
+#include <QTableWidget>
+#include <QString>
 
-enum PlotType
-{
-    Vd_Nd  = 0,
-    Vd_PgF = 1
-};
-
-
-class GlassMapManager
+class GlassMapManager: public GlassCatalogManager
 {
 public:
-    GlassMapManager(QCustomPlot* customPlot);
-
-    bool readAllAGF(QString agfdir);
-
-    int catalogCount();
-    GlassCatalog* catalog(int index);
-
-    Glass* glass(QString name);
+    GlassMapManager(QCustomPlot* customPlot, QTableWidget* table);
+    ~GlassMapManager();
 
     QColor getColor(QString supplyer);
 
     void createGlassMapList(int plotType);
     void clearGlassMapList();
 
+    void createTable();
+
     void setCurveCoefs(QList<double> coefs);
 
+    void updateVisible();
     void setChartVisible(QString supplyer,bool pointstate, bool labelstate);
     void setCurveVisible(bool state);
 
     void setAxis(QCPRange xrange, QCPRange yrange);
     void resetAxis(int plotType);
 
-    //void replotAll();
-    void clear();
+    int selectedItemsCount();
+    Glass* getSelectedGlass();
 
+    void clear();
     void replot();
 
 
 private:
     QCustomPlot* _customPlot;
+    QTableWidget* _table;
 
-    int _currentPlotType;
-    QList<GlassCatalog*> _catalogs;
+    static const int ColumnSupplyer = 0;
+    static const int ColumnPlot     = 1;
+    static const int ColumnLabel    = 2;
+
+    //int _currentPlotType;
 
     QHash<QString, QCPScatterChart* > _glassmaps; //<supplyer, currentmap>
     QHash<QString, QPair<bool,bool> > _glassmapvisiblestate;

@@ -6,9 +6,15 @@
 //#include <QtWidgets>
 
 #include "qcustomplot.h"
+
 #include "glasscatalog.h"
+#include "glasscatalogmanager.h"
 #include "glassmapmanager.h"
+#include "dispersionplotmanager.h"
+#include "transmittanceplotmanager.h"
+
 #include "glasspropertydlg.h"
+#include "glassselectiondlg.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,8 +28,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void createTableWidget();
-    void createComboSupplyers();
+    void createUI();
 
 private slots:
     void on_cellChanged(int catalogIndex, int PlotOrLabel);
@@ -32,23 +37,34 @@ private slots:
     void on_lineEdit_textEdited(QString linetext);
     void on_buttonResetViewClicked();
     void on_menu_File_LoadAGF_Triggered();
-    void on_menu_Help_Abou_Triggered();
+    void on_menu_Help_About_Triggered();
 
+    //GlassMap tab
     void contextMenuRequest(QPoint pos);
     void showGlassProperty();
 
-    //GlassTable tab
-    void createGlassTable(int catalogIndex);
+    //Dispersion tab
+    void on_buttonAddNewGlassClicked();
+    void on_buttonDeleteSelectedGlassClicked();
+    void on_buttonSetAxisClicked();
+
+    //Transmittance tab
+    void on_button_Transmittance_AddNewGlassClicked();
+    void on_button_Transmittance_DeleteGlassClicked();
+    void on_button_Transmittance_SetAxisClicked();
+
 private:
     Ui::MainWindow *ui;
 
+    QCustomPlot* _glassmapPlot;
+    QCustomPlot* _dispersionPlot;
+    QCustomPlot* _transmittancePlot;
 
-    QCustomPlot* _customPlot;
     GlassMapManager* _glassmapmanager;
+    DispersionPlotManager* _dispersionplotmanager;
+    TransmittancePlotManager* _transmittanceplotmanager;
 
     QString _AGFdir;
-
-    //QMenu* _contextMenu;
 
     static const int ColumnSupplyer = 0;
     static const int ColumnPlot     = 1;

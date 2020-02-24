@@ -11,18 +11,49 @@ MainWindow::MainWindow(QWidget *parent)
     //set default value
     _AGFdir = QApplication::applicationDirPath() + "/AGF";
 
-    //menu
+    //---> Glass Map
+    _glassmapPlot = ui->widget;
+    _glassmapPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+    _glassmapmanager = new GlassMapManager(ui->widget, ui->tableWidget);
+
+    if(!_glassmapmanager->loadAllAGF(_AGFdir)){ // read Zemax AGF in the folder
+        QMessageBox::information(this,tr("File"), tr("AGF load missed"));
+    }
+
+    _glassmapmanager->createGlassMapList(0);
+    _glassmapmanager->resetAxis(0);
+    _glassmapmanager->replot();
+
+    //---> Dispersion Plot
+    _dispersionPlot = ui->plotWidget_Dispersion;
+    _dispersionplotmanager = new DispersionPlotManager(_dispersionPlot);
+    _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList()); //copy from glassmap
+
+    //---> Transmittance Plot
+    _transmittancePlot = ui->plotWidget_Transmittance;
+    _transmittanceplotmanager = new TransmittancePlotManager(_transmittancePlot);
+    _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
+
+    createUI();
+}
+
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::createUI()
+{
+    //---> menu
     QObject::connect(ui->actionLoadAGFfolder,SIGNAL(triggered()),
                      this, SLOT(on_menu_File_LoadAGF_Triggered()));
 
-    QObject::connect(ui->actionAbout, SIGNAL(triggered()),
-                     this, SLOT(on_menu_Help_Abou_Triggered()));
+    QObject::connect(ui->actionAbout,SIGNAL(triggered()),
+                     this, SLOT(on_menu_Help_About_Triggered()));
 
-    //custom plot
-    _customPlot = ui->widget;
-    _glassmapmanager = new GlassMapManager(_customPlot);
-
-    //create comboBox
+    //---> Map tab
+    //combobox
     ui->comboBox_plotType->clear();
     ui->comboBox_plotType->addItem("Nd-Vd");
     ui->comboBox_plotType->addItem("Ne-Ve");
@@ -30,11 +61,11 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->comboBox_plotType,SIGNAL(currentIndexChanged(int)),
                      this, SLOT(on_comboChanged(int)));
 
-    //reset view button
-    QObject::connect(ui->button_resetView,SIGNAL(clicked()),
-                     this, SLOT(on_buttonResetViewClicked()));
+    //mouse
+    QObject::connect(_glassmapPlot,SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextMenuRequest(QPoint)));
 
-    //curve
+    //user defined curve
     ui->lineEdit_coef0->setText("7.278e-1");
     ui->lineEdit_coef1->setText("-5.656e-3");
     ui->lineEdit_coef2->setText("5.213e-5");
@@ -50,118 +81,64 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->lineEdit_coef3,SIGNAL(textEdited(QString)),
                      this, SLOT(on_lineEdit_textEdited(QString)));
 
-    //mouse context menu
-    _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(_customPlot,SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(contextMenuRequest(QPoint)));
+    //reset view button
+    QObject::connect(ui->button_resetView,SIGNAL(clicked()),
+                     this, SLOT(on_buttonResetViewClicked()));
 
-
-    // read Zemax AGF in the folder
-    if(!_glassmapmanager->readAllAGF(_AGFdir)){
-        QMessageBox::information(this,tr("Error"), tr("AGF load error\n Check File->Load AGF folder"));
-        //return;
-    }
-    _glassmapmanager->createGlassMapList(0);
-
-    //create table widget
-    createTableWidget();
+    //plot control table
+    QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
+                     this, SLOT(on_cellChanged(int,int)));
+    _glassmapmanager->createTable();
     QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
                      this, SLOT(on_cellChanged(int,int)));
 
-    _glassmapmanager->resetAxis(0);
-    _glassmapmanager->replot();
 
+    //---> Dispersion tab
+    QObject::connect(ui->pushButton_addNewGlass, SIGNAL(clicked()),
+                     this, SLOT(on_buttonAddNewGlassClicked()));
+    QObject::connect(ui->pushButton_deleteSelectedGlass, SIGNAL(clicked()),
+                     this, SLOT(on_buttonDeleteSelectedGlassClicked()));
+    QObject::connect(ui->pushButton_Dispersion_SetAxis, SIGNAL(clicked()),
+                     this, SLOT(on_buttonSetAxisClicked()));
+    ui->lineEdit_Xmin->setText("300");
+    ui->lineEdit_Xmax->setText("1000");
+    ui->lineEdit_Ymin->setText("0.9");
+    ui->lineEdit_Ymax->setText("2.1");
 
-    /*******************************
-     * Table tab
-     * *****************************/
-    createComboSupplyers();
+    //---> Transmittance tab
+    QObject::connect(ui->pushButton_Transmittance_addGraph, SIGNAL(clicked()),
+                     this, SLOT(on_button_Transmittance_AddNewGlassClicked()));
+    QObject::connect(ui->pushButton_Transmittance_deleteGraph,SIGNAL(clicked()),
+                     this, SLOT(on_button_Transmittance_DeleteGlassClicked()));
+    QObject::connect(ui->pushButton_Transmittance_setAxis, SIGNAL(clickec()),
+                     this, SLOT(on_buttonSetAxisClicked()));
+    ui->lineEdit_Transmittance_Xmin->setText("300");
+    ui->lineEdit_Transmittance_Xmax->setText("2000");
+    ui->lineEdit_Transmittance_Ymin->setText("0.9");
+    ui->lineEdit_Transmittance_Ymax->setText("1.0");
 
-
-
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 void MainWindow::contextMenuRequest(QPoint pos)
 {
-    if(!_customPlot->selectedItems().isEmpty()){ //at least one textitem should be selected
+    if(_glassmapPlot->selectedItems().size() > 0){ //at least one textitem should be selected
         QMenu* contextMenu;
         contextMenu = new QMenu(this);
         contextMenu->setAttribute(Qt::WA_DeleteOnClose);
         contextMenu->addAction("Show Property",this,SLOT(showGlassProperty()));
-        contextMenu->popup(_customPlot->mapToGlobal(pos));
+        contextMenu->popup(_glassmapPlot->mapToGlobal(pos));
     }
 }
 
 void MainWindow::showGlassProperty()
 {
-    QString glassname = _customPlot->selectedItems().first()->objectName();
-    //GlassPropertyDlg *dlg = new GlassPropertyDlg;
-    GlassPropertyDlg *dlg = new GlassPropertyDlg(_glassmapmanager->glass(glassname),this);
-    dlg->show();
+    if(_glassmapmanager->selectedItemsCount() > 0){
+        GlassPropertyDlg *dlg = new GlassPropertyDlg(this);
+        dlg->setProperty(_glassmapmanager->getSelectedGlass());
+        dlg->show();
+    }
 }
 
-void MainWindow::createTableWidget()
-{
-    //disconnect to avoid updating
-    QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                     this, SLOT(on_cellChanged(int,int)));
-
-    QTableWidget *table = ui->tableWidget;
-    table->clear();
-
-    // set table format 
-    table->setColumnCount( 3 );
-    table->setRowCount( _glassmapmanager->catalogCount() );
-
-    // set header
-    table->setHorizontalHeaderLabels( QStringList() << tr("CATALOG") << tr("P") << tr("L" )  );
-
-    // set supplyers' names and checkboxes
-    QString supplyername;
-
-    for (int i = 0; i< _glassmapmanager->catalogCount() ; i++)
-    {
-        supplyername = _glassmapmanager->catalog(i)->supplyer();
-        table->setItem( i, ColumnSupplyer, new QTableWidgetItem(supplyername) );     //supplyer
-        table->item(i,ColumnSupplyer)->setBackgroundColor(_glassmapmanager->getColor(supplyername));
-        table->item(i,ColumnSupplyer)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-        table->setItem( i, ColumnPlot, new QTableWidgetItem("")  );                   //plot
-        table->item(i,ColumnPlot)->setCheckState(Qt::Unchecked );
-
-        table->setItem( i, ColumnLabel, new QTableWidgetItem("")  );                  //label
-        table->item(i,ColumnLabel)->setCheckState(Qt::Unchecked );
-
-    }
-
-    table->setColumnWidth(ColumnSupplyer,(table->width() - table->verticalHeader()->width()) /3);
-    table->setColumnWidth(ColumnPlot,    (table->width() - table->verticalHeader()->width()) /3);
-    table->setColumnWidth(ColumnLabel,   (table->width() - table->verticalHeader()->width()) /3);
-
-    //re-connect
-    QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                     this, SLOT(on_cellChanged(int,int)));
-
-    // update visible state
-    bool pointstate;
-    bool labelstate;
-
-    for(int i = 0 ;i<ui->tableWidget->rowCount();i++)
-    {
-        supplyername = _glassmapmanager->catalog(i)->supplyer();
-        pointstate = ui->tableWidget->item(i,ColumnPlot)->checkState();
-        labelstate = ui->tableWidget->item(i,ColumnLabel)->checkState();
-        _glassmapmanager->setChartVisible(supplyername,pointstate,labelstate);
-    }
-
-    _glassmapmanager->replot();
-
-}
 
 void MainWindow::on_menu_File_LoadAGF_Triggered()
 {
@@ -171,21 +148,30 @@ void MainWindow::on_menu_File_LoadAGF_Triggered()
     if(fileDialog.exec()){
         QStringList filePaths = fileDialog.selectedFiles();
         _AGFdir = filePaths.first();
+
+
+        if(!_glassmapmanager->loadAllAGF(_AGFdir))
+        {
+            QMessageBox::information(this,tr("File"), tr("AGF load missed"));
+            return;
+        }
+
+        _glassmapmanager->setCatalogList(_glassmapmanager->getCatalogList());
+
+        QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),  //disconnect to avoid updating
+                         this, SLOT(on_cellChanged(int,int)));
+        _glassmapmanager->createTable();
+        QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
+                         this, SLOT(on_cellChanged(int,int)));
+
+        _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
+        _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
+
+        _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
+        _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
+
+        QMessageBox::information(this,tr("Load AGF folder"), tr("AGF loaded"));
     }
-
-    if(!_glassmapmanager->readAllAGF(_AGFdir))
-    {
-        QMessageBox::information(this,tr("File"), tr("AGF load missed"));
-        return;
-    }
-    _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
-    _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
-    createTableWidget();
-
-    createComboSupplyers();
-    createGlassTable(ui->comboBox_Supplyers->currentIndex());
-
-    QMessageBox::information(this,tr("Load AGF folder"), tr("AGF loaded"));
 
 }
 
@@ -193,34 +179,20 @@ void MainWindow::on_comboChanged(int index)
 {
     _glassmapmanager->clearGlassMapList();
     _glassmapmanager->createGlassMapList(index);
-
-    QString supplyer;
-    bool pointstate;
-    bool labelstate;
-
-    for(int i = 0 ;i<ui->tableWidget->rowCount();i++)
-    {
-        supplyer = _glassmapmanager->catalog(i)->supplyer();
-        pointstate = ui->tableWidget->item(i,ColumnPlot)->checkState();
-        labelstate = ui->tableWidget->item(i,ColumnLabel)->checkState();
-        _glassmapmanager->setChartVisible(supplyer,pointstate,labelstate);
-    }
-
-    _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
+    QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),  //disconnect to avoid updating
+                     this, SLOT(on_cellChanged(int,int)));
+    _glassmapmanager->createTable();
+    QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
+                     this, SLOT(on_cellChanged(int,int)));
+    _glassmapmanager->updateVisible();
+    _glassmapmanager->resetAxis(index);
     _glassmapmanager->replot();
-
 }
 
 void MainWindow::on_cellChanged(int catalogIndex, int PlotOrLabel)
 {
-
-    QString supplyer = _glassmapmanager->catalog(catalogIndex)->supplyer();
-    bool pointstate = ui->tableWidget->item(catalogIndex,ColumnPlot)->checkState();
-    bool labelstate = ui->tableWidget->item(catalogIndex,ColumnLabel)->checkState();
-    _glassmapmanager->setChartVisible(supplyer,pointstate,labelstate);
-
+    _glassmapmanager->updateVisible();
     _glassmapmanager->replot();
-
 }
 
 void MainWindow::on_checkBoxCurveChanged(bool checkState)
@@ -235,7 +207,7 @@ void MainWindow::on_checkBoxCurveChanged(bool checkState)
 
     _glassmapmanager->setCurveCoefs(coefs);
     _glassmapmanager->setCurveVisible(checkState);
-    _customPlot->replot();
+    _glassmapmanager->replot();
 }
 
 void MainWindow::on_lineEdit_textEdited(QString linetext)
@@ -258,61 +230,107 @@ void MainWindow::on_buttonResetViewClicked()
     _glassmapmanager->replot();
 }
 
-void MainWindow::on_menu_Help_Abou_Triggered()
+void MainWindow::on_menu_Help_About_Triggered()
 {
     QMessageBox::about(this,tr("About"),tr(" GlassPlotter\n\n Copyright(c) 2020 Hiiragi(heterophyllus) "));
 }
 
-void MainWindow::createComboSupplyers()
-{
-    QObject::disconnect(ui->comboBox_Supplyers, SIGNAL(currentIndexChanged(int)),
-                     this, SLOT(createGlassTable(int)));
 
-    ui->comboBox_Supplyers->clear();
-    for(int i = 0;i < _glassmapmanager->catalogCount();i++)
-    {
-        ui->comboBox_Supplyers->addItem(_glassmapmanager->catalog(i)->supplyer());
+/*******************
+ * Dispersion tab
+ * ****************/
+void MainWindow::on_buttonAddNewGlassClicked()
+{
+    if(_dispersionplotmanager->catalogCount() < 1){
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        return;
     }
 
-    QObject::connect(ui->comboBox_Supplyers, SIGNAL(currentIndexChanged(int)),
-                     this, SLOT(createGlassTable(int)));
+    if(_dispersionPlot->graphCount() >= 4){
+        QMessageBox::information(this,tr("File"), tr("Up to 5 graphs can be plotted"));
+        return;
+    }
+    QString glassname, supplyername;
+    GlassSelectionDlg *dlg = new GlassSelectionDlg(this);
 
-    //createGlassTable(ui->comboBox_Supplyers->currentIndex());
+    dlg->setCatalogList(_dispersionplotmanager->getCatalogList());
+    dlg->create_comboBox_Supplyers();
+
+    if(dlg->exec() == QDialog::Accepted)
+    {
+        supplyername = dlg->getSupplyerName();
+        glassname = dlg->getGlassName();
+        _dispersionplotmanager->addGraph(_dispersionplotmanager->getGlass(glassname,supplyername));
+        _dispersionplotmanager->setAllColors();
+        _dispersionplotmanager->replot();
+    }
 }
 
-void MainWindow::createGlassTable(int catalogIndex)
+void MainWindow::on_buttonDeleteSelectedGlassClicked()
 {
-    GlassCatalog* catalog = _glassmapmanager->catalog(catalogIndex);
-    QTableWidget *table = ui->tableWidget_GlassTable;
-    table->clear();
-    table->setSortingEnabled(false); //sorting off
-
-    // set table format
-    QStringList horizontalHeaderLabels = QStringList() << tr("GLASS") << tr("nd") << tr("vd") << tr("DispForm") << SpectralLine::spectralLineList();
-    table->setRowCount( catalog->glassCount() );
-    table->setColumnCount(horizontalHeaderLabels.count());
-    table->setHorizontalHeaderLabels(horizontalHeaderLabels);
-
-    for(int i = 0; i < catalog->glassCount(); i++)
-    {
-        table->setItem( i, 0, new QTableWidgetItem(catalog->glass(i)->name()) ); //glass name
-
-        table->setItem( i, 1, new QTableWidgetItem );
-        table->item(i,1)->setText(QString::number(catalog->glass(i)->nd()));
-
-        table->setItem( i, 2, new QTableWidgetItem );
-        table->item(i,2)->setText(QString::number(catalog->glass(i)->vd()));
-
-        table->setItem( i, 3, new QTableWidgetItem );
-        table->item(i,3)->setText(catalog->glass(i)->dispFormName());
-
-        for(int j = 0; j < SpectralLine::spectralLineList().count(); j++)
-        {
-            table->setItem( i, j+4, new QTableWidgetItem );
-            table->item(i,j+4)->setText(QString::number(catalog->glass(i)->index(SpectralLine::spectralLineList()[j])));
-        }
-
+    if(_dispersionplotmanager->catalogCount() < 1){
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        return;
     }
-    table->setSortingEnabled(true);
+    _dispersionplotmanager->deleteGraph();
+    _dispersionplotmanager->replot();
+}
 
+void MainWindow::on_buttonSetAxisClicked()
+{
+    QCPRange xr = QCPRange(ui->lineEdit_Xmin->text().toDouble(),ui->lineEdit_Xmax->text().toDouble());
+    QCPRange yr = QCPRange(ui->lineEdit_Ymin->text().toDouble(),ui->lineEdit_Ymax->text().toDouble());
+
+    _dispersionplotmanager->setAxis(xr,yr);
+    _dispersionplotmanager->replot();
+}
+
+
+/*****************
+ * Transmittance tab
+ * ******************/
+void MainWindow::on_button_Transmittance_AddNewGlassClicked()
+{
+    if(_transmittanceplotmanager->catalogCount() < 1){
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        return;
+    }
+
+    if(_transmittancePlot->graphCount() >= 4){
+        QMessageBox::information(this,tr("File"), tr("Up to 5 graphs can be plotted"));
+        return;
+    }
+    QString glassname, supplyername;
+    GlassSelectionDlg *dlg = new GlassSelectionDlg(this);
+
+    dlg->setCatalogList(_transmittanceplotmanager->getCatalogList());
+    dlg->create_comboBox_Supplyers();
+
+    if(dlg->exec() == QDialog::Accepted)
+    {
+        supplyername = dlg->getSupplyerName();
+        glassname = dlg->getGlassName();
+        _transmittanceplotmanager->addGraph(_transmittanceplotmanager->getGlass(glassname,supplyername));
+        _transmittanceplotmanager->setAllColors();
+        _transmittanceplotmanager->replot();
+    }
+}
+
+void MainWindow::on_button_Transmittance_DeleteGlassClicked()
+{
+    if(_transmittanceplotmanager->catalogCount() < 1){
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        return;
+    }
+    _transmittanceplotmanager->deleteGraph();
+    _transmittanceplotmanager->replot();
+}
+
+void MainWindow::on_button_Transmittance_SetAxisClicked()
+{
+    QCPRange xr = QCPRange(ui->lineEdit_Transmittance_Xmin->text().toDouble(),ui->lineEdit_Transmittance_Xmax->text().toDouble());
+    QCPRange yr = QCPRange(ui->lineEdit_Transmittance_Ymin->text().toDouble(),ui->lineEdit_Transmittance_Ymax->text().toDouble());
+
+    _transmittanceplotmanager->setAxis(xr,yr);
+    _transmittanceplotmanager->replot();
 }

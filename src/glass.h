@@ -31,7 +31,7 @@
 #include <QPair>
 
 #include "math.h"
-
+#include "spline.h"
 #include "spectralline.h"
 
 class Glass
@@ -42,6 +42,10 @@ public:
 
     double index(double lambdamicron);
     double index(QString spectral);
+
+    double transmittance(double lambdamicron, double thickness = 25);
+    QVector<double> transmittance(double start, double end, int stepcount);
+    QVector<double> transmittance(QVector<double> x);
 
     QString name()
     {
@@ -54,6 +58,13 @@ public:
     QList<double> dispcoefs()
     {
         return _dispcoefs;
+    }
+    QList<double> thermalCoefs(){
+        return _thermalcoefs;
+    }
+    QString dispFormName();
+    QString status(){
+        return _status;
     }
     double nd() const
     {
@@ -77,16 +88,13 @@ public:
     }
     double Pxy(QString x, QString y);
     double Pxy_(QString x, QString y);
+
     double lambdaMin(){ //micron
         return _lambdaMin;
     }
     double lambdaMax(){ //micron
         return _lambdaMax;
     }
-    QString dispFormName();
-
-    QVector<double> get_IT_wl();
-    QVector<double> get_IT_tr();
 
     void computeProperties();
 
@@ -96,6 +104,9 @@ public:
     void setSupplyer(QString str){
         _supplyer = str;
     }
+    void setStatus(QString str);
+    void setStatus(int index);
+
     void setNd(double value){
         _nd = value;
     }
@@ -105,10 +116,18 @@ public:
     void setPgF(double value){
         _PgF = value;
     }
+
+    void setdPgF(double value){
+        _dPgF = value;
+    }
+
     void setDispForm(int formnum){
         _dispform = formnum;
     }
     void setDispCoef(QList<double> coefs);
+    void setDispCoef(int index, double val);
+
+    void setThermalCoef(int index, double val);
     void setLambdaMin(double value){
         _lambdaMin = value;
     }
@@ -140,6 +159,7 @@ private:
     //fundamentals
     QString _name;
     QString _supplyer;
+    QString _status;
     double _nd;
     double _ne;   
     double _vd;
@@ -157,7 +177,7 @@ private:
     QList<double> _dispcoefs;
 
     // TD
-    QList<double> _thermaldata;
+    QList<double> _thermalcoefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
 
     // OD
 

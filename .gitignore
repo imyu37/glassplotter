@@ -3,5 +3,6 @@
 *.app
 *.exe
 
-AGF/
-SUPPLYERS/
+/resources/
+/build*/
+/release/

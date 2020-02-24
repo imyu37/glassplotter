@@ -24,8 +24,10 @@
 
 #include "glassmapmanager.h"
 
-GlassMapManager::GlassMapManager(QCustomPlot* customPlot)
+GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
 {
+    _table = table;
+
     _customPlot = customPlot;
     _customPlot->setInteraction(QCP::iRangeDrag, true);
     _customPlot->setInteraction(QCP::iRangeZoom, true);
@@ -61,77 +63,17 @@ GlassMapManager::GlassMapManager(QCustomPlot* customPlot)
     _customPlot->legend->setVisible(false);
 }
 
-
-int GlassMapManager::catalogCount()
+GlassMapManager::~GlassMapManager()
 {
-    return _catalogs.count();
-}
-
-GlassCatalog* GlassMapManager::catalog(int index)
-{
-    return _catalogs[index];
-}
-
-
-// Search glass in current catalogs
-Glass* GlassMapManager::glass(QString name)
-{
-    QString supplyer;
-    for(int i = 0; i < _catalogs.count(); i++)
-    {
-        supplyer = _catalogs[i]->supplyer();
-        if(_glassmaps[supplyer]->textLabels().first()->visible()) // Selected label should be visible
-        {
-            for(int j = 0; j< _catalogs[i]->glassCount(); j++)
-            {
-                if(name == _catalogs[i]->glass(j)->name())
-                {
-                    return _catalogs[i]->glass(j);
-                }
-            }
-        }
-    }
-    return nullptr;
-}
-
-
-bool GlassMapManager::readAllAGF(QString agfdir)
-{
-    GlassCatalog *catalog;
-    _catalogs.clear();
-
-    QStringList nameFilters;
-    nameFilters.append("*.AGF");
-
-    QDir dir(agfdir);
-    QStringList filelist = dir.entryList(nameFilters, QDir::Files);
-    if(filelist.empty())
-    {
-        qDebug() << "AGF dir is empty";
-        return false;
-    }
-
-    QString fullpath;
-    for (int i = 0; i < filelist.size(); i++) {
-        fullpath = dir.filePath(filelist[i]);
-        catalog = new GlassCatalog;
-        if(!catalog->loadAGF(fullpath))
-        {
-            //delete catalog;
-            return false;
-        }else{
-            _catalogs.append(catalog);
-        }
-    }
-
-    return true;
+    _customPlot = nullptr;
+    _defaultRanges.clear();
 }
 
 QColor GlassMapManager::getColor(QString supplyer)
 {
     //get index
     int index = 0;
-    for(int i = 0;i < _catalogs.size(); i++)
+    for(int i = 0;i < _catalogs.count(); i++)
     {
         if(_catalogs[i]->supplyer() == supplyer)
         {
@@ -148,6 +90,7 @@ QColor GlassMapManager::getColor(QString supplyer)
 
     return color;
 }
+
 void GlassMapManager::createGlassMapList(int plotType)
 {
     GlassCatalog *catalog;
@@ -211,7 +154,7 @@ void GlassMapManager::createGlassMapList(int plotType)
 void GlassMapManager::clearGlassMapList()
 {
     //_customPlot->clearGraphs();
-    for(int i = 0; i < _catalogs.size(); i++)
+    for(int i = 0; i < _catalogs.count(); i++)
     {
         _customPlot->removeGraph(_glassmaps[_catalogs[i]->supplyer()]->pointSeries());
     }
@@ -219,13 +162,50 @@ void GlassMapManager::clearGlassMapList()
     _glassmaps.clear();
 }
 
+void GlassMapManager::createTable()
+{
+    _table->clear();
+
+    // set table format
+    _table->setColumnCount( 3 );
+    _table->setRowCount( catalogCount() );
+
+    // set header
+    _table->setHorizontalHeaderLabels( QStringList() << "CATALOG" << "P" << "L" );
+
+    // set supplyers' names and checkboxes
+    QString supplyername;
+
+    for (int i = 0; i< catalogCount() ; i++)
+    {
+        supplyername = getCatalog(i)->supplyer();
+        _table->setItem( i, ColumnSupplyer, new QTableWidgetItem(supplyername) );     //supplyer
+        _table->item(i,ColumnSupplyer)->setBackgroundColor(getColor(supplyername));
+        _table->item(i,ColumnSupplyer)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+        _table->setItem( i, ColumnPlot, new QTableWidgetItem("")  );                   //plot
+        _table->item(i,ColumnPlot)->setCheckState(Qt::Unchecked );
+
+        _table->setItem( i, ColumnLabel, new QTableWidgetItem("")  );                  //label
+        _table->item(i,ColumnLabel)->setCheckState(Qt::Unchecked );
+    }
+
+    _table->setColumnWidth(ColumnSupplyer,(_table->width() - _table->verticalHeader()->width()) /3);
+    _table->setColumnWidth(ColumnPlot,    (_table->width() - _table->verticalHeader()->width()) /3);
+    _table->setColumnWidth(ColumnLabel,   (_table->width() - _table->verticalHeader()->width()) /3);
+}
+
+
+
 void GlassMapManager::setCurveCoefs(QList<double> coefs)
 {
     QVector<double> x(101),y(101);
     double xmin, xmax;
 
-    xmin = _defaultRanges[_currentPlotType].first.lower;
-    xmax = _defaultRanges[_currentPlotType].first.upper;
+    //xmin = _defaultRanges[_currentPlotType].first.lower;
+    //xmax = _defaultRanges[_currentPlotType].first.upper;
+    xmin = 10;
+    xmax = 100;
 
     for(int i = 0; i<101; i++)
     {
@@ -245,6 +225,17 @@ void GlassMapManager::setCurveCoefs(QList<double> coefs)
     pen.setColor(Qt::black); //black
     _pCurveGraph->setPen(pen);
 
+}
+
+void GlassMapManager::updateVisible()
+{
+    for(int i = 0 ;i<_table->rowCount();i++)
+    {
+        setChartVisible(_table->item(i,ColumnSupplyer)->text(),
+                        _table->item(i,ColumnPlot)->checkState(),
+                        _table->item(i,ColumnLabel)->checkState());
+    }
+    _customPlot->replot();
 }
 
 void GlassMapManager::setChartVisible(QString supplyer,bool pointstate, bool labelstate)
@@ -271,6 +262,19 @@ void GlassMapManager::resetAxis(int plotType)
     _customPlot->xAxis->setRangeReversed(true);
     _customPlot->xAxis->setRange(xrange);
     _customPlot->yAxis->setRange(yrange);
+}
+
+int GlassMapManager::selectedItemsCount()
+{
+    return _customPlot->selectedItems().size();
+}
+
+Glass* GlassMapManager::getSelectedGlass()
+{
+    if(_customPlot->selectedItems().size() > 0){
+        return getGlass(_customPlot->selectedItems().first()->objectName());
+    }
+    return nullptr;
 }
 
 void GlassMapManager::replot()

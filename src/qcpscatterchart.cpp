@@ -34,18 +34,6 @@ QCPScatterChart::QCPScatterChart(QCustomPlot *customPlot)
 
 QCPScatterChart::~QCPScatterChart()
 {
-    /*
-    if(NULL!=_pointSeries){
-        _customPlot->removeGraph(_pointSeries);
-    }
-    for(int i=0; i < _textlabels.size();i++)
-    {
-        if(NULL != _textlabels[i]){
-            _customPlot->removeItem(_textlabels[i]);
-        }
-    }
-    */
-
     _pointSeries = NULL;
     _textlabels.clear();
     _customPlot = NULL;
@@ -69,7 +57,6 @@ void QCPScatterChart::setColor(QColor color)
 {
     QPen pen;
     pen.setColor(color);
-
     _pointSeries->setPen(pen);
 }
 

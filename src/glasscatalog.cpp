@@ -29,17 +29,37 @@ GlassCatalog::GlassCatalog()
     _glasses.clear();
     _supplyer = "";
 }
-
 GlassCatalog::~GlassCatalog()
 {
     _glasses.clear();
     _supplyer = "";
 }
-
 void GlassCatalog::clear()
 {
     _glasses.clear();
     _supplyer = "";
+}
+
+Glass* GlassCatalog::glass(QString glassname)
+{
+    for(int i = 0; i < _glasses.count(); i++)
+    {
+        if(glassname == _glasses[i]->name()){
+            return _glasses[i];
+        }
+    }
+    return NULL;
+}
+
+bool GlassCatalog::hasGlass(QString glassname)
+{
+    for(int i = 0; i < _glasses.count(); i++)
+    {
+        if(glassname == _glasses[i]->name()){
+            return true;
+        }
+    }
+    return false;
 }
 
 bool GlassCatalog::loadAGF(QString AGFpath)
@@ -76,18 +96,25 @@ bool GlassCatalog::loadAGF(QString AGFpath)
             _glasses.last()->setDispForm(lineparts[2].toInt());
             _glasses.last()->setNd(lineparts[4].toDouble());
             _glasses.last()->setVd(lineparts[5].toDouble());
+            if(lineparts.size() > 8){
+                _glasses.last()->setStatus(lineparts[7].toUInt());
+            }
         }
         else if (linetext.startsWith("ED")) {
-            continue;
+            lineparts = linetext.simplified().split(" ");
+            _glasses.last()->setdPgF(lineparts[4].toDouble());
         }
         else if(linetext.startsWith("CD")){
             lineparts = linetext.simplified().split(" ");
-
-            dlist.clear();
             for(int i = 1;i<lineparts.size();i++){
-                dlist.append(lineparts[i].toDouble());
+                _glasses.last()->setDispCoef(i-1,lineparts[i].toDouble());
             }
-            _glasses.last()->setDispCoef(dlist);
+        }
+        else if(linetext.startsWith("TD")){
+            lineparts = linetext.simplified().split(" ");
+            for(int i = 1;i<lineparts.size();i++){
+                _glasses.last()->setThermalCoef(i-1, lineparts[i].toDouble());
+            }
         }
         else if(linetext.startsWith("LD")){
             lineparts = linetext.simplified().split(" ");
@@ -99,7 +126,6 @@ bool GlassCatalog::loadAGF(QString AGFpath)
             if(lineparts.size() < 3) continue; //eg. NIHON_KESSHO_KOGAKU CaF2
             _glasses.last()->appendIntTrans(lineparts[1].toDouble(),lineparts[2].toDouble());
         }
-
     }
 
     file.close();

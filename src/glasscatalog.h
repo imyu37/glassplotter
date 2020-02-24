@@ -50,6 +50,9 @@ public:
     Glass* glass(int index){
         return _glasses.at(index);
     }
+    Glass* glass(QString glassname);
+
+    bool hasGlass(QString glassname);
 
     //setter
     void setSupplyer(QString str){
