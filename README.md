@@ -1,6 +1,6 @@
 # GlassPlotter
 
-![demo](image/screenshot.png)
+
 
 ## Overview
 GlassPlotter is a open source, desktop glass map viewer.  This application aims to be a comprehensive glass catalog explorer which would be helpful for diverse optical engineers.
@@ -8,10 +8,24 @@ GlassPlotter is a open source, desktop glass map viewer.  This application aims 
 ## Key Features
 - Overlay glass maps from multiple supplyers
 - Plot user defined curve on the glass map
-- Plot dispersion, internal transmittance of the selected glass
+- Plot dispersion, internal transmittance of the glass
+
+## Demo
+
+### Glass Map
+![Glassmap](image/Screenshot_Glassmap.png)
+
+### Dispersion Plot
+![DispersionPlot](image/Screenshot_DispersionPlot.png)
+
+### Internal Transmittance
+![TransmittancePlot](image/Screenshot_TransmittancePlot.png)
 
 ## Getting Started
 Binary packages can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
+
+When this application started, it assumes that AGF files are in "(Application)/AGF/".
+If not, please set the proper folder from File->LoadAGF.
 
 ## Resources
 This application extracts glass data from Zemax AGF file.  Each of AGF files is available in the supplyer's web site. If Zemax has been installed to the computer, AGF files are supposed to be contained in the folder like Documents/Zemax/Glasscat.
