@@ -24,6 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    aboutdlg.cpp \
     dispersionplotmanager.cpp \
     glass.cpp \
     glasscatalog.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     transmittanceplotmanager.cpp
 
 HEADERS += \
+    aboutdlg.h \
     dispersionplotmanager.h \
     glass.h \
     glasscatalog.h \
@@ -54,6 +56,7 @@ HEADERS += \
     transmittanceplotmanager.h
 
 FORMS += \
+    aboutdlg.ui \
     glasspropertydlg.ui \
     glassselectiondlg.ui \
     mainwindow.ui

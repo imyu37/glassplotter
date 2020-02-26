@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //---> Glass Map
     _glassmapPlot = ui->widget;
-    _glassmapPlot->setContextMenuPolicy(Qt::CustomContextMenu);
     _glassmapmanager = new GlassMapManager(ui->widget, ui->tableWidget);
 
     if(!_glassmapmanager->loadAllAGF(_AGFdir)){ // read Zemax AGF in the folder
@@ -31,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //---> Transmittance Plot
     _transmittancePlot = ui->plotWidget_Transmittance;
-    _transmittanceplotmanager = new TransmittancePlotManager(_transmittancePlot);
+    _transmittanceplotmanager = new TransmittancePlotManager(_transmittancePlot, ui->tableWidget_TransmittanceData);
     _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
 
     createUI();
@@ -66,31 +65,35 @@ void MainWindow::createUI()
             this, SLOT(contextMenuRequest(QPoint)));
 
     //user defined curve
+    /*
     ui->lineEdit_coef0->setText("7.278e-1");
     ui->lineEdit_coef1->setText("-5.656e-3");
     ui->lineEdit_coef2->setText("5.213e-5");
     ui->lineEdit_coef3->setText("-1.665e-7");
+    */
+    ui->lineEdit_coef0->setText("2.43");
+    ui->lineEdit_coef1->setText("-0.028");
+    ui->lineEdit_coef2->setText("2.03e-4");
+    ui->lineEdit_coef3->setText("2.9e-7");
     QObject::connect(ui->groupBox_curve,SIGNAL(toggled(bool)),
                      this, SLOT(on_checkBoxCurveChanged(bool)));
     QObject::connect(ui->lineEdit_coef0,SIGNAL(textEdited(QString)),
-                     this, SLOT(on_lineEdit_textEdited(QString)));
+                     this, SLOT(on_lineEdit_textEdited()));
     QObject::connect(ui->lineEdit_coef1,SIGNAL(textEdited(QString)),
-                     this, SLOT(on_lineEdit_textEdited(QString)));
+                     this, SLOT(on_lineEdit_textEdited()));
     QObject::connect(ui->lineEdit_coef2,SIGNAL(textEdited(QString)),
-                     this, SLOT(on_lineEdit_textEdited(QString)));
+                     this, SLOT(on_lineEdit_textEdited()));
     QObject::connect(ui->lineEdit_coef3,SIGNAL(textEdited(QString)),
-                     this, SLOT(on_lineEdit_textEdited(QString)));
+                     this, SLOT(on_lineEdit_textEdited()));
 
     //reset view button
     QObject::connect(ui->button_resetView,SIGNAL(clicked()),
                      this, SLOT(on_buttonResetViewClicked()));
 
     //plot control table
-    QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                     this, SLOT(on_cellChanged(int,int)));
     _glassmapmanager->createTable();
     QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                     this, SLOT(on_cellChanged(int,int)));
+                     this, SLOT(on_cellChanged()));
 
 
     //---> Dispersion tab
@@ -105,20 +108,68 @@ void MainWindow::createUI()
     ui->lineEdit_Ymin->setText("0.9");
     ui->lineEdit_Ymax->setText("2.1");
 
+    QObject::connect(_dispersionPlot, SIGNAL(selectionChangedByUser()),
+                     this, SLOT(on_Dispersion_graphSelect_Changed()));
+
     //---> Transmittance tab
     QObject::connect(ui->pushButton_Transmittance_addGraph, SIGNAL(clicked()),
                      this, SLOT(on_button_Transmittance_AddNewGlassClicked()));
     QObject::connect(ui->pushButton_Transmittance_deleteGraph,SIGNAL(clicked()),
                      this, SLOT(on_button_Transmittance_DeleteGlassClicked()));
-    QObject::connect(ui->pushButton_Transmittance_setAxis, SIGNAL(clickec()),
-                     this, SLOT(on_buttonSetAxisClicked()));
+    QObject::connect(ui->pushButton_Transmittance_setAxis, SIGNAL(clicked()),
+                     this, SLOT(on_button_Transmittance_SetAxisClicked()));
     ui->lineEdit_Transmittance_Xmin->setText("300");
     ui->lineEdit_Transmittance_Xmax->setText("2000");
-    ui->lineEdit_Transmittance_Ymin->setText("0.9");
+    ui->lineEdit_Transmittance_Ymin->setText("0.0");
     ui->lineEdit_Transmittance_Ymax->setText("1.0");
+
+    QObject::connect(_transmittancePlot, SIGNAL(selectionChangedByUser()),
+                     this, SLOT(on_Transmittance_graphSelect_Changed()));
+}
+
+/***********************
+ * Menu
+ * *********************/
+
+void MainWindow::on_menu_Help_About_Triggered()
+{
+    AboutDlg *dlg = new AboutDlg(this);
+    dlg->exec();
+}
+
+
+void MainWindow::on_menu_File_LoadAGF_Triggered()
+{
+    QFileDialog fileDialog(this);
+    fileDialog.setFileMode(QFileDialog::Directory);
+    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
+    if(fileDialog.exec()){
+        QStringList filePaths = fileDialog.selectedFiles();
+        _AGFdir = filePaths.first();
+
+        if(!_glassmapmanager->loadAllAGF(_AGFdir))
+        {
+            QMessageBox::information(this,tr("File"), tr("AGF load missed"));
+            return;
+        }
+
+        _glassmapmanager->setCatalogList(_glassmapmanager->getCatalogList());
+        _glassmapmanager->createTable();
+        _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
+        _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
+
+        _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
+        _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
+
+        QMessageBox::information(this,tr("Load AGF folder"), tr("AGF loaded"));
+    }
 
 }
 
+
+/*****************
+ * GlassMap tab
+ * ***************/
 void MainWindow::contextMenuRequest(QPoint pos)
 {
     if(_glassmapPlot->selectedItems().size() > 0){ //at least one textitem should be selected
@@ -140,56 +191,38 @@ void MainWindow::showGlassProperty()
 }
 
 
-void MainWindow::on_menu_File_LoadAGF_Triggered()
-{
-    QFileDialog fileDialog(this);
-    fileDialog.setFileMode(QFileDialog::Directory);
-    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
-    if(fileDialog.exec()){
-        QStringList filePaths = fileDialog.selectedFiles();
-        _AGFdir = filePaths.first();
-
-
-        if(!_glassmapmanager->loadAllAGF(_AGFdir))
-        {
-            QMessageBox::information(this,tr("File"), tr("AGF load missed"));
-            return;
-        }
-
-        _glassmapmanager->setCatalogList(_glassmapmanager->getCatalogList());
-
-        QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),  //disconnect to avoid updating
-                         this, SLOT(on_cellChanged(int,int)));
-        _glassmapmanager->createTable();
-        QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                         this, SLOT(on_cellChanged(int,int)));
-
-        _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
-        _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
-
-        _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
-        _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
-
-        QMessageBox::information(this,tr("Load AGF folder"), tr("AGF loaded"));
-    }
-
-}
 
 void MainWindow::on_comboChanged(int index)
 {
+    switch(index){
+    case 0:
+        ui->lineEdit_coef0->setText("2.43");
+        ui->lineEdit_coef1->setText("-0.028");
+        ui->lineEdit_coef2->setText("2.03e-4");
+        ui->lineEdit_coef3->setText("2.9e-7");
+        break;
+    case 1:
+        ui->lineEdit_coef0->setText("2.43");
+        ui->lineEdit_coef1->setText("-0.028");
+        ui->lineEdit_coef2->setText("2.03e-4");
+        ui->lineEdit_coef3->setText("2.9e-7");
+        break;
+    case 2:
+        ui->lineEdit_coef0->setText("7.278e-1");
+        ui->lineEdit_coef1->setText("-5.656e-3");
+        ui->lineEdit_coef2->setText("5.213e-5");
+        ui->lineEdit_coef3->setText("-1.665e-7");
+    }
+
     _glassmapmanager->clearGlassMapList();
     _glassmapmanager->createGlassMapList(index);
-    QObject::disconnect(ui->tableWidget,SIGNAL(cellChanged(int,int)),  //disconnect to avoid updating
-                     this, SLOT(on_cellChanged(int,int)));
     _glassmapmanager->createTable();
-    QObject::connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),
-                     this, SLOT(on_cellChanged(int,int)));
     _glassmapmanager->updateVisible();
     _glassmapmanager->resetAxis(index);
     _glassmapmanager->replot();
 }
 
-void MainWindow::on_cellChanged(int catalogIndex, int PlotOrLabel)
+void MainWindow::on_cellChanged()
 {
     _glassmapmanager->updateVisible();
     _glassmapmanager->replot();
@@ -210,7 +243,7 @@ void MainWindow::on_checkBoxCurveChanged(bool checkState)
     _glassmapmanager->replot();
 }
 
-void MainWindow::on_lineEdit_textEdited(QString linetext)
+void MainWindow::on_lineEdit_textEdited()
 {
     QList<double> coefs;
 
@@ -221,18 +254,12 @@ void MainWindow::on_lineEdit_textEdited(QString linetext)
 
     _glassmapmanager->setCurveCoefs(coefs);
     _glassmapmanager->replot();
-
 }
 
 void MainWindow::on_buttonResetViewClicked()
 {
     _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
     _glassmapmanager->replot();
-}
-
-void MainWindow::on_menu_Help_About_Triggered()
-{
-    QMessageBox::about(this,tr("About"),tr(" GlassPlotter\n\n Copyright(c) 2020 Hiiragi(heterophyllus) "));
 }
 
 
@@ -244,12 +271,11 @@ void MainWindow::on_buttonAddNewGlassClicked()
     if(_dispersionplotmanager->catalogCount() < 1){
         QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
-    }
-
-    if(_dispersionPlot->graphCount() >= 4){
+    }else if(_dispersionPlot->graphCount() >= 4){
         QMessageBox::information(this,tr("File"), tr("Up to 5 graphs can be plotted"));
         return;
     }
+
     QString glassname, supplyername;
     GlassSelectionDlg *dlg = new GlassSelectionDlg(this);
 
@@ -268,12 +294,46 @@ void MainWindow::on_buttonAddNewGlassClicked()
 
 void MainWindow::on_buttonDeleteSelectedGlassClicked()
 {
-    if(_dispersionplotmanager->catalogCount() < 1){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+    if(_dispersionPlot->selectedGraphs().size() > 0){
+
+        _dispersionplotmanager->deleteGraph();
+        _dispersionplotmanager->replot();
+
+        //after delete
+        if(_dispersionPlot->selectedGraphs().size() > 0){
+            Glass *glass;
+            glass = _dispersionplotmanager->getGlass(_dispersionPlot->selectedGraphs().first()->name());
+
+            //Belows should be programmatically implemented without Qt Designer
+            ui->lineEdit_Dispersion_Formula->setText(glass->dispFormName());
+            ui->lineEdit_Dispersion_C0->setText(QString::number(glass->dispCoef(0)));
+            ui->lineEdit_Dispersion_C1->setText(QString::number(glass->dispCoef(1)));
+            ui->lineEdit_Dispersion_C2->setText(QString::number(glass->dispCoef(2)));
+            ui->lineEdit_Dispersion_C3->setText(QString::number(glass->dispCoef(3)));
+            ui->lineEdit_Dispersion_C4->setText(QString::number(glass->dispCoef(4)));
+            ui->lineEdit_Dispersion_C5->setText(QString::number(glass->dispCoef(5)));
+            ui->lineEdit_Dispersion_C6->setText(QString::number(glass->dispCoef(6)));
+            ui->lineEdit_Dispersion_C7->setText(QString::number(glass->dispCoef(7)));
+            ui->lineEdit_Dispersion_C8->setText(QString::number(glass->dispCoef(8)));
+            ui->lineEdit_Dispersion_C9->setText(QString::number(glass->dispCoef(9)));
+        }
+        else{
+            ui->lineEdit_Dispersion_Formula->clear();
+            ui->lineEdit_Dispersion_C0->clear();
+            ui->lineEdit_Dispersion_C1->clear();
+            ui->lineEdit_Dispersion_C2->clear();
+            ui->lineEdit_Dispersion_C3->clear();
+            ui->lineEdit_Dispersion_C4->clear();
+            ui->lineEdit_Dispersion_C5->clear();
+            ui->lineEdit_Dispersion_C6->clear();
+            ui->lineEdit_Dispersion_C7->clear();
+            ui->lineEdit_Dispersion_C8->clear();
+            ui->lineEdit_Dispersion_C9->clear();
+        }
+    }else{
+        QMessageBox::information(this,tr("File"),tr("No graph selected"));
         return;
     }
-    _dispersionplotmanager->deleteGraph();
-    _dispersionplotmanager->replot();
 }
 
 void MainWindow::on_buttonSetAxisClicked()
@@ -283,6 +343,43 @@ void MainWindow::on_buttonSetAxisClicked()
 
     _dispersionplotmanager->setAxis(xr,yr);
     _dispersionplotmanager->replot();
+}
+
+void MainWindow::on_Dispersion_graphSelect_Changed()
+{
+
+    if(_dispersionPlot->selectedGraphs().size() > 0){
+        Glass *glass;
+        glass = _dispersionplotmanager->getGlass(_dispersionPlot->selectedGraphs().first()->name());
+
+        //Belows should be programmatically implemented without Qt Designer
+        ui->lineEdit_Dispersion_Formula->setText(glass->dispFormName());
+        ui->lineEdit_Dispersion_C0->setText(QString::number(glass->dispCoef(0)));
+        ui->lineEdit_Dispersion_C1->setText(QString::number(glass->dispCoef(1)));
+        ui->lineEdit_Dispersion_C2->setText(QString::number(glass->dispCoef(2)));
+        ui->lineEdit_Dispersion_C3->setText(QString::number(glass->dispCoef(3)));
+        ui->lineEdit_Dispersion_C4->setText(QString::number(glass->dispCoef(4)));
+        ui->lineEdit_Dispersion_C5->setText(QString::number(glass->dispCoef(5)));
+        ui->lineEdit_Dispersion_C6->setText(QString::number(glass->dispCoef(6)));
+        ui->lineEdit_Dispersion_C7->setText(QString::number(glass->dispCoef(7)));
+        ui->lineEdit_Dispersion_C8->setText(QString::number(glass->dispCoef(8)));
+        ui->lineEdit_Dispersion_C9->setText(QString::number(glass->dispCoef(9)));
+    }
+    else{
+        ui->lineEdit_Dispersion_Formula->clear();
+        ui->lineEdit_Dispersion_C0->clear();
+        ui->lineEdit_Dispersion_C1->clear();
+        ui->lineEdit_Dispersion_C2->clear();
+        ui->lineEdit_Dispersion_C3->clear();
+        ui->lineEdit_Dispersion_C4->clear();
+        ui->lineEdit_Dispersion_C5->clear();
+        ui->lineEdit_Dispersion_C6->clear();
+        ui->lineEdit_Dispersion_C7->clear();
+        ui->lineEdit_Dispersion_C8->clear();
+        ui->lineEdit_Dispersion_C9->clear();
+    }
+
+
 }
 
 
@@ -318,12 +415,13 @@ void MainWindow::on_button_Transmittance_AddNewGlassClicked()
 
 void MainWindow::on_button_Transmittance_DeleteGlassClicked()
 {
-    if(_transmittanceplotmanager->catalogCount() < 1){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+    if(_transmittancePlot->selectedGraphs().size() > 0){
+        _transmittanceplotmanager->deleteGraph();
+        _transmittanceplotmanager->replot();
+    }else{
+        QMessageBox::information(this,tr("File"),tr("No graph selected"));
         return;
     }
-    _transmittanceplotmanager->deleteGraph();
-    _transmittanceplotmanager->replot();
 }
 
 void MainWindow::on_button_Transmittance_SetAxisClicked()
@@ -333,4 +431,17 @@ void MainWindow::on_button_Transmittance_SetAxisClicked()
 
     _transmittanceplotmanager->setAxis(xr,yr);
     _transmittanceplotmanager->replot();
+}
+
+void MainWindow::on_Transmittance_graphSelect_Changed()
+{
+    if(_transmittancePlot->selectedGraphs().size() > 0){
+        qDebug() << _transmittancePlot->selectedGraphs().first()->name();
+        Glass *glass;
+        glass = _transmittanceplotmanager->getGlass(_transmittancePlot->selectedGraphs().first()->name());
+        _transmittanceplotmanager->createTransmittanceDataTable(glass);
+    }
+    else{
+        _transmittanceplotmanager->clearTransmittanceDataTable();
+    }
 }

@@ -26,6 +26,7 @@
 
 GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
 {
+    isReady = false;
     _table = table;
 
     _customPlot = customPlot;
@@ -33,6 +34,8 @@ GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
     _customPlot->setInteraction(QCP::iRangeZoom, true);
     _customPlot->setInteraction(QCP::iSelectItems, true);
     _customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
+
+    _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QCPRange xrange, yrange;
 
@@ -148,22 +151,21 @@ void GlassMapManager::createGlassMapList(int plotType)
         _glassmaps.insert(catalog->supplyer(),chart);
         //delete chart;
     }
-
+    isReady = true;
 }
 
 void GlassMapManager::clearGlassMapList()
 {
     //_customPlot->clearGraphs();
-    for(int i = 0; i < _catalogs.count(); i++)
-    {
-        _customPlot->removeGraph(_glassmaps[_catalogs[i]->supplyer()]->pointSeries());
-    }
     _customPlot->clearItems();
     _glassmaps.clear();
+
+    isReady = false;
 }
 
 void GlassMapManager::createTable()
 {
+    isReady = false;
     _table->clear();
 
     // set table format
@@ -193,6 +195,8 @@ void GlassMapManager::createTable()
     _table->setColumnWidth(ColumnSupplyer,(_table->width() - _table->verticalHeader()->width()) /3);
     _table->setColumnWidth(ColumnPlot,    (_table->width() - _table->verticalHeader()->width()) /3);
     _table->setColumnWidth(ColumnLabel,   (_table->width() - _table->verticalHeader()->width()) /3);
+
+    isReady = true;
 }
 
 
@@ -229,13 +233,16 @@ void GlassMapManager::setCurveCoefs(QList<double> coefs)
 
 void GlassMapManager::updateVisible()
 {
-    for(int i = 0 ;i<_table->rowCount();i++)
-    {
-        setChartVisible(_table->item(i,ColumnSupplyer)->text(),
-                        _table->item(i,ColumnPlot)->checkState(),
-                        _table->item(i,ColumnLabel)->checkState());
+    if(isReady){
+        for(int i = 0 ;i<_table->rowCount();i++)
+        {
+            setChartVisible(_table->item(i,ColumnSupplyer)->text(),
+                            _table->item(i,ColumnPlot)->checkState(),
+                            _table->item(i,ColumnLabel)->checkState());
+        }
+        _customPlot->replot();
     }
-    _customPlot->replot();
+
 }
 
 void GlassMapManager::setChartVisible(QString supplyer,bool pointstate, bool labelstate)

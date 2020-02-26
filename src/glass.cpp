@@ -63,15 +63,15 @@ Glass::Glass()
     _lambdaMin = 400;
 
     // IT
-    _int_trans.clear();
-
+    _ITwavelength.clear();
+    _ITtransmittance.clear();
+    _ITthickness.clear();
 }
 
 Glass::~Glass()
 {
     _dispcoefs.clear();
     _thermalcoefs.clear();
-    _int_trans.clear();
 }
 
 double Glass::index(double lambdamicron)
@@ -116,58 +116,20 @@ double Glass::index(double lambdamicron)
 
 double Glass::index(QString spectral)
 {
-    if(spectral == "t"){
-        return index(SpectralLine::t/1000);
-    }
-    else if(spectral == "s"){
-        return index(SpectralLine::s/1000);
-    }
-    else if(spectral == "r"){
-        return index(SpectralLine::r/1000);
-    }
-    else if(spectral == "C"){
-        return index(SpectralLine::C/1000);
-    }
-    else if(spectral == "C_"){
-        return index(SpectralLine::C_/1000);
-    }
-    else if(spectral == "D"){
-        return index(SpectralLine::D/1000);
-    }
-    else if(spectral == "d"){
-        return index(SpectralLine::d/1000);
-    }
-    else if(spectral == "e"){
-        return index(SpectralLine::e/1000);
-    }
-    else if(spectral == "F"){
-        return index(SpectralLine::F/1000);
-    }
-    else if(spectral == "F_"){
-        return index(SpectralLine::F_/1000);
-    }
-    else if(spectral == "g"){
-        return index(SpectralLine::g/1000);
-    }
-    else if(spectral == "h"){
-        return index(SpectralLine::h/1000);
-    }
-    else if(spectral == "i"){
-        return index(SpectralLine::i/1000);
-    }
-    else{
-        return 0;
-    }
+    double lambdanano = SpectralLine::wavelength(spectral);
+    double lambdamicron = lambdanano/1000;
+
+    return index(lambdamicron);
 }
 
 double Glass::transmittance(double lambdamicron, double thickness)
 {
     QVector<double> sx, sy;
 
-    for(int i = 0; i < _int_trans.size(); i++)
+    for(int i = 0; i < _ITwavelength.size(); i++)
     {
-        sx.append(_int_trans[i].first);
-        sy.append(_int_trans[i].second);
+        sx.append(_ITwavelength.at(i));
+        sy.append(_ITtransmittance.at(i));
     }
 
     tk::spline s;
@@ -175,38 +137,16 @@ double Glass::transmittance(double lambdamicron, double thickness)
     return s(lambdamicron);
 }
 
-QVector<double> Glass::transmittance(double start, double end, int stepcount)
-{
-    QVector<double> sx, sy;
-    QVector<double> y(stepcount);
-    double x;
-
-    for(int i = 0; i < _int_trans.size(); i++)
-    {
-        sx.append(_int_trans[i].first);
-        sy.append(_int_trans[i].second);
-    }
-
-    tk::spline s;
-    s.set_points(sx.toStdVector(), sy.toStdVector());
-
-    for(int i = 0; i < stepcount; i++)
-    {
-        x = start + (end-start)*(double)i/stepcount;
-        y[i]=(s(x));
-    }
-    return y;
-}
-
 QVector<double> Glass::transmittance(QVector<double> x)
 {
     QVector<double> sx, sy;
 
-    for(int i = 0; i < _int_trans.size(); i++)
+    for(int i = 0; i < _ITwavelength.size(); i++)
     {
-        sx.append(_int_trans[i].first);
-        sy.append(_int_trans[i].second);
+        sx.append(_ITwavelength.at(i));
+        sy.append(_ITtransmittance.at(i));
     }
+
     tk::spline s;
     s.set_points(sx.toStdVector(), sy.toStdVector());
 
@@ -219,7 +159,7 @@ QVector<double> Glass::transmittance(QVector<double> x)
 }
 
 
-QString Glass::dispFormName()
+QString Glass::dispFormName() const
 {
     switch(_dispform){
     case 1:
@@ -266,7 +206,6 @@ double Glass::Pxy_(QString x, QString y)
 {
     return (index(x) - index(y)) / ( index("F_") - index("C_") );
 }
-
 
 void Glass::computeProperties()
 {
@@ -327,11 +266,25 @@ void Glass::setThermalCoef(int index, double val)
     }
 }
 
-void Glass::appendIntTrans(double lambdamicron, double trans)
+void Glass::appendITdata(double lambdamicron, double trans, double thick)
 {
-    QPair<double, double> p;
-    p.first  = lambdamicron;
-    p.second = trans;
-    _int_trans.append(p);
+    _ITwavelength.append(lambdamicron);
+    _ITtransmittance.append(trans);
+    _ITthickness.append(thick);
 }
+
+double Glass::getITdata(int data, int index)
+{
+    switch (data) {
+    case 0:
+        return _ITwavelength.at(index);
+    case 1:
+        return _ITtransmittance.at(index);
+    case 2:
+        return _ITthickness.at(index);
+    default:
+        return 0;
+    }
+}
+
 

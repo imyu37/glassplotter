@@ -123,8 +123,12 @@ bool GlassCatalog::loadAGF(QString AGFpath)
         }
         else if(linetext.startsWith("IT")){
             lineparts = linetext.simplified().split(" ");
-            if(lineparts.size() < 3) continue; //eg. NIHON_KESSHO_KOGAKU CaF2
-            _glasses.last()->appendIntTrans(lineparts[1].toDouble(),lineparts[2].toDouble());
+            if(lineparts.size() < 4){
+                continue; //eg. NIHON_KESSHO_KOGAKU CaF2
+            }
+            else{
+                _glasses.last()->appendITdata(lineparts[1].toDouble(), lineparts[2].toDouble(), lineparts[3].toDouble());
+            }
         }
     }
 

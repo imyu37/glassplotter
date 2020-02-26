@@ -39,7 +39,7 @@ public:
     QCPScatterChart(QCPScatterChart &other);
 
     QCustomPlot* parentPlot();
-    QCPGraph* pointSeries();
+    QCPGraph* graphPoints();
     QList<QCPItemText*> textLabels();
     QString name();
     void setData(QVector<double> x, QVector<double> y, QVector<QString> str);
@@ -53,7 +53,7 @@ public:
 private:
     int _pointCount;
     QCustomPlot* _customPlot;
-    QCPGraph* _pointSeries;
+    QCPGraph* _graphPoints;
     QList<QCPItemText*> _textlabels;
 };
 

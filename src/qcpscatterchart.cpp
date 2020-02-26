@@ -28,13 +28,13 @@
 QCPScatterChart::QCPScatterChart(QCustomPlot *customPlot)
 {  
     _customPlot = customPlot;
-    _pointSeries = _customPlot->addGraph();
+    _graphPoints = _customPlot->addGraph();
     _textlabels.clear();
 }
 
 QCPScatterChart::~QCPScatterChart()
 {
-    _pointSeries = NULL;
+    _graphPoints = NULL;
     _textlabels.clear();
     _customPlot = NULL;
 }
@@ -42,7 +42,7 @@ QCPScatterChart::~QCPScatterChart()
 QCPScatterChart::QCPScatterChart(QCPScatterChart &other)
 {
     _customPlot = other.parentPlot();
-    _pointSeries = other.pointSeries();
+    _graphPoints = other.graphPoints();
     _pointCount = other.textLabels().count();
     _textlabels = other.textLabels();
 }
@@ -50,14 +50,14 @@ QCPScatterChart::QCPScatterChart(QCPScatterChart &other)
 
 void QCPScatterChart::setName(QString name)
 {
-    _pointSeries->setName(name);
+    _graphPoints->setName(name);
 }
 
 void QCPScatterChart::setColor(QColor color)
 {
     QPen pen;
     pen.setColor(color);
-    _pointSeries->setPen(pen);
+    _graphPoints->setPen(pen);
 }
 
 QCustomPlot* QCPScatterChart::parentPlot()
@@ -65,9 +65,9 @@ QCustomPlot* QCPScatterChart::parentPlot()
     return _customPlot;
 }
 
-QCPGraph* QCPScatterChart::pointSeries()
+QCPGraph* QCPScatterChart::graphPoints()
 {
-    return _pointSeries;
+    return _graphPoints;
 }
 
 
@@ -78,17 +78,17 @@ QList<QCPItemText*> QCPScatterChart::textLabels()
 
 QString QCPScatterChart::name()
 {
-    return _pointSeries->name();
+    return _graphPoints->name();
 }
 
 void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QString> str)
 {   
     //set data to points
-    //_pointSeries = _customPlot->addGraph();
-    _pointSeries->setData(x,y);
-    _pointSeries->setLineStyle(QCPGraph::lsNone);
-    _pointSeries->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,8));
-    _pointSeries->setVisible(false);
+    //_graphPoints = _customPlot->addGraph();
+    _graphPoints->setData(x,y);
+    _graphPoints->setLineStyle(QCPGraph::lsNone);
+    _graphPoints->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,8));
+    _graphPoints->setVisible(false);
 
     //set text to labels
     _textlabels.clear();
@@ -106,8 +106,8 @@ void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QStr
 
 void QCPScatterChart::setVisiblePointSeries(bool state)
 {
-    if(_customPlot->hasPlottable(_pointSeries)){
-        _pointSeries->setVisible(state);
+    if(_customPlot->hasPlottable(_graphPoints)){
+        _graphPoints->setVisible(state);
     }
 }
 

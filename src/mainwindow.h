@@ -15,6 +15,7 @@
 
 #include "glasspropertydlg.h"
 #include "glassselectiondlg.h"
+#include "aboutdlg.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,10 +32,10 @@ public:
     void createUI();
 
 private slots:
-    void on_cellChanged(int catalogIndex, int PlotOrLabel);
+    void on_cellChanged();
     void on_comboChanged(int index);
     void on_checkBoxCurveChanged(bool checkState);
-    void on_lineEdit_textEdited(QString linetext);
+    void on_lineEdit_textEdited();
     void on_buttonResetViewClicked();
     void on_menu_File_LoadAGF_Triggered();
     void on_menu_Help_About_Triggered();
@@ -47,11 +48,13 @@ private slots:
     void on_buttonAddNewGlassClicked();
     void on_buttonDeleteSelectedGlassClicked();
     void on_buttonSetAxisClicked();
+    void on_Dispersion_graphSelect_Changed();
 
     //Transmittance tab
     void on_button_Transmittance_AddNewGlassClicked();
     void on_button_Transmittance_DeleteGlassClicked();
     void on_button_Transmittance_SetAxisClicked();
+    void on_Transmittance_graphSelect_Changed();
 
 private:
     Ui::MainWindow *ui;

@@ -28,7 +28,7 @@
 
 #include <QString>
 #include <QList>
-#include <QPair>
+#include <QDebug>
 
 #include "math.h"
 #include "spline.h"
@@ -43,100 +43,53 @@ public:
     double index(double lambdamicron);
     double index(QString spectral);
 
+    QString name() const { return _name;}
+    QString supplyer() const { return _supplyer;}
+    QString dispFormName() const;
+    double dispCoef(int index) const { return _dispcoefs.at(index); }
+
+    double thermalCoef(int index) const { return _thermalcoefs.at(index);}
+
     double transmittance(double lambdamicron, double thickness = 25);
-    QVector<double> transmittance(double start, double end, int stepcount);
     QVector<double> transmittance(QVector<double> x);
 
-    QString name()
-    {
-        return _name;
-    }
-    QString supplyer()
-    {
-        return _supplyer;
-    }
-    QList<double> dispcoefs()
-    {
-        return _dispcoefs;
-    }
-    QList<double> thermalCoefs(){
-        return _thermalcoefs;
-    }
-    QString dispFormName();
-    QString status(){
-        return _status;
-    }
-    double nd() const
-    {
-        return _nd;
-    }
-    double ne() const
-    {
-        return _ne;
-    }
-    double vd() const
-    {
-        return _vd;
-    }
-    double ve() const
-    {
-        return _ve;
-    }
-    double PgF() const
-    {
-        return _PgF;
-    }
+    QString status() const { return _status;}
+    double nd() const { return _nd;}
+    double ne() const { return _ne;}
+    double vd() const { return _vd;}
+    double ve() const { return _ve;}
+    double PgF() const {return _PgF;}
     double Pxy(QString x, QString y);
     double Pxy_(QString x, QString y);
 
-    double lambdaMin(){ //micron
-        return _lambdaMin;
-    }
-    double lambdaMax(){ //micron
-        return _lambdaMax;
-    }
+    double lambdaMin() const {return _lambdaMin;} //micron
+    double lambdaMax() const {return _lambdaMax;}
+
+    int getITsize() const {return _ITwavelength.size();}
+    double getITdata(int data, int index);
 
     void computeProperties();
 
-    void setName(QString str){
-        _name = str;
-    }
-    void setSupplyer(QString str){
-        _supplyer = str;
-    }
+    void setName(QString str){ _name = str;}
+    void setSupplyer(QString str){ _supplyer = str;}
     void setStatus(QString str);
     void setStatus(int index);
 
-    void setNd(double value){
-        _nd = value;
-    }
-    void setVd(double value){
-        _vd = value;
-    }
-    void setPgF(double value){
-        _PgF = value;
-    }
+    void setNd(double value){ _nd = value;}
+    void setVd(double value){ _vd = value;}
+    void setPgF(double value){_PgF = value;}
 
-    void setdPgF(double value){
-        _dPgF = value;
-    }
+    void setdPgF(double value){_dPgF = value;}
 
-    void setDispForm(int formnum){
-        _dispform = formnum;
-    }
+    void setDispForm(int formnum){ _dispform = formnum;}
     void setDispCoef(QList<double> coefs);
     void setDispCoef(int index, double val);
 
     void setThermalCoef(int index, double val);
-    void setLambdaMin(double value){
-        _lambdaMin = value;
-    }
-    void setLambdaMax(double value){
-        _lambdaMax = value;
-    }
+    void setLambdaMin(double value){ _lambdaMin = value;}
+    void setLambdaMax(double value){ _lambdaMax = value;}
 
-    void appendIntTrans(double lambdamicron, double trans);
-
+    void appendITdata(double lambdamicron, double trans, double thick);
 
 
     // dispersion formulas
@@ -172,7 +125,6 @@ private:
     // ED    
     double _dPgF;
 
-
     // CD
     QList<double> _dispcoefs;
 
@@ -181,14 +133,14 @@ private:
 
     // OD
 
-
     // LD
     double _lambdaMax;
     double _lambdaMin;
 
     // IT
-    QList< QPair<double,double> > _int_trans;
-
+    QList<double> _ITwavelength;
+    QList<double> _ITtransmittance;
+    QList<double> _ITthickness;
 };
 
 #endif // GLASS_H

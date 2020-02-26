@@ -67,7 +67,7 @@ private:
     static const int ColumnPlot     = 1;
     static const int ColumnLabel    = 2;
 
-    //int _currentPlotType;
+    bool isReady;
 
     QHash<QString, QCPScatterChart* > _glassmaps; //<supplyer, currentmap>
     QHash<QString, QPair<bool,bool> > _glassmapvisiblestate;
