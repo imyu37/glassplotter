@@ -37,20 +37,32 @@ DispersionPlotManager::DispersionPlotManager(QCustomPlot* customPlot)
 
     _xrange = QCPRange(300,1000);
     _yrange = QCPRange(0.9,2.1);
-
     setDefaultAxis();
+
+    _glassList.clear();
 }
 
 void DispersionPlotManager::addGraph(Glass *glass)
-{
-    QCPGraph* graph = _customPlot->addGraph();
+{    
+    QCPGraph* graph;
+
+    if(hasGraph(glass)){
+        for(int i = 0; i < _customPlot->graphCount();i++)
+        {
+            if(_customPlot->graph(i)->name() == glass->name()){
+                graph = _customPlot->graph(i);
+                break;
+            }
+        }
+    }else{
+        graph = _customPlot->addGraph();
+        _glassList.append(glass);
+    }
 
     QVector<double> x(101),y(101);
 
-    //double lambdamin = _xrange.lower/1000;
-    //double lambdamax = _xrange.upper/1000;
-    double lambdamin = 200/1000;
-    double lambdamax = 2000/1000;
+    double lambdamin = _xrange.lower/1000;
+    double lambdamax = _xrange.upper/1000;
 
     for(int i = 0; i<101; i++)
     {
@@ -73,6 +85,20 @@ void DispersionPlotManager::deleteGraph()
         _customPlot->removeGraph(_customPlot->selectedGraphs().first());
         _customPlot->replot();
     }
+}
+
+bool DispersionPlotManager::hasGraph(Glass *glass)
+{
+    if(_glassList.size() > 0)
+    {
+        for(int i = 0; i < _glassList.size(); i++)
+        {
+            if(glass->name() == _glassList[i]->name()){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void DispersionPlotManager::replot()
@@ -110,4 +136,12 @@ void DispersionPlotManager::setAxis(QCPRange xr, QCPRange yr)
     _yrange = yr;
     _customPlot->xAxis->setRange(xr);
     _customPlot->yAxis->setRange(yr);
+
+    //replot at new axis
+    for(int i = 0; i < _glassList.size(); i++)
+    {
+        addGraph(_glassList[i]);
+    }
+
+    replot();
 }

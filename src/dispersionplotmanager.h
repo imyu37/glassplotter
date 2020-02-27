@@ -38,6 +38,7 @@ public:
     DispersionPlotManager(QCustomPlot* customPlot);
     void addGraph(Glass *glass);
     void deleteGraph();
+    bool hasGraph(Glass* glass);
     void setAllColors();
 
     void setDefaultAxis();
@@ -50,6 +51,8 @@ private:
     int _maxGraphCount;
     QCPRange _xrange;
     QCPRange _yrange;
+
+    QList<Glass*> _glassList;
 };
 
 #endif // DISPERSIONPLOTMANAGER_H

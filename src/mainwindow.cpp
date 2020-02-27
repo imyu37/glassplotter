@@ -342,6 +342,7 @@ void MainWindow::on_buttonSetAxisClicked()
     QCPRange yr = QCPRange(ui->lineEdit_Ymin->text().toDouble(),ui->lineEdit_Ymax->text().toDouble());
 
     _dispersionplotmanager->setAxis(xr,yr);
+    _dispersionplotmanager->setAllColors();
     _dispersionplotmanager->replot();
 }
 
@@ -430,6 +431,7 @@ void MainWindow::on_button_Transmittance_SetAxisClicked()
     QCPRange yr = QCPRange(ui->lineEdit_Transmittance_Ymin->text().toDouble(),ui->lineEdit_Transmittance_Ymax->text().toDouble());
 
     _transmittanceplotmanager->setAxis(xr,yr);
+    _transmittanceplotmanager->setAllColors();
     _transmittanceplotmanager->replot();
 }
 

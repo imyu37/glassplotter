@@ -56,9 +56,7 @@ void GlassSelectionDlg::create_comboBox_Glass(int catalogindex)
 {
     _comboBox_Glass->clear();
 
-    GlassCatalog* catalog;
-
-    catalog = _catalogs[catalogindex];
+    GlassCatalog* catalog = _catalogs[catalogindex];
 
     for(int i = 0; i < catalog->glassCount(); i++)
     {

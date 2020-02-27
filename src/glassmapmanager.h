@@ -70,7 +70,6 @@ private:
     bool isReady;
 
     QHash<QString, QCPScatterChart* > _glassmaps; //<supplyer, currentmap>
-    QHash<QString, QPair<bool,bool> > _glassmapvisiblestate;
 
     QCPGraph* _pCurveGraph;
     QList<double> _curvecoefs;

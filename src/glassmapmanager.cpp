@@ -70,6 +70,7 @@ GlassMapManager::~GlassMapManager()
 {
     _customPlot = nullptr;
     _defaultRanges.clear();
+    _table->clear();
 }
 
 QColor GlassMapManager::getColor(QString supplyer)
@@ -96,6 +97,12 @@ QColor GlassMapManager::getColor(QString supplyer)
 
 void GlassMapManager::createGlassMapList(int plotType)
 {
+    if(_catalogs.size() == 0)
+    {
+        qDebug() << "createGlassMapList: Catalogs has not been loaded";
+        return;
+    }
+
     GlassCatalog *catalog;
     QCPScatterChart *chart;
 
@@ -156,9 +163,10 @@ void GlassMapManager::createGlassMapList(int plotType)
 
 void GlassMapManager::clearGlassMapList()
 {
-    //_customPlot->clearGraphs();
+    _customPlot->clearGraphs();
     _customPlot->clearItems();
     _glassmaps.clear();
+    _pCurveGraph = _customPlot->addGraph();
 
     isReady = false;
 }
@@ -178,6 +186,7 @@ void GlassMapManager::createTable()
     // set supplyers' names and checkboxes
     QString supplyername;
 
+    if(catalogCount() ==0) return;
     for (int i = 0; i< catalogCount() ; i++)
     {
         supplyername = getCatalog(i)->supplyer();
@@ -203,6 +212,8 @@ void GlassMapManager::createTable()
 
 void GlassMapManager::setCurveCoefs(QList<double> coefs)
 {
+    if(!_pCurveGraph) return;
+
     QVector<double> x(101),y(101);
     double xmin, xmax;
 

@@ -45,7 +45,7 @@ public:
 
 private:
     Ui::GlassPropertyDlg *ui;
-    Glass* _glass;
+
 };
 
 #endif // GLASSPROPERTYDLG_H

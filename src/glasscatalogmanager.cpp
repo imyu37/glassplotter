@@ -80,21 +80,24 @@ Glass* GlassCatalogManager::getGlass(QString glassname, QString supplyername)
 }
 bool GlassCatalogManager::hasCatalog(QString supplyername)
 {
-    for(int i = 0; i < _catalogs.count(); i++)
+    if(_catalogs.count() > 0)
     {
-        if(supplyername == _catalogs[i]->supplyer()){
-            return true;
+        for(int i = 0; i < _catalogs.count(); i++)
+        {
+            if(supplyername == _catalogs[i]->supplyer()){
+                return true;
+            }
         }
     }
     return false;
 }
 bool GlassCatalogManager::hasGlass(QString glassname)
 {
-    for(int i = 0; i < _catalogs.count(); i++)
+    if(_catalogs.count() > 0)
     {
-        for(int j = 0; j < _catalogs.at(i)->glassCount(); j++)
+        for(int i = 0; i < _catalogs.count(); i++)
         {
-            if(glassname == _catalogs.at(i)->glass(j)->name())
+            if(_catalogs[i]->hasGlass(glassname))
             {
                 return true;
             }
@@ -125,7 +128,7 @@ bool GlassCatalogManager::loadAllAGF(QString AGFdir)
         catalog = new GlassCatalog;
         if(!catalog->loadAGF(fullpath))
         {
-            //delete catalog;
+            delete catalog;
             return false;
         }else{
             _catalogs.append(catalog);

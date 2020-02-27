@@ -41,25 +41,15 @@ public:
     ~GlassCatalog();
 
     //getter
-    QString supplyer(){
-        return _supplyer;
-    }
-    int glassCount(){
-        return _glasses.size();
-    }
-    Glass* glass(int index){
-        return _glasses.at(index);
-    }
-    Glass* glass(QString glassname);
+    QString supplyer() const { return _supplyer;}
+    int glassCount() const {return _glasses.size();}
+    Glass* glass(int index) const {return _glasses.at(index);}
+    Glass* glass(QString glassname) const;
 
     bool hasGlass(QString glassname);
 
     //setter
-    void setSupplyer(QString str){
-        _supplyer = str;
-    }
-
-    //void addGlass(Glass* g);
+    void setSupplyer(QString str){_supplyer = str;}
     void clear();
 
     bool loadAGF(QString AGFpath);
