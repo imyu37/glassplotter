@@ -50,7 +50,7 @@ public:
     void setCurveVisible(bool state);
 
     void setAxis(QCPRange xrange, QCPRange yrange);
-    void resetAxis(int plotType);
+    void setDefaultAxis(int plotType);
 
     int selectedItemsCount();
     Glass* getSelectedGlass();
@@ -67,14 +67,12 @@ private:
     static const int ColumnPlot     = 1;
     static const int ColumnLabel    = 2;
 
-    bool isReady;
+    bool _isReady;
 
     QHash<QString, QCPScatterChart* > _glassmaps; //<supplyer, currentmap>
 
     QCPGraph* _pCurveGraph;
     QList<double> _curvecoefs;
-
-    QHash<int, QPair<QCPRange,QCPRange> > _defaultRanges;
 
 };
 

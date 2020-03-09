@@ -31,11 +31,11 @@ GlassSelectionDlg::GlassSelectionDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _comboBox_Glass = ui->comboBox_Glass;
     _comboBox_Supplyer = ui->comboBox_Supplyer;
+    _listWidget_Glass = ui->listWidget_Glass;
 
     QObject::connect(_comboBox_Supplyer, SIGNAL(currentIndexChanged(int)),
-                     this, SLOT(create_comboBox_Glass(int)));
+                     this, SLOT(createGlassListWidget(int)));
 }
 
 GlassSelectionDlg::~GlassSelectionDlg()
@@ -49,22 +49,22 @@ QString GlassSelectionDlg::getSupplyerName()
 }
 QString GlassSelectionDlg::getGlassName()
 {
-    return ui->comboBox_Glass->currentText();
+    return ui->listWidget_Glass->currentItem()->text();
 }
 
-void GlassSelectionDlg::create_comboBox_Glass(int catalogindex)
+void GlassSelectionDlg::createGlassListWidget(int catalogindex)
 {
-    _comboBox_Glass->clear();
+    _listWidget_Glass->clear();
 
     GlassCatalog* catalog = _catalogs[catalogindex];
 
     for(int i = 0; i < catalog->glassCount(); i++)
     {
-        _comboBox_Glass->addItem(catalog->glass(i)->name());
+        _listWidget_Glass->addItem(catalog->glass(i)->name());
     }
 }
 
-void GlassSelectionDlg::create_comboBox_Supplyers()
+void GlassSelectionDlg::createComboBoxSupplyers()
 {
     _comboBox_Supplyer->clear();
 

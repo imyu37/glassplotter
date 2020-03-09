@@ -33,9 +33,11 @@ class TransmittancePlotManager:public GlassCatalogManager
 public:
     TransmittancePlotManager(QCustomPlot* customPlot, QTableWidget *table);
     ~TransmittancePlotManager();
-    void addGraph(Glass* glass);
+
+    QCPGraph* addGraph(Glass* glass);
+    void setData(QCPGraph *graph, Glass *glass);
     void deleteGraph();
-    bool hasGraph(Glass* glass);
+
     void setAllColors();
     void setDefaultAxis();
     void setAxis(QCPRange xr, QCPRange yr);
@@ -51,7 +53,7 @@ private:
     QCPRange _xrange;
     QCPRange _yrange;
 
-    QList<Glass*> _glassList;
+    QHash<Glass*, QCPGraph*> _graphList;
 };
 
 #endif // TRANSMITTANCEPLOTMANAGER_H

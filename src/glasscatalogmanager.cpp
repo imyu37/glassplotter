@@ -107,10 +107,6 @@ bool GlassCatalogManager::hasGlass(QString glassname)
 }
 bool GlassCatalogManager::loadAllAGF(QString AGFdir)
 {
-    GlassCatalog *catalog;
-
-    _catalogs.clear();
-
     QStringList nameFilters;
     nameFilters.append("*.AGF");
 
@@ -123,6 +119,8 @@ bool GlassCatalogManager::loadAllAGF(QString AGFdir)
     }
 
     QString fullpath;
+    GlassCatalog *catalog;
+    _catalogs.clear();
     for (int i = 0; i < filelist.size(); i++) {
         fullpath = dir.filePath(filelist[i]);
         catalog = new GlassCatalog;

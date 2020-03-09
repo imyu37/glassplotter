@@ -25,20 +25,19 @@
 #ifndef DISPERSIONPLOTMANAGER_H
 #define DISPERSIONPLOTMANAGER_H
 
-#include "qcustomplot.h"
-#include <QList>
 
-#include "glass.h"
-#include "glasscatalog.h"
+#include "qcustomplot.h"
 #include "glasscatalogmanager.h"
 
 class DispersionPlotManager : public GlassCatalogManager
 {
 public:
     DispersionPlotManager(QCustomPlot* customPlot);
-    void addGraph(Glass *glass);
+    ~DispersionPlotManager();
+    QCPGraph* addGraph(Glass *glass);
+    void setData(QCPGraph *graph, Glass *glass);
     void deleteGraph();
-    bool hasGraph(Glass* glass);
+
     void setAllColors();
 
     void setDefaultAxis();
@@ -48,11 +47,11 @@ public:
 
 private:
     QCustomPlot* _customPlot;
-    int _maxGraphCount;
+    const int _maxGraphCount = 5;
     QCPRange _xrange;
     QCPRange _yrange;
 
-    QList<Glass*> _glassList;
+    QHash<Glass*, QCPGraph*> _graphList; //<glassname, graph>
 };
 
 #endif // DISPERSIONPLOTMANAGER_H

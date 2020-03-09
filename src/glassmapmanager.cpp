@@ -26,7 +26,7 @@
 
 GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
 {
-    isReady = false;
+    _isReady = false;
     _table = table;
 
     _customPlot = customPlot;
@@ -34,42 +34,18 @@ GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
     _customPlot->setInteraction(QCP::iRangeZoom, true);
     _customPlot->setInteraction(QCP::iSelectItems, true);
     _customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
-
     _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    QCPRange xrange, yrange;
-
-    // vd-nd
-    xrange.lower = 10;
-    xrange.upper = 100;
-    yrange.lower = 1.4;
-    yrange.upper = 2.1;
-    _defaultRanges[0].first  = xrange;
-    _defaultRanges[0].second = yrange;
-
-    // ve-ne
-    xrange.lower = 10;
-    xrange.upper = 100;
-    yrange.lower = 1.4;
-    yrange.upper = 2.1;
-    _defaultRanges[1].first  = xrange;
-    _defaultRanges[1].second = yrange;
-
-    //vd-PgF
-    yrange.lower = 0.5;
-    yrange.upper = 0.7;
-    _defaultRanges[2].first  = xrange;
-    _defaultRanges[2].second = yrange;
+    _customPlot->legend->setVisible(false);
 
     _pCurveGraph = _customPlot->addGraph();
 
-    _customPlot->legend->setVisible(false);
 }
 
 GlassMapManager::~GlassMapManager()
 {
+    _customPlot->clearGraphs();
+    _customPlot->clearItems();
     _customPlot = nullptr;
-    _defaultRanges.clear();
     _table->clear();
 }
 
@@ -158,7 +134,7 @@ void GlassMapManager::createGlassMapList(int plotType)
         _glassmaps.insert(catalog->supplyer(),chart);
         //delete chart;
     }
-    isReady = true;
+    _isReady = true;
 }
 
 void GlassMapManager::clearGlassMapList()
@@ -168,12 +144,12 @@ void GlassMapManager::clearGlassMapList()
     _glassmaps.clear();
     _pCurveGraph = _customPlot->addGraph();
 
-    isReady = false;
+    _isReady = false;
 }
 
 void GlassMapManager::createTable()
 {
-    isReady = false;
+    _isReady = false;
     _table->clear();
 
     // set table format
@@ -205,7 +181,7 @@ void GlassMapManager::createTable()
     _table->setColumnWidth(ColumnPlot,    (_table->width() - _table->verticalHeader()->width()) /3);
     _table->setColumnWidth(ColumnLabel,   (_table->width() - _table->verticalHeader()->width()) /3);
 
-    isReady = true;
+    _isReady = true;
 }
 
 
@@ -217,8 +193,6 @@ void GlassMapManager::setCurveCoefs(QList<double> coefs)
     QVector<double> x(101),y(101);
     double xmin, xmax;
 
-    //xmin = _defaultRanges[_currentPlotType].first.lower;
-    //xmax = _defaultRanges[_currentPlotType].first.upper;
     xmin = 10;
     xmax = 100;
 
@@ -244,7 +218,7 @@ void GlassMapManager::setCurveCoefs(QList<double> coefs)
 
 void GlassMapManager::updateVisible()
 {
-    if(isReady){
+    if(_isReady){
         for(int i = 0 ;i<_table->rowCount();i++)
         {
             setChartVisible(_table->item(i,ColumnSupplyer)->text(),
@@ -272,10 +246,32 @@ void GlassMapManager::setAxis(QCPRange xrange, QCPRange yrange)
     _customPlot->yAxis->setRange(yrange);
 }
 
-void GlassMapManager::resetAxis(int plotType)
+void GlassMapManager::setDefaultAxis(int plotType)
 {
-    QCPRange xrange = _defaultRanges[plotType].first;
-    QCPRange yrange = _defaultRanges[plotType].second;
+    QCPRange xrange, yrange;
+
+    switch(plotType)
+    {
+    case 0: // vd-nd
+        xrange.lower = 10;
+        xrange.upper = 100;
+        yrange.lower = 1.4;
+        yrange.upper = 2.1;
+        break;
+    case 1: // ve-ne
+        xrange.lower = 10;
+        xrange.upper = 100;
+        yrange.lower = 1.4;
+        yrange.upper = 2.1;
+        break;
+    case 2: //vd-PgF
+        xrange.lower = 10;
+        xrange.upper = 100;
+        yrange.lower = 0.5;
+        yrange.upper = 0.7;
+    default:
+        break;
+    }
 
     _customPlot->xAxis->setRangeReversed(true);
     _customPlot->xAxis->setRange(xrange);

@@ -37,45 +37,38 @@ TransmittancePlotManager::TransmittancePlotManager(QCustomPlot* customPlot, QTab
     _table->setHorizontalHeaderLabels(QStringList() << "WL" << "Trans" << "Thick" );
 
     _maxGraphCount = 5;
-    _glassList.clear();
+    _graphList.clear();
     setDefaultAxis();
 }
 TransmittancePlotManager::~TransmittancePlotManager()
 {
-    _glassList.clear();
+    _graphList.clear();
     _table->clear();
     _customPlot->clearGraphs();
     _customPlot->clearItems();
     _customPlot = nullptr;
 }
 
-void TransmittancePlotManager::addGraph(Glass *glass)
+QCPGraph* TransmittancePlotManager::addGraph(Glass *glass)
 {
     QCPGraph* graph;
 
-    if(hasGraph(glass)){
-        for(int i = 0; i < _customPlot->graphCount();i++)
-        {
-            if(_customPlot->graph(i)->name() == glass->name()){
-                graph = _customPlot->graph(i);
-                break;
-            }
-        }
+    if(_graphList.contains(glass)){
+        graph = _graphList.value(glass);
     }else{
         graph = _customPlot->addGraph();
-        _glassList.append(glass);
+        _graphList.insert(glass, graph);
     }
 
+    return graph;
+}
 
+void TransmittancePlotManager::setData(QCPGraph *graph, Glass *glass)
+{
     QVector<double> x(101),y(101), xmicron(101);
 
-    //double lambdamin = glass->lambdaMin();
-    //double lambdamax = glass->lambdaMax();
     double lambdamin = (double)_xrange.lower/1000;
     double lambdamax = (double)_xrange.upper/1000;
-
-    //double lambdamin = 200/1000;
-    //double lambdamax = 3000/1000;
 
     for(int i = 0; i<101; i++)
     {
@@ -96,13 +89,9 @@ void TransmittancePlotManager::deleteGraph()
 {
     if(_customPlot->selectedGraphs().size() > 0)
     {
+        _graphList.remove(getGlass(_customPlot->selectedGraphs().first()->name()));
         _customPlot->removeGraph(_customPlot->selectedGraphs().first());
-        for(int i = 0; i < _glassList.size();i++){
-            if(_glassList[i]->name() == _customPlot->selectedGraphs().first()->name()){
-                _glassList.removeAt(i);
-                break;
-            }
-        }
+        _customPlot->replot();
     }
 
     //after delete
@@ -113,21 +102,6 @@ void TransmittancePlotManager::deleteGraph()
     else{
         clearTransmittanceDataTable();
     }
-
-}
-
-bool TransmittancePlotManager::hasGraph(Glass *glass)
-{
-    if(_glassList.size() > 0)
-    {
-        for(int i = 0; i < _glassList.size(); i++)
-        {
-            if(glass->name() == _glassList[i]->name()){
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 void TransmittancePlotManager::replot()
@@ -167,9 +141,11 @@ void TransmittancePlotManager::setAxis(QCPRange xr, QCPRange yr)
     _customPlot->yAxis->setRange(_yrange);
 
     //replot at new axis
-    for(int i = 0; i < _glassList.size(); i++)
+    QCPGraph *graph;
+    for(int i = 0; i < _graphList.size(); i++)
     {
-        addGraph(_glassList[i]);
+        graph = addGraph(_graphList.keys().at(i));
+        setData(graph, _graphList.keys().at(i));
     }
 
     replot();

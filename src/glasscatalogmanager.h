@@ -32,7 +32,6 @@
 #include <QList>
 #include <QDebug>
 
-#include "glass.h"
 #include "glasscatalog.h"
 
 class GlassCatalogManager

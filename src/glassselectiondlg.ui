@@ -14,9 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1">
-    <widget class="QComboBox" name="comboBox_Glass"/>
-   </item>
    <item row="3" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -43,6 +40,9 @@
       <string>Glass</string>
      </property>
     </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QListWidget" name="listWidget_Glass"/>
    </item>
   </layout>
  </widget>

@@ -27,7 +27,7 @@
 
 #include <QDialog>
 #include <QComboBox>
-#include "glass.h"
+#include <QListWidget>
 #include "glasscatalog.h"
 
 namespace Ui {
@@ -45,19 +45,19 @@ public:
     QString getSupplyerName();
     QString getGlassName();
 
-    void create_comboBox_Supplyers();
+    void createComboBoxSupplyers();
 
     void setCatalogList(QList<GlassCatalog*> gcl);
 
 private:
     Ui::GlassSelectionDlg *ui;
-    QComboBox* _comboBox_Glass;
     QComboBox* _comboBox_Supplyer;
+    QListWidget* _listWidget_Glass;
 
     QList<GlassCatalog*> _catalogs;
 
 private slots:
-    void create_comboBox_Glass(int catalogindex);
+    void createGlassListWidget(int catalogindex);
 
 };
 

@@ -1,3 +1,28 @@
+/*****************************************************************************
+ **                                                                         **
+ **  This file is part of GlassPlotter.                                     **
+ **                                                                         **
+ **  GlassPlotter is free software: you can redistribute it and/or modify   **
+ **  it under the terms of the GNU General Public License as published by   **
+ **  the Free Software Foundation, either version 3 of the License, or      **
+ **  (at your option) any later version.                                    **
+ **                                                                         **
+ **  GlassPlotter is distributed in the hope that it will be useful,        **
+ **  but WITHOUT ANY WARRANTY; without even the implied warranty of         **
+ **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          **
+ **  GNU General Public License for more details.                           **
+ **                                                                         **
+ **  You should have received a copy of the GNU General Public License      **
+ **  along with GlassPlotter.  If not, see <http://www.gnu.org/licenses/>.  **
+ **                                                                         **
+ *****************************************************************************
+ **  Author  : Hiiragi                                                      **
+ **  Contact : heterophyllus.work@gmail.com                                 **
+ **  Website : https://github.com/heterophyllus/glassplotter                **
+ **  Date    : 2020-1-25                                                    **
+ *****************************************************************************/
+
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -20,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     _glassmapmanager->createGlassMapList(0);
-    _glassmapmanager->resetAxis(0);
+    _glassmapmanager->setDefaultAxis(0);
     _glassmapmanager->replot();
 
     //---> Dispersion Plot
@@ -156,7 +181,7 @@ void MainWindow::on_menu_File_LoadAGF_Triggered()
         _glassmapmanager->setCatalogList(_glassmapmanager->getCatalogList());
         _glassmapmanager->createTable();
         _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
-        _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
+        _glassmapmanager->setDefaultAxis(ui->comboBox_plotType->currentIndex());
 
         _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
         _transmittanceplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
@@ -218,7 +243,7 @@ void MainWindow::on_comboChanged(int index)
     _glassmapmanager->createGlassMapList(index);
     _glassmapmanager->createTable();
     _glassmapmanager->updateVisible();
-    _glassmapmanager->resetAxis(index);
+    _glassmapmanager->setDefaultAxis(index);
     _glassmapmanager->replot();
 }
 
@@ -258,7 +283,7 @@ void MainWindow::on_lineEdit_textEdited()
 
 void MainWindow::on_buttonResetViewClicked()
 {
-    _glassmapmanager->resetAxis(ui->comboBox_plotType->currentIndex());
+    _glassmapmanager->setDefaultAxis(ui->comboBox_plotType->currentIndex());
     _glassmapmanager->replot();
 }
 
@@ -280,13 +305,17 @@ void MainWindow::on_buttonAddNewGlassClicked()
     GlassSelectionDlg *dlg = new GlassSelectionDlg(this);
 
     dlg->setCatalogList(_dispersionplotmanager->getCatalogList());
-    dlg->create_comboBox_Supplyers();
+    dlg->createComboBoxSupplyers();
 
     if(dlg->exec() == QDialog::Accepted)
     {
+        QCPGraph *newGraph;
+        Glass *glass;
         supplyername = dlg->getSupplyerName();
         glassname = dlg->getGlassName();
-        _dispersionplotmanager->addGraph(_dispersionplotmanager->getGlass(glassname,supplyername));
+        glass = _dispersionplotmanager->getGlass(glassname,supplyername);
+        newGraph = _dispersionplotmanager->addGraph(_dispersionplotmanager->getGlass(glassname,supplyername));
+        _dispersionplotmanager->setData(newGraph,glass);
         _dispersionplotmanager->setAllColors();
         _dispersionplotmanager->replot();
     }
@@ -384,7 +413,7 @@ void MainWindow::on_Dispersion_graphSelect_Changed()
 }
 
 
-/*****************
+/********************
  * Transmittance tab
  * ******************/
 void MainWindow::on_button_Transmittance_AddNewGlassClicked()
@@ -398,17 +427,19 @@ void MainWindow::on_button_Transmittance_AddNewGlassClicked()
         QMessageBox::information(this,tr("File"), tr("Up to 5 graphs can be plotted"));
         return;
     }
-    QString glassname, supplyername;
+
     GlassSelectionDlg *dlg = new GlassSelectionDlg(this);
 
     dlg->setCatalogList(_transmittanceplotmanager->getCatalogList());
-    dlg->create_comboBox_Supplyers();
+    dlg->createComboBoxSupplyers();
 
     if(dlg->exec() == QDialog::Accepted)
     {
-        supplyername = dlg->getSupplyerName();
-        glassname = dlg->getGlassName();
-        _transmittanceplotmanager->addGraph(_transmittanceplotmanager->getGlass(glassname,supplyername));
+        QString supplyername = dlg->getSupplyerName();
+        QString glassname = dlg->getGlassName();
+        Glass* glass = _transmittanceplotmanager->getGlass(glassname,supplyername);
+        QCPGraph* newGraph = _transmittanceplotmanager->addGraph(glass);
+        _transmittanceplotmanager->setData(newGraph,glass);
         _transmittanceplotmanager->setAllColors();
         _transmittanceplotmanager->replot();
     }

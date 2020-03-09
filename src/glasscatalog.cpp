@@ -58,7 +58,7 @@ Glass* GlassCatalog::glass(QString glassname) const
             return _glasses[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool GlassCatalog::hasGlass(QString glassname)
@@ -89,7 +89,6 @@ bool GlassCatalog::loadAGF(QString AGFpath)
     QTextStream in(&file);
     QString linetext;
     QStringList lineparts;
-    QList<double> dlist;
 
     Glass *g;
 
