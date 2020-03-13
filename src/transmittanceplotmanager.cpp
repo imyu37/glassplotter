@@ -36,7 +36,6 @@ TransmittancePlotManager::TransmittancePlotManager(QCustomPlot* customPlot, QTab
     _table->setColumnCount(3);
     _table->setHorizontalHeaderLabels(QStringList() << "WL" << "Trans" << "Thick" );
 
-    _maxGraphCount = 5;
     _graphList.clear();
     setDefaultAxis();
 }
@@ -128,7 +127,7 @@ void TransmittancePlotManager::setAllColors()
 void TransmittancePlotManager::setDefaultAxis()
 {
     _xrange = QCPRange(300,2000);
-    _yrange = QCPRange(0.0,1.0);
+    _yrange = QCPRange(0.0,1.1);
     _customPlot->xAxis->setRange(_xrange);
     _customPlot->yAxis->setRange(_yrange);
 }

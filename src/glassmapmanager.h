@@ -38,9 +38,7 @@ public:
 
     QColor getColor(QString supplyer);
 
-    void createGlassMapList(int plotType);
-    void clearGlassMapList();
-
+    void createGlassMapAll(int plotType);
     void createTable();
 
     void setCurveCoefs(QList<double> coefs);
@@ -55,25 +53,21 @@ public:
     int selectedItemsCount();
     Glass* getSelectedGlass();
 
-    void clear();
     void replot();
+    void clear();
 
 
 private:
     QCustomPlot* _customPlot;
     QTableWidget* _table;
+    bool _isReady;
 
     static const int ColumnSupplyer = 0;
     static const int ColumnPlot     = 1;
     static const int ColumnLabel    = 2;
 
-    bool _isReady;
-
     QHash<QString, QCPScatterChart* > _glassmaps; //<supplyer, currentmap>
-
-    QCPGraph* _pCurveGraph;
-    QList<double> _curvecoefs;
-
+    QCPGraph* _graphCurve;
 };
 
 #endif // GLASSMAPMANAGER_H

@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
         QMessageBox::information(this,tr("File"), tr("AGF load missed"));
     }
 
-    _glassmapmanager->createGlassMapList(0);
+    _glassmapmanager->createGlassMapAll(0);
     _glassmapmanager->setDefaultAxis(0);
     _glassmapmanager->replot();
 
@@ -146,7 +146,7 @@ void MainWindow::createUI()
     ui->lineEdit_Transmittance_Xmin->setText("300");
     ui->lineEdit_Transmittance_Xmax->setText("2000");
     ui->lineEdit_Transmittance_Ymin->setText("0.0");
-    ui->lineEdit_Transmittance_Ymax->setText("1.0");
+    ui->lineEdit_Transmittance_Ymax->setText("1.1");
 
     QObject::connect(_transmittancePlot, SIGNAL(selectionChangedByUser()),
                      this, SLOT(on_Transmittance_graphSelect_Changed()));
@@ -180,7 +180,7 @@ void MainWindow::on_menu_File_LoadAGF_Triggered()
 
         _glassmapmanager->setCatalogList(_glassmapmanager->getCatalogList());
         _glassmapmanager->createTable();
-        _glassmapmanager->createGlassMapList(ui->comboBox_plotType->currentIndex());
+        _glassmapmanager->createGlassMapAll(ui->comboBox_plotType->currentIndex());
         _glassmapmanager->setDefaultAxis(ui->comboBox_plotType->currentIndex());
 
         _dispersionplotmanager->setCatalogList(_glassmapmanager->getCatalogList());
@@ -239,8 +239,8 @@ void MainWindow::on_comboChanged(int index)
         ui->lineEdit_coef3->setText("-1.665e-7");
     }
 
-    _glassmapmanager->clearGlassMapList();
-    _glassmapmanager->createGlassMapList(index);
+    _glassmapmanager->clear();
+    _glassmapmanager->createGlassMapAll(index);
     _glassmapmanager->createTable();
     _glassmapmanager->updateVisible();
     _glassmapmanager->setDefaultAxis(index);

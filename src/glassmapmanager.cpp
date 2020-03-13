@@ -37,7 +37,7 @@ GlassMapManager::GlassMapManager(QCustomPlot* customPlot, QTableWidget* table)
     _customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
     _customPlot->legend->setVisible(false);
 
-    _pCurveGraph = _customPlot->addGraph();
+    _graphCurve = _customPlot->addGraph();
 
 }
 
@@ -71,13 +71,15 @@ QColor GlassMapManager::getColor(QString supplyer)
     return color;
 }
 
-void GlassMapManager::createGlassMapList(int plotType)
+void GlassMapManager::createGlassMapAll(int plotType)
 {
     if(_catalogs.size() == 0)
     {
         qDebug() << "createGlassMapList: Catalogs has not been loaded";
         return;
     }
+
+    _isReady = false;
 
     GlassCatalog *catalog;
     QCPScatterChart *chart;
@@ -137,12 +139,12 @@ void GlassMapManager::createGlassMapList(int plotType)
     _isReady = true;
 }
 
-void GlassMapManager::clearGlassMapList()
+void GlassMapManager::clear()
 {
     _customPlot->clearGraphs();
     _customPlot->clearItems();
     _glassmaps.clear();
-    _pCurveGraph = _customPlot->addGraph();
+    _graphCurve = _customPlot->addGraph();
 
     _isReady = false;
 }
@@ -188,7 +190,7 @@ void GlassMapManager::createTable()
 
 void GlassMapManager::setCurveCoefs(QList<double> coefs)
 {
-    if(!_pCurveGraph) return;
+    if(!_graphCurve) return;
 
     QVector<double> x(101),y(101);
     double xmin, xmax;
@@ -207,12 +209,12 @@ void GlassMapManager::setCurveCoefs(QList<double> coefs)
         }
     }
 
-    _pCurveGraph->setData(x,y);
-    _pCurveGraph->setName("curve");
+    _graphCurve->setData(x,y);
+    _graphCurve->setName("curve");
 
     QPen pen;
     pen.setColor(Qt::black); //black
-    _pCurveGraph->setPen(pen);
+    _graphCurve->setPen(pen);
 
 }
 
@@ -237,7 +239,7 @@ void GlassMapManager::setChartVisible(QString supplyer,bool pointstate, bool lab
 }
 void GlassMapManager::setCurveVisible(bool state)
 {
-    _pCurveGraph->setVisible(state);
+    _graphCurve->setVisible(state);
 }
 
 void GlassMapManager::setAxis(QCPRange xrange, QCPRange yrange)

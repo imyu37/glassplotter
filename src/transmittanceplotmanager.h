@@ -49,7 +49,7 @@ public:
 private:
     QCustomPlot* _customPlot;
     QTableWidget* _table;
-    int _maxGraphCount;
+    const int _maxGraphCount = 5;
     QCPRange _xrange;
     QCPRange _yrange;
 
