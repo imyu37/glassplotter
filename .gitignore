@@ -1,0 +1,8 @@
+*.user
+*.pro.user
+*.app
+*.exe
+
+/resources/
+/build*/
+/release/

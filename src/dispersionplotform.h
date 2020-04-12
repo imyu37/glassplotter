@@ -1,0 +1,73 @@
+/*****************************************************************************
+ **                                                                         **
+ **  This file is part of GlassPlotter.                                     **
+ **                                                                         **
+ **  GlassPlotter is free software: you can redistribute it and/or modify   **
+ **  it under the terms of the GNU General Public License as published by   **
+ **  the Free Software Foundation, either version 3 of the License, or      **
+ **  (at your option) any later version.                                    **
+ **                                                                         **
+ **  GlassPlotter is distributed in the hope that it will be useful,        **
+ **  but WITHOUT ANY WARRANTY; without even the implied warranty of         **
+ **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          **
+ **  GNU General Public License for more details.                           **
+ **                                                                         **
+ **  You should have received a copy of the GNU General Public License      **
+ **  along with GlassPlotter.  If not, see <http://www.gnu.org/licenses/>.  **
+ **                                                                         **
+ *****************************************************************************
+ **  Author  : Hiiragi                                                      **
+ **  Contact : heterophyllus.work@gmail.com                                 **
+ **  Website : https://github.com/heterophyllus/glassplotter                **
+ **  Date    : 2020-1-25                                                    **
+ *****************************************************************************/
+
+#ifndef DISPERSIONPLOTFORM_H
+#define DISPERSIONPLOTFORM_H
+
+#include <QWidget>
+
+#include "qcustomplot.h"
+#include "glasscatalog.h"
+
+#include "glassselectiondialog.h"
+
+namespace Ui {
+class DispersionPlotForm;
+}
+
+class DispersionPlotForm : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget *parent = nullptr);
+    ~DispersionPlotForm();
+
+    void setData(QCPGraph *graph, Glass *glass);
+    void setColor(QCPGraph *graph, int index);
+
+    void updateColor();
+
+    void setDefault();
+
+
+private slots:
+    void addGraph();
+    void deleteGraph();
+    void setAxis();
+
+private:
+    Ui::DispersionPlotForm *ui;
+
+    QList<GlassCatalog*> m_catalogList;
+    QList<Glass*> m_plottedGlassList;
+    QList<QCPGraph*> m_plottedGraphList;
+
+    QCustomPlot* m_customPlot;
+    const int m_maxGraphCount = 5;
+    QCPRange m_xrange;
+    QCPRange m_yrange;
+};
+
+#endif // DISPERSIONPLOTFORM_H

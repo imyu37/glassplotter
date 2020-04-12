@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>738</width>
+    <height>617</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>738</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_loadAGF"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuGlass_Map">
+     <property name="title">
+      <string>Glass Map</string>
+     </property>
+     <addaction name="action_NdVd"/>
+     <addaction name="action_NeVe"/>
+     <addaction name="action_VdPgF"/>
+    </widget>
+    <addaction name="menuGlass_Map"/>
+    <addaction name="action_DispersionPlot"/>
+    <addaction name="action_TransmittancePlot"/>
+    <addaction name="separator"/>
+    <addaction name="action_CloseAll"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="action_About"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_loadAGF">
+   <property name="text">
+    <string>load AGF</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="action_DispersionPlot">
+   <property name="text">
+    <string>Dispersion Plot</string>
+   </property>
+  </action>
+  <action name="action_TransmittancePlot">
+   <property name="text">
+    <string>Transmittance Plot</string>
+   </property>
+  </action>
+  <action name="action_NdVd">
+   <property name="text">
+    <string>Nd-Vd</string>
+   </property>
+  </action>
+  <action name="action_NeVe">
+   <property name="text">
+    <string>Ne-Ve</string>
+   </property>
+  </action>
+  <action name="action_VdPgF">
+   <property name="text">
+    <string>Vd-PgF</string>
+   </property>
+  </action>
+  <action name="action_CloseAll">
+   <property name="text">
+    <string>Close All </string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
