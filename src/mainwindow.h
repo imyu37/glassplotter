@@ -48,6 +48,9 @@ private slots:
     void showGlassMapVdPgF();
     void showDispersionPlot();
     void showTransmittancePlot();
+
+    void tileWindows();
+    void cascadeWindows();
     void closeAll();
 
     void showAbout();
@@ -56,5 +59,6 @@ private:
     Ui::MainWindow *ui;
 
     QList<GlassCatalog*> m_catalogList;
+
 };
 #endif // MAINWINDOW_H

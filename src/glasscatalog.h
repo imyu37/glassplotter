@@ -48,10 +48,6 @@ public:
 
     bool hasGlass(QString glassname);
 
-    //setter
-    void setSupplyer(QString str){_supplyer = str;}
-    void clear();
-
     bool loadAGF(QString AGFpath);
 
 private:

@@ -36,18 +36,12 @@ Glass::Glass()
     _PgF = 0;
 
     // NM
-    _dispform = 1;
 
     _status = "No Data";
 
     // ED 
     _dPgF = 0;
 
-    // CD
-    _dispcoefs.clear();
-    for(int i = 0;i <10; i++){
-        _dispcoefs.append(0.0);
-    }
 
     // TD
     _thermalcoefs.clear();
@@ -55,28 +49,27 @@ Glass::Glass()
         _thermalcoefs.append(0.0);
     }
 
-    // OD
-
-
     // LD
     _lambdaMax = 700;
     _lambdaMin = 400;
 
-    // IT
-    _ITwavelength.clear();
-    _ITtransmittance.clear();
-    _ITthickness.clear();
+    _dispersionData = new DispersionData;
+    _transmittanceData = new TransmittanceData;
 }
 
 Glass::~Glass()
 {
-    _dispcoefs.clear();
     _thermalcoefs.clear();
+
+    delete _dispersionData;
+    delete _transmittanceData;
 }
 
 double Glass::index(double lambdamicron)
 {
-    switch(_dispform){
+    QVector<double> _dispcoefs = _dispersionData->coefs;
+
+    switch(_dispersionData->formulaIndex){
     case 1: //Schott
         return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) );
     case 2: //Sellmeier 1
@@ -126,10 +119,10 @@ double Glass::transmittance(double lambdamicron, double thickness)
 {
     QVector<double> sx, sy;
 
-    for(int i = 0; i < _ITwavelength.size(); i++)
+    for(int i = 0; i < _transmittanceData->size(); i++)
     {
-        sx.append(_ITwavelength.at(i));
-        sy.append(_ITtransmittance.at(i));
+        sx.append(_transmittanceData->wavelength.at(i));
+        sy.append(_transmittanceData->transmittance.at(i));
     }
 
     tk::spline s;
@@ -141,10 +134,10 @@ QVector<double> Glass::transmittance(QVector<double> x)
 {
     QVector<double> sx, sy;
 
-    for(int i = 0; i < _ITwavelength.size(); i++)
+    for(int i = 0; i < _transmittanceData->size(); i++)
     {
-        sx.append(_ITwavelength.at(i));
-        sy.append(_ITtransmittance.at(i));
+        sx.append(_transmittanceData->wavelength.at(i));
+        sy.append(_transmittanceData->transmittance.at(i));
     }
 
     tk::spline s;
@@ -159,9 +152,9 @@ QVector<double> Glass::transmittance(QVector<double> x)
 }
 
 
-QString Glass::dispFormName() const
+QString Glass::DispersionData::formulaName()
 {
-    switch(_dispform){
+    switch(formulaIndex){
     case 1:
         return "Schott";
     case 2:
@@ -187,15 +180,12 @@ QString Glass::dispFormName() const
     case 12:
         return "Extended2";
     case 13:
-        if(_supplyer.contains("HIKARI")){
-            return "HIKARI";
-        }else{
             return "Unknown";
-        }
     default:
         return "Unknown";
     }
 }
+
 
 double Glass::Pxy(QString x, QString y)
 {
@@ -219,6 +209,7 @@ void Glass::setStatus(QString str)
 {
     _status = str;
 }
+
 void Glass::setStatus(int index)
 {
     switch(index)
@@ -240,22 +231,11 @@ void Glass::setStatus(int index)
     }
 }
 
-void Glass::setDispCoef(QList<double> coefs)
-{
-    for(int i = 0;i < _dispcoefs.size(); i++)
-    {
-        if(i < coefs.size()){
-            _dispcoefs[i] = coefs[i];
-        }else{
-            _dispcoefs[i] = 0.0;
-        }
-    }
-}
 
 void Glass::setDispCoef(int index, double val)
 {
-    if(index < _dispcoefs.count()){
-        _dispcoefs[index] = val;
+    if(index < _dispersionData->coefs.count()){
+        _dispersionData->coefs[index] = val;
     }
 }
 
@@ -266,25 +246,11 @@ void Glass::setThermalCoef(int index, double val)
     }
 }
 
-void Glass::appendITdata(double lambdamicron, double trans, double thick)
+void Glass::appendTransmittanceData(double lambdamicron, double trans, double thick)
 {
-    _ITwavelength.append(lambdamicron);
-    _ITtransmittance.append(trans);
-    _ITthickness.append(thick);
-}
-
-double Glass::getITdata(int data, int index)
-{
-    switch (data) {
-    case 0:
-        return _ITwavelength.at(index);
-    case 1:
-        return _ITtransmittance.at(index);
-    case 2:
-        return _ITthickness.at(index);
-    default:
-        return 0;
-    }
+    _transmittanceData->wavelength.append(lambdamicron);
+    _transmittanceData->transmittance.append(trans);
+    _transmittanceData->thickness.append(thick);
 }
 
 

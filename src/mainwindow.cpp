@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->action_DispersionPlot,    SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
     QObject::connect(ui->action_TransmittancePlot, SIGNAL(triggered()),this, SLOT(showTransmittancePlot()));
 
+    // Window menu
+    QObject::connect(ui->action_Tile,    SIGNAL(triggered()),this, SLOT(tileWindows()));
+    QObject::connect(ui->action_Cascade, SIGNAL(triggered()),this, SLOT(cascadeWindows()));
     QObject::connect(ui->action_CloseAll,SIGNAL(triggered()),this, SLOT(closeAll()));
 
     // Help menu
@@ -90,12 +93,6 @@ void MainWindow::loadAGF()
     QMessageBox::information(this,tr("Message"), tr("AGF files are successfully loaded"));
 }
 
-void MainWindow::showAbout()
-{
-    AboutDialog *dlg = new AboutDialog(this);
-    dlg->exec();
-}
-
 void MainWindow::showGlassMapNdVd()
 {
     int plotType = 0;
@@ -109,6 +106,7 @@ void MainWindow::showGlassMapNdVd()
     ui->mdiArea->addSubWindow(subwindow);
 
     subwindow->setWindowTitle("Vd - Nd Map");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
 }
 
@@ -125,6 +123,7 @@ void MainWindow::showGlassMapNeVe()
     ui->mdiArea->addSubWindow(subwindow);
 
     subwindow->setWindowTitle("Ve - Ne Map");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
 }
 
@@ -141,6 +140,7 @@ void MainWindow::showGlassMapVdPgF()
     ui->mdiArea->addSubWindow(subwindow);
 
     subwindow->setWindowTitle("Vd - PgF Map");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
 }
 
@@ -154,6 +154,7 @@ void MainWindow::showDispersionPlot()
     DispersionPlotForm *subwindow = new DispersionPlotForm(m_catalogList, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
     subwindow->setWindowTitle("Dispersion Plot");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
 }
 
@@ -167,10 +168,28 @@ void MainWindow::showTransmittancePlot()
     TransmittancePlotForm *subwindow = new TransmittancePlotForm(m_catalogList, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
     subwindow->setWindowTitle("Transmittance Plot");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
+}
+
+void MainWindow::tileWindows()
+{
+    ui->mdiArea->tileSubWindows();
+}
+
+void MainWindow::cascadeWindows()
+{
+    ui->mdiArea->cascadeSubWindows();
 }
 
 void MainWindow::closeAll()
 {
     ui->mdiArea->closeAllSubWindows();
+}
+
+
+void MainWindow::showAbout()
+{
+    AboutDialog *dlg = new AboutDialog(this);
+    dlg->exec();
 }

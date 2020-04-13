@@ -51,18 +51,25 @@ public:
 
     void setDefault();
 
-
 private slots:
     void addGraph();
     void deleteGraph();
     void setAxis();
 
 private:
+    class PlottedGraph
+    {
+    public:
+        QString name;
+        Glass* glass;
+        QCPGraph* graph;
+    };
+
+    QList<PlottedGraph*> m_plottedGraphList;
+
     Ui::DispersionPlotForm *ui;
 
     QList<GlassCatalog*> m_catalogList;
-    QList<Glass*> m_plottedGlassList;
-    QList<QCPGraph*> m_plottedGraphList;
 
     QCustomPlot* m_customPlot;
     const int m_maxGraphCount = 5;

@@ -39,16 +39,6 @@ GlassCatalog::~GlassCatalog()
     }
     _supplyer = "";
 }
-void GlassCatalog::clear()
-{
-    if(_glasses.size() > 0){
-        for(int i = 0; i < _glasses.size(); i++){
-            delete _glasses[i];
-        }
-        _glasses.clear();
-    }
-    _supplyer = "";
-}
 
 Glass* GlassCatalog::glass(QString glassname) const
 {
@@ -77,8 +67,6 @@ bool GlassCatalog::hasGlass(QString glassname)
 
 bool GlassCatalog::loadAGF(QString AGFpath)
 {
-    qDebug("Loading : %s", AGFpath.toUtf8().data());
-
     QFile file(AGFpath);
     if (! file.open(QIODevice::ReadOnly)) {
         qDebug() << "File Open Error";
@@ -139,7 +127,7 @@ bool GlassCatalog::loadAGF(QString AGFpath)
                 continue; //eg. NIHON_KESSHO_KOGAKU CaF2
             }
             else{
-                _glasses.last()->appendITdata(lineparts[1].toDouble(), lineparts[2].toDouble(), lineparts[3].toDouble());
+                _glasses.last()->appendTransmittanceData(lineparts[1].toDouble(), lineparts[2].toDouble(), lineparts[3].toDouble());
             }
         }
     }

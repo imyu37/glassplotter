@@ -62,11 +62,17 @@ void TransmittancePlotForm::addGraph()
     {
         int catalogIndex = dlg->getCatalogIndex();
         QString glassName = dlg->getGlassName();
-        Glass* glass = m_catalogList.at(catalogIndex)->glass(glassName);
-        QCPGraph* graph = m_customPlot->addGraph();
-        setData(graph,glass);
-        m_plottedGlassList.append(glass);
-        m_plottedGraphList.append(graph);
+        Glass* newGlass = m_catalogList.at(catalogIndex)->glass(glassName);
+        QCPGraph* newGraph = m_customPlot->addGraph();
+        setData(newGraph,newGlass);
+
+        PlottedGraph *plottedGraph = new PlottedGraph;
+        plottedGraph->name = glassName;
+        plottedGraph->glass = newGlass;
+        plottedGraph->graph = newGraph;
+
+        m_plottedGraphList.append(plottedGraph);
+
         updateColor();
         m_customPlot->replot();
     }
@@ -110,7 +116,7 @@ void TransmittancePlotForm::setColor(QCPGraph *graph, int index)
 void TransmittancePlotForm::updateColor()
 {
     for(int i = 0; i < m_plottedGraphList.size(); i++){
-        setColor(m_plottedGraphList.at(i),i);
+        setColor(m_plottedGraphList.at(i)->graph, i);
     }
 }
 
@@ -121,13 +127,12 @@ void TransmittancePlotForm::deleteGraph()
         QCPGraph* selectedGraph = m_customPlot->selectedGraphs().first();
         QString glassName = selectedGraph->name();
 
-        for(int i = 0;i < m_plottedGlassList.size(); i++){
-            if(m_plottedGlassList.at(i)->name() == glassName){
-                m_plottedGlassList.removeAt(i);
+        for(int i = 0;i < m_plottedGraphList.size(); i++){
+            if(m_plottedGraphList.at(i)->name == glassName){
+                m_plottedGraphList.removeAt(i);
                 break;
             }
         }
-        m_plottedGraphList.removeOne(selectedGraph);
         m_customPlot->removeGraph(selectedGraph);
         updateColor();
         m_customPlot->replot();
@@ -158,10 +163,10 @@ void TransmittancePlotForm::setAxis()
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);
 
-    //replot at new axis
+    //replot on new axis
     for(int i = 0; i < m_plottedGraphList.size(); i++)
     {
-        setData(m_plottedGraphList.at(i), m_plottedGlassList.at(i));
+        setData(m_plottedGraphList.at(i)->graph, m_plottedGraphList.at(i)->glass);
     }
     updateColor();
     m_customPlot->replot();

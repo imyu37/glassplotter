@@ -28,7 +28,6 @@
 
 #include <QString>
 #include <QList>
-#include <QDebug>
 
 #include "math.h"
 #include "spline.h"
@@ -40,13 +39,57 @@ public:
     Glass();
     ~Glass();
 
+    class DispersionData
+    {
+    public:
+        DispersionData(){
+            coefs.clear();
+            for(int i = 0;i<10;i++) coefs.append(0.0);
+        };
+
+        int formulaIndex;
+        QVector<double> coefs;
+
+        double coef(int n) const {
+            return coefs.at(n);
+        }
+        QString formulaName();
+    };
+
+    class TransmittanceData
+    {
+    public:
+        QVector<double> wavelength;
+        QVector<double> transmittance;
+        QVector<double> thickness;
+
+        int size(){
+          return wavelength.size();
+        }
+
+    };
+
+    class ThermalData
+    {
+    public:
+        QVector<double> coefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
+
+        double coef(int n){return coefs.at(n);}
+        double D0();
+        double D1();
+        double D2();
+        double E0();
+        double E1();
+        double Ltk();
+    };
+
     double index(double lambdamicron);
     double index(QString spectral);
 
     QString name() const { return _name;}
     QString supplyer() const { return _supplyer;}
-    QString dispFormName() const;
-    double dispCoef(int index) const { return _dispcoefs.at(index); }
+
+    DispersionData* dispersion(){return _dispersionData;}
 
     double thermalCoef(int index) const { return _thermalcoefs.at(index);}
 
@@ -65,9 +108,6 @@ public:
     double lambdaMin() const {return _lambdaMin;} //micron
     double lambdaMax() const {return _lambdaMax;}
 
-    int getITsize() const {return _ITwavelength.size();}
-    double getITdata(int data, int index);
-
     void computeProperties();
 
     void setName(QString str){ _name = str;}
@@ -81,15 +121,14 @@ public:
 
     void setdPgF(double value){_dPgF = value;}
 
-    void setDispForm(int formnum){ _dispform = formnum;}
-    void setDispCoef(QList<double> coefs);
+    void setDispForm(int n){ _dispersionData->formulaIndex = n;}
     void setDispCoef(int index, double val);
 
     void setThermalCoef(int index, double val);
     void setLambdaMin(double value){ _lambdaMin = value;}
     void setLambdaMax(double value){ _lambdaMax = value;}
 
-    void appendITdata(double lambdamicron, double trans, double thick);
+    void appendTransmittanceData(double lambdamicron, double trans, double thick);
 
 
     // dispersion formulas
@@ -119,28 +158,21 @@ private:
     double _ve;   
     double _PgF;
 
-    // NM
-    int    _dispform;
-
-    // ED    
     double _dPgF;
-
-    // CD
-    QList<double> _dispcoefs;
-
-    // TD
-    QList<double> _thermalcoefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
-
-    // OD
 
     // LD
     double _lambdaMax;
     double _lambdaMin;
 
-    // IT
-    QList<double> _ITwavelength;
-    QList<double> _ITtransmittance;
-    QList<double> _ITthickness;
+
+    DispersionData* _dispersionData;
+
+    // TD
+    QList<double> _thermalcoefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
+
+
+
+    TransmittanceData* _transmittanceData;
 };
 
 #endif // GLASS_H

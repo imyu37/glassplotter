@@ -46,6 +46,12 @@ public:
     explicit GlassMapForm(QList<GlassCatalog*> catalogList, int plotType = 0, QWidget *parent = nullptr);
     ~GlassMapForm();
 
+    class GlassMaps
+    {
+        QList<GlassCatalog*> catalogs;
+        QList<QCPScatterChart*> charts;
+    };
+
     void setUpScrollArea();
     void setUpCurveCtrl();
 

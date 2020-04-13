@@ -57,11 +57,20 @@ private slots:
     void setAxis();
 
 private:
-    Ui::TransmittancePlotForm *ui;
+
+    class PlottedGraph
+    {
+    public:
+        QString name;
+        Glass* glass;
+        QCPGraph* graph;
+    };
+
+    QList<PlottedGraph*> m_plottedGraphList;
 
     QList<GlassCatalog*> m_catalogList;
-    QList<Glass*> m_plottedGlassList;
-    QList<QCPGraph*> m_plottedGraphList;
+
+    Ui::TransmittancePlotForm *ui;
 
     QCustomPlot* m_customPlot;
     const int m_maxGraphCount = 5;
