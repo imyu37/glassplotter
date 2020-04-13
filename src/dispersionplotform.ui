@@ -39,7 +39,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>GroupBox</string>
+      <string>Plot Control</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="3" column="0" colspan="3">
@@ -84,7 +84,7 @@
       <item row="4" column="1">
        <widget class="QLineEdit" name="lineEdit_Xmin">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -94,7 +94,7 @@
       <item row="4" column="2">
        <widget class="QLineEdit" name="lineEdit_Xmax">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -117,7 +117,7 @@
       <item row="5" column="1">
        <widget class="QLineEdit" name="lineEdit_Ymin">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -127,7 +127,7 @@
       <item row="5" column="2">
        <widget class="QLineEdit" name="lineEdit_Ymax">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>

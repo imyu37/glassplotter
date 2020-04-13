@@ -42,38 +42,17 @@
       <item row="3" column="1">
        <widget class="QLineEdit" name="lineEdit_Xmin">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QPushButton" name="pushButton_AddGraph">
-        <property name="text">
-         <string>Add Graph</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QPushButton" name="pushButton_SetAxis">
-        <property name="text">
-         <string>Set Axis</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QPushButton" name="pushButton_DeleteGraph">
-        <property name="text">
-         <string>Delete Selected Graph</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="2">
        <widget class="QLineEdit" name="lineEdit_Xmax">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -96,7 +75,7 @@
       <item row="4" column="1">
        <widget class="QLineEdit" name="lineEdit_Ymin">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -106,10 +85,31 @@
       <item row="4" column="2">
        <widget class="QLineEdit" name="lineEdit_Ymax">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QPushButton" name="pushButton_AddGraph">
+        <property name="text">
+         <string>Add Graph</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QPushButton" name="pushButton_DeleteGraph">
+        <property name="text">
+         <string>Delete Selected Graph</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3">
+       <widget class="QPushButton" name="pushButton_SetAxis">
+        <property name="text">
+         <string>Set Axis</string>
         </property>
        </widget>
       </item>

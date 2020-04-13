@@ -51,8 +51,9 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->action_NdVd,    SIGNAL(triggered()),this, SLOT(showGlassMapNdVd()));
     QObject::connect(ui->action_NeVe,    SIGNAL(triggered()),this, SLOT(showGlassMapNeVe()));
     QObject::connect(ui->action_VdPgF,   SIGNAL(triggered()),this, SLOT(showGlassMapVdPgF()));
-    QObject::connect(ui->action_DispersionPlot, SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
+    QObject::connect(ui->action_DispersionPlot,    SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
     QObject::connect(ui->action_TransmittancePlot, SIGNAL(triggered()),this, SLOT(showTransmittancePlot()));
+
     QObject::connect(ui->action_CloseAll,SIGNAL(triggered()),this, SLOT(closeAll()));
 
     // Help menu
@@ -73,6 +74,7 @@ void MainWindow::loadAGF()
 
     QStringList filePaths = QFileDialog::getOpenFileNames(this,
                                                           tr("select AGF"),
+                                                          QApplication::applicationDirPath(),
                                                           tr("AGF files(*.agf);;All Files(*.*)"));
     if(filePaths.empty()){
         QMessageBox::information(this,tr("File"), tr("No AGF file loaded"));
@@ -84,8 +86,8 @@ void MainWindow::loadAGF()
         catalog = new GlassCatalog;
         catalog->loadAGF(filePaths[i]);
         m_catalogList.append(catalog);
-        qDebug("%s",m_catalogList[i]->supplyer().toUtf8().data());
     }
+    QMessageBox::information(this,tr("Message"), tr("AGF files are successfully loaded"));
 }
 
 void MainWindow::showAbout()
