@@ -34,6 +34,7 @@
 #include "glassmapform.h"
 #include "dispersionplotform.h"
 #include "transmittanceplotform.h"
+#include "glassdatasheetform.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

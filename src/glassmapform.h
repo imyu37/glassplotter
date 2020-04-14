@@ -34,6 +34,8 @@
 #include "glasscatalog.h"
 #include "qcpscatterchart.h"
 
+#include "glassdatasheetform.h"
+
 namespace Ui {
 class GlassMapForm;
 }
@@ -43,51 +45,73 @@ class GlassMapForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit GlassMapForm(QList<GlassCatalog*> catalogList, int plotType = 0, QWidget *parent = nullptr);
+    explicit GlassMapForm(QList<GlassCatalog*> catalogList, int plotType = 0, QMdiArea *parent = nullptr);
     ~GlassMapForm();
 
-    class GlassMaps
+    class GlassMapCtrl
     {
-        QList<GlassCatalog*> catalogs;
-        QList<QCPScatterChart*> charts;
+    public:
+        GlassMapCtrl(QCustomPlot *customPlot);
+        ~GlassMapCtrl();
+        QString name;
+        GlassCatalog* catalog;
+        QCPScatterChart* glassmap;
+        QLabel* labelSupplyer;
+        QCheckBox* checkBoxPlot;
+        QCheckBox* checkBoxLabel;
+        void setGlassMap(int plotType, QColor color);
+        void setVisible(bool pointState, bool labelState);
+        void setVisible();
+    private:
+        QCustomPlot* m_customPlot;
+    };
+
+    class CurveCtrl
+    {
+    public:
+        CurveCtrl(QCustomPlot* customPlot);
+        ~CurveCtrl();
+        QCPGraph* graph;
+        QList<QLineEdit*> lineEditList;
+        QGroupBox* checkBox; //User defined curve is controled with checkbox inside of groupbox
+        QList<double> coefs;
+        void setData();
+        void setVisible(bool state);
+        void setVisible();
+        void getCoefsFromUI();
+        void setCoefsToUI();
+    private:
+        QCustomPlot* m_customPlot;
     };
 
     void setUpScrollArea();
     void setUpCurveCtrl();
 
-    void createGlassMaps();
-
-    void setCurveData(QList<double> coefs);
-
-    void setChartVisible(QCPScatterChart* chart, bool pointstate, bool labelstate);
-    void setCurveVisible(bool state);
-
     void setDefault();
 
-    QColor getColor(QString supplyer);
+    QColor getColorFromIndex(int index);
 
 private slots:
+    void contextMenuRequest(QPoint pos);
+    void showGlassDataSheet();
+
     void update();
     void resetView();
 
 private:
     Ui::GlassMapForm *ui;
 
+    QMdiArea* m_parentMdiArea;
     QCustomPlot* m_customPlot;
 
     QList<GlassCatalog*> m_catalogList;
+    QList<GlassMapCtrl*> m_glassMapCtrlList;
 
-    QList<QCPScatterChart*> m_glassMapList;
-    QCPGraph* m_curveGraph;
-
-    QList<QCheckBox*> m_checkBoxPlotList;
-    QList<QCheckBox*> m_checkBoxLabelList;
-    QList<QLabel*> m_supplyerNameLabelList;
-
-    QList<QLineEdit*> m_curveCoefEditList;
-    QList<double> m_curveCoefList;
+    CurveCtrl *m_curveCtrl;
 
     int m_plotType;
+
+    Glass* getGlassFromName(QString glassName);
 };
 
 #endif // GLASSMAPFORM_H

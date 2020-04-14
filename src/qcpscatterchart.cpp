@@ -34,9 +34,14 @@ QCPScatterChart::QCPScatterChart(QCustomPlot *customPlot)
 
 QCPScatterChart::~QCPScatterChart()
 {
-    m_graphPoints = NULL;
+    m_customPlot->removeGraph(m_graphPoints);
+    m_graphPoints = nullptr;
+
+    for(int i = 0; i < m_textlabels.size(); i++){
+        m_customPlot->removeItem(m_textlabels[i]);
+    }
     m_textlabels.clear();
-    m_customPlot = NULL;
+    m_customPlot = nullptr;
 }
 
 QCPScatterChart::QCPScatterChart(QCPScatterChart &other)

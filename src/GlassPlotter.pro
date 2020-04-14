@@ -21,6 +21,7 @@ SOURCES += \
     dispersionplotform.cpp \
     glass.cpp \
     glasscatalog.cpp \
+    glassdatasheetform.cpp \
     glassmapform.cpp \
     glassselectiondialog.cpp \
     main.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     dispersionplotform.h \
     glass.h \
     glasscatalog.h \
+    glassdatasheetform.h \
     glassmapform.h \
     glassselectiondialog.h \
     mainwindow.h \
@@ -47,6 +49,7 @@ HEADERS += \
 FORMS += \
     aboutdialog.ui \
     dispersionplotform.ui \
+    glassdatasheetform.ui \
     glassmapform.ui \
     glassselectiondialog.ui \
     mainwindow.ui \

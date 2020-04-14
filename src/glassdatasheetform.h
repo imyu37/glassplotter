@@ -22,45 +22,32 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 
-#include <QMainWindow>
-#include "glasscatalog.h"
+#ifndef GLASSDATASHEETFORM_H
+#define GLASSDATASHEETFORM_H
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+#include <QWidget>
 
-class MainWindow : public QMainWindow
+#include "glass.h"
+
+namespace Ui {
+class GlassDataSheetForm;
+}
+
+class GlassDataSheetForm : public QWidget
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-
-    void showGlassDataSheet(Glass* glass);
-
-private slots:
-    void loadAGF();
-
-    void showGlassMapNdVd();
-    void showGlassMapNeVe();
-    void showGlassMapVdPgF();
-    void showDispersionPlot();
-    void showTransmittancePlot();
-
-    void tileWindows();
-    void cascadeWindows();
-    void closeAll();
-
-    void showAbout();
+    explicit GlassDataSheetForm(Glass* glass, QWidget *parent = nullptr);
+    ~GlassDataSheetForm();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::GlassDataSheetForm *ui;
+    Glass* m_glass;
 
-    QList<GlassCatalog*> m_catalogList;
-
+    void setUpIndicesTab();
+    void setUpDispersionTab();
 };
-#endif // MAINWINDOW_H
+
+#endif // GLASSDATASHEETFORM_H
