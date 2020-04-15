@@ -37,16 +37,9 @@ This application is built with:
 - [QCustomPlot](https://www.qcustomplot.com) : Graph plotting library
 - [spline](https://github.com/ttk592/spline) : Cubic spline interpolation library
   
-
 ## License
 This project is licensed under the GPL License - see the [LICENSE](LICENSE.md) for details.
 
 ## Contribution
 Contributions and feedbacks are always welcome.
 
-## Acknowledgement
-This project got inspiration from the following repositories.
-
-- [mjhoptics/opticalglass](https://github.com/mjhoptics/opticalglass) :
-  glass map viewer with simple GUI, written in python.
-- [nzhagen/zemaxglass](https://github.com/nzhagen/zemaxglass) : python suite to utilize Zemax glass data.
