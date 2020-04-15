@@ -12,7 +12,7 @@ GlassPlotter is an open source, simple desktop glass catalog manager.  This appl
 
 ## Demo
 ![MDI](image/Screenshot_MDI.png)
-![HowToUse](https://github.com/heterophyllus/glassplotter/tree/image/GlassPlotter_HowToUse.gif)
+![HowToUse](https://github.com/heterophyllus/glassplotter/tree/image/GlassPlotter_HowToUse_PgF.gif)
 
 ## Getting Started
 
