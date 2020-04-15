@@ -62,8 +62,10 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     setUpScrollArea();
 
     //mouse
-    QObject::connect(m_customPlot,SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(contextMenuRequest(QPoint)));
+    QObject::connect(m_customPlot,SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(contextMenuRequest(QPoint)));
+
+    // reset view button
+    QObject::connect(ui->pushButton_resetView, SIGNAL(clicked()), this, SLOT(resetView()));
 
     setDefault();
     update();
