@@ -52,7 +52,6 @@ QCPScatterChart::QCPScatterChart(QCPScatterChart &other)
     m_textlabels = other.textLabels();
 }
 
-
 void QCPScatterChart::setName(QString name)
 {
     m_graphPoints->setName(name);
@@ -75,7 +74,6 @@ QCPGraph* QCPScatterChart::graphPoints()
     return m_graphPoints;
 }
 
-
 QList<QCPItemText*> QCPScatterChart::textLabels()
 {
     return m_textlabels;
@@ -88,8 +86,9 @@ QString QCPScatterChart::name()
 
 void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QString> str)
 {   
+    if(!m_graphPoints) return;
+
     //set data to points
-    //_graphPoints = _customPlot->addGraph();
     m_graphPoints->setData(x,y);
     m_graphPoints->setLineStyle(QCPGraph::lsNone);
     m_graphPoints->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,8));
@@ -107,6 +106,7 @@ void QCPScatterChart::setData(QVector<double> x, QVector<double> y, QVector<QStr
         m_textlabels.last()->setObjectName(str[i]); //used for mouse click
         m_textlabels[i]->setVisible(false);
     }
+
 }
 
 void QCPScatterChart::setVisiblePointSeries(bool state)
@@ -118,8 +118,7 @@ void QCPScatterChart::setVisiblePointSeries(bool state)
 
 void QCPScatterChart::setVisibleTextLabels(bool state)
 {
-    for(int i = 0; i < m_textlabels.size(); i++)
-    {
+    for(int i = 0; i < m_textlabels.size(); i++){
         m_textlabels[i]->setVisible(state);
     }
 }

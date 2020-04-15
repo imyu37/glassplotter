@@ -46,6 +46,9 @@ public:
             coefs.clear();
             for(int i = 0;i<10;i++) coefs.append(0.0);
         };
+        ~DispersionData(){
+            coefs.clear();
+        };
 
         int formulaIndex;
         QVector<double> coefs;
@@ -59,6 +62,12 @@ public:
     class TransmittanceData
     {
     public:
+        TransmittanceData(){};
+        ~TransmittanceData(){
+            wavelength.clear();
+            transmittance.clear();
+            thickness.clear();
+        }
         QVector<double> wavelength;
         QVector<double> transmittance;
         QVector<double> thickness;
@@ -66,7 +75,6 @@ public:
         int size(){
           return wavelength.size();
         }
-
     };
 
     class ThermalData
@@ -164,13 +172,10 @@ private:
     double _lambdaMax;
     double _lambdaMin;
 
-
     DispersionData* _dispersionData;
 
     // TD
     QList<double> _thermalcoefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
-
-
 
     TransmittanceData* _transmittanceData;
 };

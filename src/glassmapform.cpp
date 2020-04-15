@@ -94,11 +94,24 @@ GlassMapForm::GlassMapCtrl::GlassMapCtrl(QCustomPlot *customPlot)
 
 GlassMapForm::GlassMapCtrl::~GlassMapCtrl()
 {
-    delete catalog;
-    delete glassmap;
-    delete labelSupplyer;
-    delete checkBoxPlot;
-    delete checkBoxLabel;
+    try{
+        delete catalog;
+        catalog = nullptr;
+        delete glassmap;
+        glassmap = nullptr;
+        delete labelSupplyer;
+        labelSupplyer = nullptr;
+        delete checkBoxPlot;
+        checkBoxPlot = nullptr;
+        delete checkBoxLabel;
+        checkBoxLabel = nullptr;
+    } catch (...) {
+        catalog = nullptr;
+        glassmap = nullptr;
+        labelSupplyer = nullptr;
+        checkBoxPlot = nullptr;
+        checkBoxLabel = nullptr;
+    }
     m_customPlot = nullptr;
 }
 

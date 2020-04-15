@@ -52,78 +52,73 @@ GlassDataSheetForm::~GlassDataSheetForm()
 void GlassDataSheetForm::setUpIndicesTab()
 {
     QWidget* scrollAreaContents = ui->scrollAreaWidgetContents;
-
-    QString spectralLineName;
-    double lambdamicron;
-    double index;
-
-    QLabel* label_spectralName;
-    QLabel* label_spectralLambda;
-    QLabel* label_index;
-
     QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout_Indices"));
 
-    QStringList spectralList = SpectralLine::spectralLineList();
+    QLabel* label;
 
     // table header
-    label_spectralName = new QLabel;
-    label_spectralName -> setText("Spectral");
-    gridLayout->addWidget(label_spectralName, 0, 0, 1, 1);
+    label = new QLabel("Spectral", scrollAreaContents);
+    gridLayout->addWidget(label, 0, 0, 1, 1);
 
-    label_spectralLambda = new QLabel(scrollAreaContents);
-    label_spectralLambda ->setText("WaveLength");
-    gridLayout->addWidget(label_spectralLambda, 0, 1, 1, 1);
+    label = new QLabel("Wavelength",scrollAreaContents);
+    gridLayout->addWidget(label, 0, 1, 1, 1);
 
-    label_index = new QLabel(scrollAreaContents);
-    label_index->setText("Index");
-    gridLayout->addWidget(label_index, 0, 2, 1, 1);
+    label = new QLabel("Index", scrollAreaContents);
+    gridLayout->addWidget(label, 0, 2, 1, 1);
 
+    // list up indices
+    QStringList spectralList = SpectralLine::spectralLineList();
+    QString spectralLineName;
+    double lambdamicron;
+    double index;
     for(int i = 1; i < spectralList.size(); i++)
     {
         spectralLineName = spectralList.at(i-1);
-        lambdamicron = SpectralLine::wavelength(spectralList.at(i-1));
+        lambdamicron = SpectralLine::wavelength(spectralLineName);
         index = m_glass->index(spectralLineName);
 
-        label_spectralName = new QLabel(scrollAreaContents);
-        label_spectralName -> setObjectName("label_spectral_" + spectralLineName);
-        label_spectralName -> setText(spectralLineName);
-        gridLayout->addWidget(label_spectralName, i, 0, 1, 1);
+        // Spectral name
+        label = new QLabel(scrollAreaContents);
+        label -> setText(spectralLineName);
+        gridLayout->addWidget(label, i, 0, 1, 1);
 
-        label_spectralLambda = new QLabel(scrollAreaContents);
-        label_spectralLambda -> setObjectName("label_lambda_" + spectralLineName);
-        label_spectralLambda ->setText(QString::number(lambdamicron));
-        gridLayout->addWidget(label_spectralLambda, i, 1, 1, 1);
+        // lambda(nm)
+        label = new QLabel(scrollAreaContents);
+        label ->setText(QString::number(lambdamicron));
+        gridLayout->addWidget(label, i, 1, 1, 1);
 
-        label_index = new QLabel(scrollAreaContents);
-        label_index -> setObjectName("label_index_" + spectralLineName);
-        label_index -> setText(QString::number(index));
-        gridLayout->addWidget(label_index, i, 2, 1, 1);
+        // refractive index
+        label = new QLabel(scrollAreaContents);
+        label -> setText(QString::number(index));
+        gridLayout->addWidget(label, i, 2, 1, 1);
     }
-
 }
 
 void GlassDataSheetForm::setUpDispersionTab()
 {
     QWidget* scrollAreaContents = ui->scrollAreaWidgetContents_Dispersion;
-    QLabel *label_formulaName;
-    QLabel *label_coefName;
-    QLabel *label_coefValue;
 
     QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout_Dispersion"));
 
-    label_formulaName = new QLabel(scrollAreaContents);
-    label_formulaName->setText(m_glass->dispersion()->formulaName());
-    gridLayout->addWidget(label_formulaName, 0, 0, 1, 1);
+    // formula name
+    QLabel *label;
+    label = new QLabel(scrollAreaContents);
+    label->setText(m_glass->dispersion()->formulaName());
+    gridLayout->addWidget(label, 0, 0, 1, 1);
 
-    for(int i = 1; i < m_glass->dispersion()->coefs.size();i++){
-        label_coefName = new QLabel(scrollAreaContents);
-        label_coefName->setText("C" + QString::number(i-1));
-        gridLayout->addWidget(label_coefName, i, 0, 1, 1);
+    // list up coefficients
+    for(int i = 1; i < m_glass->dispersion()->coefs.size();i++)
+    {
+        // C0, C1, C2...
+        label = new QLabel(scrollAreaContents);
+        label->setText("C" + QString::number(i-1));
+        gridLayout->addWidget(label, i, 0, 1, 1);
 
-        label_coefValue = new QLabel(scrollAreaContents);
-        label_coefValue->setText(QString::number(m_glass->dispersion()->coefs[i-1]));
-        gridLayout->addWidget(label_coefValue, i, 1, 1, 1);
+        // coefficient value
+        label = new QLabel(scrollAreaContents);
+        label->setText(QString::number(m_glass->dispersion()->coefs[i-1]));
+        gridLayout->addWidget(label, i, 1, 1, 1);
     }
 }

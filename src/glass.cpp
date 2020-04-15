@@ -61,8 +61,18 @@ Glass::~Glass()
 {
     _thermalcoefs.clear();
 
-    delete _dispersionData;
-    delete _transmittanceData;
+    try {
+        delete _dispersionData;
+        _dispersionData = nullptr;
+        delete _transmittanceData;
+        _transmittanceData = nullptr;
+    } catch (...) {
+        if(_dispersionData != nullptr)
+            delete _dispersionData;
+        if(_transmittanceData != nullptr)
+            delete _transmittanceData;
+    }
+
 }
 
 double Glass::index(double lambdamicron)

@@ -41,11 +41,19 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()), this, SLOT(deleteGraph()));
     QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()), this, SLOT(setAxis()));
 
+    m_plottedGraphList.clear();
+
     setDefault();
 }
 
 DispersionPlotForm::~DispersionPlotForm()
 {
+    m_catalogList.clear();
+
+    for(int i = 0; i < m_plottedGraphList.size(); i++){
+        m_customPlot->removeGraph(m_plottedGraphList[i]->graph);
+    }
+
     delete ui;
 }
 
@@ -74,6 +82,12 @@ void DispersionPlotForm::addGraph()
 
         updateColor();
         m_customPlot->replot();
+    }
+
+    try {
+        delete dlg;
+    } catch (...) {
+        dlg = nullptr;
     }
 
 }
