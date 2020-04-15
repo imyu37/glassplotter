@@ -12,15 +12,15 @@ GlassPlotter is an open source, simple desktop glass catalog manager.  This appl
 
 ## Demo
 ![MDI](image/Screenshot_MDI.png)
-
+![HowToUse](https://github.com/heterophyllus/glassplotter/tree/image/GlassPlotter_HowToUse.gif)
 
 ## Getting Started
 
 0. Download  
-Binary packages can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
+Windows binaries (portable zip) can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
 1. Load AGF  
- What you have to do first after launching is to load AGF files. Go to "File->load AGF" and then select desirable AGF files.
+ What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desirable AGF files.
 
 2. Plotting  
  Clicking an action in "Tools" menu creates a subwindow to view and control plotting.  
