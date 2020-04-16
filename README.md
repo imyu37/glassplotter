@@ -5,18 +5,18 @@
 [日本語はこちら](README_ja.md)
 
 ## Overview
-GlassPlotter is an open source, simple desktop glass catalog manager.  This application is capable of plotting glass maps, dispersion graphs and internal transmittance curves.  GlassPlotter aims to be useful for diverse optical engineers, including those who are not familiar with programming.
+GlassPlotter is an open source, simple desktop glass map viewer.  This application is capable of plotting glass maps, dispersion graphs and internal transmittance curves.  GlassPlotter would be useful for diverse optical engineers, including those who are not familiar with programming.
 
 
 ## Key Features
-- Multi Document Interface allows flexible viewing
+- Multi Document Interface enables flexible viewing
 - Good looking plots with intaractive mouse control
-- Support several glass maps, dispersion plot and internal transmittance plot
-
+- Overlay plotting enables to compare several glasses or catalogs easily
+  
 ## Getting Started
 
 0. Download  
-Windows binaries (portable zip) can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
+Windows/Mac binaries (portable zip) can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
 1. Load AGF  
  What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desirable AGF files.
