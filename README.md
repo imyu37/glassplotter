@@ -2,6 +2,8 @@
 
 ![MDI](image/Screenshot_MDI.png)
 
+[日本語はこちら](README_ja.md)
+
 ## Overview
 GlassPlotter is an open source, simple desktop glass catalog manager.  This application is capable of plotting glass maps, dispersion graphs and internal transmittance curves.  GlassPlotter aims to be useful for diverse optical engineers, including those who are not familiar with programming.
 
