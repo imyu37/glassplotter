@@ -26,15 +26,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QDebug>
 
-#include "aboutdialog.h"
-#include "glassmapform.h"
-#include "dispersionplotform.h"
-#include "transmittanceplotform.h"
-#include "glassdatasheetform.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -191,6 +183,6 @@ void MainWindow::closeAll()
 
 void MainWindow::showAbout()
 {
-    AboutDialog *dlg = new AboutDialog(this);
-    dlg->exec();
+    AboutDialog dlg(this);
+    dlg.exec();
 }

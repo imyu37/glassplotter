@@ -53,7 +53,7 @@ TransmittancePlotForm::~TransmittancePlotForm()
 void TransmittancePlotForm::addGraph()
 {
     if(m_customPlot->graphCount() >= m_maxGraphCount-1){
-        QMessageBox::information(this,tr("Error"), tr("Up to 5 Graphs can be plotted"));
+        QMessageBox::information(this,tr("Error"), tr("Up to 5 graphs can be plotted"));
         return;
     }
 
@@ -91,7 +91,7 @@ void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)
         x[i] = xmicron[i]*1000;
     }
 
-    y = glass->transmittance(xmicron);
+    y = glass->transmittance(xmicron, m_thickness);
 
     graph->setData(x,y);
     //graph->setName(glass->supplyer() + ": " + glass->name());
@@ -143,14 +143,17 @@ void TransmittancePlotForm::setDefault()
 {
     m_xrange = QCPRange(300,2000);
     m_yrange = QCPRange(0.0,1.2);
+    m_thickness = 25;
+
+    m_customPlot->xAxis->setRange(m_xrange);
+    m_customPlot->yAxis->setRange(m_yrange);
 
     ui->lineEdit_Xmin->setText(QString::number(m_xrange.lower));
     ui->lineEdit_Xmax->setText(QString::number(m_xrange.upper));
     ui->lineEdit_Ymin->setText(QString::number(m_yrange.lower));
     ui->lineEdit_Ymax->setText(QString::number(m_yrange.upper));
 
-    m_customPlot->xAxis->setRange(m_xrange);
-    m_customPlot->yAxis->setRange(m_yrange);
+    ui->lineEdit_Thickness->setText(QString::number(m_thickness));
 }
 
 void TransmittancePlotForm::setAxis()
@@ -159,6 +162,8 @@ void TransmittancePlotForm::setAxis()
     m_xrange.upper = ui->lineEdit_Xmax->text().toDouble();
     m_yrange.lower = ui->lineEdit_Ymin->text().toDouble();
     m_yrange.upper = ui->lineEdit_Ymax->text().toDouble();
+
+    m_thickness    = ui->lineEdit_Thickness->text().toDouble();
 
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);

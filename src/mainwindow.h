@@ -28,6 +28,16 @@
 #include <QMainWindow>
 #include "glasscatalog.h"
 
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QDebug>
+
+#include "aboutdialog.h"
+#include "glassmapform.h"
+#include "dispersionplotform.h"
+#include "transmittanceplotform.h"
+#include "glassdatasheetform.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

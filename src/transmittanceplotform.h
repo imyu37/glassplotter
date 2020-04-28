@@ -67,7 +67,6 @@ private:
     };
 
     QList<PlottedGraph*> m_plottedGraphList;
-
     QList<GlassCatalog*> m_catalogList;
 
     Ui::TransmittancePlotForm *ui;
@@ -76,6 +75,7 @@ private:
     const int m_maxGraphCount = 5;
     QCPRange m_xrange;
     QCPRange m_yrange;
+    double m_thickness;
 };
 
 #endif // TRANSMITTANCEPLOTFORM_H

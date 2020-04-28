@@ -74,9 +74,8 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
 GlassMapForm::~GlassMapForm()
 {
     m_customPlot->clearPlottables();
-
+    m_customPlot->clearItems();
     m_glassMapCtrlList.clear();
-
     m_customPlot = nullptr;
 
     delete ui;

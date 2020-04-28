@@ -36,7 +36,6 @@ Glass::Glass()
     _PgF = 0;
 
     // NM
-
     _status = "No Data";
 
     // ED 
@@ -127,30 +126,32 @@ double Glass::index(QString spectral)
 
 double Glass::transmittance(double lambdamicron, double thickness)
 {
+    double refThickness = _transmittanceData->thickness.first();
     QVector<double> sx, sy;
 
     for(int i = 0; i < _transmittanceData->size(); i++)
     {
         sx.append(_transmittanceData->wavelength.at(i));
-        sy.append(_transmittanceData->transmittance.at(i));
+        sy.append(pow(_transmittanceData->transmittance.at(i), thickness/refThickness)); // T^(t/ref_t)
     }
 
-    tk::spline s;
+    tk::spline s; // c++ cubic spline library, Tino Kluge (ttk448 at gmail.com), https://github.com/ttk592/spline
     s.set_points(sx.toStdVector(), sy.toStdVector());
     return s(lambdamicron);
 }
 
-QVector<double> Glass::transmittance(QVector<double> x)
+QVector<double> Glass::transmittance(QVector<double> x, double thickness)
 {
+    double refThickness = _transmittanceData->thickness.first();
     QVector<double> sx, sy;
 
     for(int i = 0; i < _transmittanceData->size(); i++)
     {
         sx.append(_transmittanceData->wavelength.at(i));
-        sy.append(_transmittanceData->transmittance.at(i));
+        sy.append(pow(_transmittanceData->transmittance.at(i), thickness/refThickness));
     }
 
-    tk::spline s;
+    tk::spline s; // c++ cubic spline library, Tino Kluge (ttk448 at gmail.com), https://github.com/ttk592/spline
     s.set_points(sx.toStdVector(), sy.toStdVector());
 
     QVector<double> y;

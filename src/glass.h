@@ -23,6 +23,8 @@
  *****************************************************************************/
 
 
+
+
 #ifndef GLASS_H
 #define GLASS_H
 
@@ -30,11 +32,16 @@
 #include <QList>
 
 #include "math.h"
-#include "spline.h"
+#include "spline.h" // c++ cubic spline library, Tino Kluge (ttk448 at gmail.com), https://github.com/ttk592/spline
 #include "spectralline.h"
 
 class Glass
 {
+    /**
+      @short Glass data container
+      @brief Class to handle glass property data
+      @author Hiiragi
+      */
 public:
     Glass();
     ~Glass();
@@ -44,7 +51,7 @@ public:
     public:
         DispersionData(){
             coefs.clear();
-            for(int i = 0;i<10;i++) coefs.append(0.0);
+            for(int i = 0;i<10;i++) coefs.append(0.0); //initialize
         };
         ~DispersionData(){
             coefs.clear();
@@ -102,7 +109,7 @@ public:
     double thermalCoef(int index) const { return _thermalcoefs.at(index);}
 
     double transmittance(double lambdamicron, double thickness = 25);
-    QVector<double> transmittance(QVector<double> x);
+    QVector<double> transmittance(QVector<double> x, double thickness = 25);
 
     QString status() const { return _status;}
     double nd() const { return _nd;}
