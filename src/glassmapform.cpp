@@ -126,8 +126,6 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
         switch(plotType)
         {
         case 0: //vd-nd
-            //m_customPlot->xAxis->setLabel("vd");
-            //m_customPlot->yAxis->setLabel("nd");
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->vd());
@@ -136,8 +134,6 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
             }
             break;
         case 1:
-            //m_customPlot->xAxis->setLabel("ve");
-            //m_customPlot->yAxis->setLabel("ne");
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->ve());
@@ -145,9 +141,7 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
                 str.append(catalog->glass(i)->name());
             }
             break;
-        case 2: //ve-ne
-            //m_customPlot->xAxis->setLabel("vd");
-            //m_customPlot->yAxis->setLabel("PgF");
+        case 2:
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->vd());
@@ -155,6 +149,14 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
                 str.append(catalog->glass(i)->name());
             }
             break;
+        case 3:
+            for(int i = 0; i < catalog->glassCount(); i++)
+            {
+                x.append(catalog->glass(i)->vd());
+                y.append(catalog->glass(i)->Pxy("C","t"));
+                str.append(catalog->glass(i)->name());
+            }
+
         }
 
         glassmap->setData(x,y,str);
@@ -352,6 +354,12 @@ void GlassMapForm::setDefault()
 
         m_curveCtrl->coefs << 7.278e-1 << -5.656e-3 << 5.213e-5 << -1.665e-7;
         break;
+    case 3:
+        m_customPlot->xAxis->setLabel("vd");
+        m_customPlot->yAxis->setLabel("PCt");
+
+        m_curveCtrl->coefs << 0.53 << 0.005 << 0.0<< 0.0;
+        break;
     }
 
     for(int i = 0; i < m_curveCtrl->lineEditList.size();i++){
@@ -381,6 +389,11 @@ void GlassMapForm::setDefault()
          xrange.upper = 100;
          yrange.lower = 0.5;
          yrange.upper = 0.7;
+     case 3:
+         xrange.lower = 10;
+         xrange.upper = 100;
+         yrange.lower = 0.6;
+         yrange.upper = 0.9;
      default:
          break;
      }

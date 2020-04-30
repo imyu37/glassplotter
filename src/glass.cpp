@@ -34,44 +34,34 @@ Glass::Glass()
     _vd  = 0;
     _ve  = 0;
     _PgF = 0;
-
-    // NM
+    _dPgF = 0;
     _status = "No Data";
 
-    // ED 
-    _dPgF = 0;
-
-
-    // TD
-    _thermalcoefs.clear();
-    for(int i = 0; i < 7; i++){
-        _thermalcoefs.append(0.0);
-    }
-
-    // LD
     _lambdaMax = 700;
     _lambdaMin = 400;
 
     _dispersionData = new DispersionData;
     _transmittanceData = new TransmittanceData;
+    _thermalData = new ThermalData;
 }
 
 Glass::~Glass()
 {
-    _thermalcoefs.clear();
-
     try {
         delete _dispersionData;
         _dispersionData = nullptr;
         delete _transmittanceData;
         _transmittanceData = nullptr;
+        delete _thermalData;
+        _thermalData = nullptr;
     } catch (...) {
         if(_dispersionData != nullptr)
             delete _dispersionData;
         if(_transmittanceData != nullptr)
             delete _transmittanceData;
+        if(_thermalData != nullptr)
+            delete _thermalData;
     }
-
 }
 
 double Glass::index(double lambdamicron)
@@ -197,6 +187,12 @@ QString Glass::DispersionData::formulaName()
     }
 }
 
+double Glass::dn_dT(double T, double lambdamicron)
+{
+    // should be implemented
+    return 0;
+}
+
 
 double Glass::Pxy(QString x, QString y)
 {
@@ -252,9 +248,7 @@ void Glass::setDispCoef(int index, double val)
 
 void Glass::setThermalCoef(int index, double val)
 {
-    if(index < _thermalcoefs.count()){
-        _thermalcoefs[index] = val;
-    }
+    _thermalData->coefs[index] = val;
 }
 
 void Glass::appendTransmittanceData(double lambdamicron, double trans, double thick)

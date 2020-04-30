@@ -47,6 +47,7 @@
      <addaction name="action_NdVd"/>
      <addaction name="action_NeVe"/>
      <addaction name="action_VdPgF"/>
+     <addaction name="action_VdPCt"/>
     </widget>
     <addaction name="menuGlass_Map"/>
     <addaction name="action_DispersionPlot"/>
@@ -120,6 +121,11 @@
   <action name="action_CloseAll">
    <property name="text">
     <string>Close All</string>
+   </property>
+  </action>
+  <action name="action_VdPCt">
+   <property name="text">
+    <string>Vd-PCt</string>
    </property>
   </action>
  </widget>

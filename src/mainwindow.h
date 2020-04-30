@@ -58,6 +58,7 @@ private slots:
     void showGlassMapNdVd();
     void showGlassMapNeVe();
     void showGlassMapVdPgF();
+    void showGlassMapVdPCt();
     void showDispersionPlot();
     void showTransmittancePlot();
 

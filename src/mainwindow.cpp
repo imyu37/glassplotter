@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->action_NdVd,    SIGNAL(triggered()),this, SLOT(showGlassMapNdVd()));
     QObject::connect(ui->action_NeVe,    SIGNAL(triggered()),this, SLOT(showGlassMapNeVe()));
     QObject::connect(ui->action_VdPgF,   SIGNAL(triggered()),this, SLOT(showGlassMapVdPgF()));
+    QObject::connect(ui->action_VdPCt,   SIGNAL(triggered()),this, SLOT(showGlassMapVdPCt()));
     QObject::connect(ui->action_DispersionPlot,    SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
     QObject::connect(ui->action_TransmittancePlot, SIGNAL(triggered()),this, SLOT(showTransmittancePlot()));
 
@@ -137,6 +138,23 @@ void MainWindow::showGlassMapVdPgF()
     subwindow->show();
 }
 
+void MainWindow::showGlassMapVdPCt()
+{
+    int plotType = 3;
+
+    if(m_catalogList.empty()){
+        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        return;
+    }
+
+    GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
+    ui->mdiArea->addSubWindow(subwindow);
+
+    subwindow->setWindowTitle("Vd - PCt Map");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
+    subwindow->show();
+}
+
 void MainWindow::showDispersionPlot()
 {
     if(m_catalogList.empty()){
@@ -179,7 +197,6 @@ void MainWindow::closeAll()
 {
     ui->mdiArea->closeAllSubWindows();
 }
-
 
 void MainWindow::showAbout()
 {

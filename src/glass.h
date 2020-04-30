@@ -65,6 +65,9 @@ public:
         }
         QString formulaName();
     };
+    void setDispForm(int n){ _dispersionData->formulaIndex = n;}
+    void setDispCoef(int index, double val);
+    DispersionData* dispersion(){return _dispersionData;}
 
     class TransmittanceData
     {
@@ -84,33 +87,35 @@ public:
         }
     };
 
+    double transmittance(double lambdamicron, double thickness = 25);
+    QVector<double> transmittance(QVector<double> x, double thickness = 25);
+
     class ThermalData
     {
     public:
+        ThermalData(){
+            coefs.clear();
+            for(int i = 0;i<6;i++) coefs.append(0.0); //initialize
+        }
         QVector<double> coefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
 
         double coef(int n){return coefs.at(n);}
-        double D0();
-        double D1();
-        double D2();
-        double E0();
-        double E1();
-        double Ltk();
+        double D0(){ return coefs[0]; };
+        double D1(){ return coefs[1]; };
+        double D2(){ return coefs[2]; };
+        double E0(){ return coefs[3]; };
+        double E1(){ return coefs[4]; };
+        double Ltk(){ return coefs[5]; };
     };
+    void setThermalCoef(int index, double val);
+    double dn_dT(double T, double lambdamicron);
+
 
     double index(double lambdamicron);
     double index(QString spectral);
 
     QString name() const { return _name;}
     QString supplyer() const { return _supplyer;}
-
-    DispersionData* dispersion(){return _dispersionData;}
-
-    double thermalCoef(int index) const { return _thermalcoefs.at(index);}
-
-    double transmittance(double lambdamicron, double thickness = 25);
-    QVector<double> transmittance(QVector<double> x, double thickness = 25);
-
     QString status() const { return _status;}
     double nd() const { return _nd;}
     double ne() const { return _ne;}
@@ -136,10 +141,6 @@ public:
 
     void setdPgF(double value){_dPgF = value;}
 
-    void setDispForm(int n){ _dispersionData->formulaIndex = n;}
-    void setDispCoef(int index, double val);
-
-    void setThermalCoef(int index, double val);
     void setLambdaMin(double value){ _lambdaMin = value;}
     void setLambdaMax(double value){ _lambdaMax = value;}
 
@@ -172,19 +173,14 @@ private:
     double _vd;
     double _ve;   
     double _PgF;
-
     double _dPgF;
 
-    // LD
     double _lambdaMax;
     double _lambdaMin;
 
     DispersionData* _dispersionData;
-
-    // TD
-    QList<double> _thermalcoefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
-
     TransmittanceData* _transmittanceData;
+    ThermalData* _thermalData;
 };
 
 #endif // GLASS_H

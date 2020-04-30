@@ -23,16 +23,18 @@
  *****************************************************************************/
 
 
-
 #ifndef QCPSCATTERCHART_H
 #define QCPSCATTERCHART_H
-
-//combine graph with text
 
 #include "qcustomplot.h"
 
 class QCPScatterChart
 {
+    /**
+      @short QCPScatterChart
+      @brief Class to handle scatter chart with QCustomPlot by combining QCPGraph and QCPItemText list
+      @author Hiiragi
+      */
 public:
     QCPScatterChart(QCustomPlot *customPlot);
     ~QCPScatterChart();
@@ -53,8 +55,8 @@ public:
 private:
     int m_pointCount;
     QCustomPlot* m_customPlot;
-    QCPGraph* m_graphPoints;
-    QList<QCPItemText*> m_textlabels;
+    QCPGraph* m_graphPoints; //points
+    QList<QCPItemText*> m_textlabels; // text labels for each point
 };
 
 #endif // QCPSCATTERCHART_H

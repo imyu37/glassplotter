@@ -69,7 +69,7 @@ bool GlassCatalog::loadAGF(QString AGFpath)
 {
     QFile file(AGFpath);
     if (! file.open(QIODevice::ReadOnly)) {
-        qDebug() << "File Open Error";
+        qDebug() << "AGF File Open Error";
         return false;
     }
 
