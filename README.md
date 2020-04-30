@@ -1,35 +1,36 @@
-# GlassPlotter
+# GlassPlotter - Simple Glass Map Viewer
 
 ![MDI](image/Screenshot_MDI.png)
 
 [日本語はこちら](README_ja.md)
 
 ## Overview
-GlassPlotter is an open source, simple desktop glass map viewer.  This application is capable of plotting glass maps, dispersion graphs and internal transmittance curves.  GlassPlotter would be useful for diverse optical engineers, including those who are not familiar with programming.
+GlassPlotter is an open source, desktop glass map viewer.  This application is capable of plotting some kinds of glass maps, dispersion graphs and internal transmittance curves, which allows to search and compare optical glasses easily.  GlassPlotter aims to be useful for diverse optical engineers, including those who are not familiar with programming.
 
 
 ## Key Features
-- Multi Document Interface enables flexible viewing
+- No specific environment or coding skills are required to use
+- Multi Document Interface for flexible viewing
 - Good looking plots with intaractive mouse control
-- Overlay plotting enables to compare several glasses or catalogs easily
+- Overlay plotting to compare several glasses or catalogs
   
 ## Getting Started
 
 0. Download  
-Windows/Mac binaries (portable zip) can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
+Windows/Mac binaries can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
 1. Load AGF  
- What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desirable AGF files.
+ What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desired AGF files.
 
 2. Plotting  
- Clicking an action in "Tools" menu creates a subwindow to view and control plotting.  
- User defined curve is plotted using the following formula.  
+ Clicking an action in "Tools" menu creates a subwindow to plot maps or graphs.
+ User defined curve in abbe diagram is plotted using the following formula.  
    <img src="https://latex.codecogs.com/gif.latex?y=C_{0}&plus;C_{1}x&plus;C_{2}x^2&plus;C_{3}x^3" />
 
 See also [image/demo.gif](image/demo.gif)
 
 ## Resources
-This application extracts glass data from Zemax AGF file.  Each of AGF files is available on the supplyer's web site. If Zemax has been installed to the computer, AGF files might be contained in the folder like Documents/Zemax/Glasscat.
+This application extracts glass property data from Zemax AGF file.  Each of AGF files is available on the supplyer's web site. If Zemax has been installed to the computer, AGF files might be contained in the folder like Documents/Zemax/Glasscat.
 
 Note that the AGF files included in this repository are not always up to date.
 
@@ -40,7 +41,7 @@ This application is built with:
 - [spline](https://github.com/ttk592/spline) : Cubic spline interpolation library
   
 ## License
-This project is licensed under the GPL License - see the [LICENSE](LICENSE.md) for details.
+This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE.md) for details.
 
 ## Contribution
 Contributions and feedbacks are always welcome.
