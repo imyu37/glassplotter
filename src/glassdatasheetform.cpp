@@ -40,8 +40,11 @@ GlassDataSheetForm::GlassDataSheetForm(Glass* glass, QWidget *parent) :
     ui->label_GlassName->setText( m_glass->name() );
     ui->label_SupplyerName->setText( m_glass->supplyer() );
 
+    // The layout is created with reference to Schott's website
     setUpIndicesTab();
+    setUpPartialTab();
     setUpDispersionTab();
+    setUpThermalTab();
 }
 
 GlassDataSheetForm::~GlassDataSheetForm()
@@ -95,6 +98,45 @@ void GlassDataSheetForm::setUpIndicesTab()
     }
 }
 
+void GlassDataSheetForm::setUpPartialTab()
+{
+    QWidget* scrollAreaContents = ui->scrollAreaWidgetContents_Partial;
+    QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
+    gridLayout->setObjectName(QString::fromUtf8("gridLayout_Partial"));
+
+    QLabel* label;
+    QStringList firsts, seconds;
+
+    // Px,y
+    firsts  = QStringList() << "s" << "C" << "d" << "e" << "g" << "i";
+    seconds = QStringList() << "t" << "s" << "C" << "d" << "F" << "h";
+    for(int i = 0; i < firsts.size(); i++){
+        label = new QLabel(scrollAreaContents);
+        label->setText("P " + firsts[i] + "," + seconds[i]);
+        gridLayout->addWidget(label, i, 0, 1, 1);
+
+        label = new QLabel(scrollAreaContents);
+        label->setText(QString::number(m_glass->Pxy(firsts[i], seconds[i])));
+        gridLayout->addWidget(label, i, 1, 1, 1);
+    }
+
+    // P'x,y
+    int rowOffset = gridLayout->rowCount();
+    firsts  = QStringList() << "s" << "C_" << "d" << "e" << "g" << "i";
+    seconds = QStringList() << "t" << "s" << "C_" << "d" << "F_" << "h";
+    for(int j = 0; j < firsts.size(); j++){
+        label = new QLabel(scrollAreaContents);
+        label->setText("P' " + firsts[j] + "," + seconds[j]);
+        gridLayout->addWidget(label, j+rowOffset, 0, 1, 1);
+
+        label = new QLabel(scrollAreaContents);
+        label->setText(QString::number(m_glass->Pxy_(firsts[j], seconds[j])));
+        gridLayout->addWidget(label, j+rowOffset, 1, 1, 1);
+    }
+
+}
+
+
 void GlassDataSheetForm::setUpDispersionTab()
 {
     QWidget* scrollAreaContents = ui->scrollAreaWidgetContents_Dispersion;
@@ -102,11 +144,16 @@ void GlassDataSheetForm::setUpDispersionTab()
     QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout_Dispersion"));
 
-    // formula name
     QLabel *label;
+
+    // formula name
+    label = new QLabel(scrollAreaContents);
+    label->setText("Formula");
+    gridLayout->addWidget(label, 0, 0, 1, 1);
+
     label = new QLabel(scrollAreaContents);
     label->setText(m_glass->dispersion()->formulaName());
-    gridLayout->addWidget(label, 0, 0, 1, 1);
+    gridLayout->addWidget(label, 0, 1, 1, 1);
 
     // list up coefficients
     for(int i = 1; i < m_glass->dispersion()->coefs.size();i++)
@@ -120,5 +167,32 @@ void GlassDataSheetForm::setUpDispersionTab()
         label = new QLabel(scrollAreaContents);
         label->setText(QString::number(m_glass->dispersion()->coefs[i-1]));
         gridLayout->addWidget(label, i, 1, 1, 1);
+    }
+}
+
+
+void GlassDataSheetForm::setUpThermalTab()
+{
+    QWidget* scrollAreaContents = ui->scrollAreaWidgetContents_dndT;
+    QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
+    gridLayout->setObjectName(QString::fromUtf8("gridLayout_dndT"));
+
+    QStringList coefNames = QStringList() << "D0" << "D1" << "D2" << "E0" << "E1" << "Ltk";
+    QLabel *label;
+
+    if(m_glass->thermalData()->hasData){
+        for(int i = 0; i < coefNames.size(); i++){
+            label = new QLabel(scrollAreaContents);
+            label->setText(coefNames[i]);
+            gridLayout->addWidget(label, i, 0, 1, 1);
+
+            label = new QLabel(scrollAreaContents);
+            label->setText(QString::number(m_glass->thermalData()->coef(i)));
+            gridLayout->addWidget(label, i, 1, 1, 1);
+        }
+    }else{
+        label = new QLabel(scrollAreaContents);
+        label->setText("No Data");
+        gridLayout->addWidget(label, 0, 0, 1, 1);
     }
 }

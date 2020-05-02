@@ -47,7 +47,9 @@ private:
     Glass* m_glass;
 
     void setUpIndicesTab();
+    void setUpPartialTab();
     void setUpDispersionTab();
+    void setUpThermalTab();
 };
 
 #endif // GLASSDATASHEETFORM_H

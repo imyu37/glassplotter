@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>428</height>
+    <width>609</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,8 +48,32 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>233</width>
-            <height>315</height>
+            <width>537</width>
+            <height>423</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_Partial">
+      <attribute name="title">
+       <string>Partial Dispersion</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QScrollArea" name="scrollArea_Partial">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_Partial">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>537</width>
+            <height>423</height>
            </rect>
           </property>
          </widget>
@@ -59,7 +83,7 @@
      </widget>
      <widget class="QWidget" name="tab_Dispersion">
       <attribute name="title">
-       <string>Dispersion</string>
+       <string>Constants for Dispersion</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
@@ -72,8 +96,32 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>233</width>
-            <height>315</height>
+            <width>537</width>
+            <height>423</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_dndT">
+      <attribute name="title">
+       <string>Constants for dn/dT</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QScrollArea" name="scrollArea_dndT">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_dndT">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>537</width>
+            <height>423</height>
            </rect>
           </property>
          </widget>

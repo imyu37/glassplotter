@@ -237,7 +237,7 @@ void GlassMapForm::setUpScrollArea()
         // plot on/off
         checkBox = new QCheckBox(ui->scrollAreaWidgetContents);
         checkBox->setObjectName("checkBox_plot_"+QString::number(i));
-        checkBox->setText("point");
+        checkBox->setText("Point");
         gridLayout->addWidget(checkBox, i, 1, 1, 1);
         QObject::connect(checkBox,SIGNAL(toggled(bool)), this, SLOT(update()));
         m_glassMapCtrlList.at(i)->checkBoxPlot = checkBox;
@@ -245,7 +245,7 @@ void GlassMapForm::setUpScrollArea()
         // label on/off
         checkBox = new QCheckBox(ui->scrollAreaWidgetContents);
         checkBox->setObjectName("checkBox_label_"+QString::number(i));
-        checkBox->setText("label");
+        checkBox->setText("Label");
         QObject::connect(checkBox,SIGNAL(toggled(bool)), this, SLOT(update()));
         gridLayout->addWidget(checkBox, i, 2, 1, 1);
         m_glassMapCtrlList.at(i)->checkBoxLabel = checkBox;

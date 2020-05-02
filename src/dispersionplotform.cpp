@@ -32,6 +32,7 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     ui->setupUi(this);
 
     m_catalogList = catalogList;
+    m_plottedGraphList.clear();
     m_customPlot = ui->widget;
     m_customPlot->setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     m_customPlot->xAxis->setLabel("Wavelength(nm)");
@@ -40,8 +41,6 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()), this, SLOT(addGraph()));
     QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()), this, SLOT(deleteGraph()));
     QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()), this, SLOT(setAxis()));
-
-    m_plottedGraphList.clear();
 
     setDefault();
 }
@@ -60,7 +59,8 @@ DispersionPlotForm::~DispersionPlotForm()
 void DispersionPlotForm::addGraph()
 {
     if(m_customPlot->graphCount() >= m_maxGraphCount-1){
-        QMessageBox::information(this,tr("Error"), tr("Up to 5 Graphs can be plotted"));
+        QString message = "Up to " + QString::number(m_maxGraphCount) + " graphs can be plotted";
+        QMessageBox::information(this,tr("Error"), message);
         return;
     }
 

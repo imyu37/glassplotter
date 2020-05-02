@@ -72,6 +72,7 @@ bool GlassCatalog::loadAGF(QString AGFpath)
         qDebug() << "AGF File Open Error";
         return false;
     }
+    qDebug("loading: %s",AGFpath.toUtf8().data());
 
     int linecount = 0;
     QTextStream in(&file);
@@ -104,16 +105,21 @@ bool GlassCatalog::loadAGF(QString AGFpath)
             lineparts = linetext.simplified().split(" ");
             _glasses.last()->setdPgF(lineparts[4].toDouble());
         }
-        else if(linetext.startsWith("CD")){
+        else if(linetext.startsWith("CD")){ // CD <dispersion coefficients 1 - 10>
             lineparts = linetext.simplified().split(" ");
             for(int i = 1;i<lineparts.size();i++){
                 _glasses.last()->setDispCoef(i-1,lineparts[i].toDouble());
             }
         }
-        else if(linetext.startsWith("TD")){
+        else if(linetext.startsWith("TD")){ // TD <D0> <D1> <D2> <E0> <E1> <Ltk> <Temp>
             lineparts = linetext.simplified().split(" ");
-            for(int i = 1;i<lineparts.size();i++){
-                _glasses.last()->setThermalCoef(i-1, lineparts[i].toDouble());
+            if(lineparts.size() > 7){
+                for(int i = 1;i<7;i++){
+                    _glasses.last()->thermalData()->hasData = true;
+                    _glasses.last()->setThermalCoef(i-1, lineparts[i].toDouble());
+                }
+            }else{
+                _glasses.last()->thermalData()->hasData = false;
             }
         }
         else if(linetext.startsWith("LD")){

@@ -33,6 +33,7 @@ TransmittancePlotForm::TransmittancePlotForm(QList<GlassCatalog*> catalogList, Q
     ui->setupUi(this);
 
     m_catalogList = catalogList;
+    m_plottedGraphList.clear();
     m_customPlot = ui->widget;
     m_customPlot->setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     m_customPlot->xAxis->setLabel("Wavelength(nm)");
@@ -53,7 +54,8 @@ TransmittancePlotForm::~TransmittancePlotForm()
 void TransmittancePlotForm::addGraph()
 {
     if(m_customPlot->graphCount() >= m_maxGraphCount-1){
-        QMessageBox::information(this,tr("Error"), tr("Up to 5 graphs can be plotted"));
+        QString message = "Up to " + QString::number(m_maxGraphCount) + " graphs can be plotted";
+        QMessageBox::information(this,tr("Error"), message);
         return;
     }
 
@@ -76,6 +78,13 @@ void TransmittancePlotForm::addGraph()
         updateColor();
         m_customPlot->replot();
     }
+
+    try {
+        delete dlg;
+    } catch (...) {
+        dlg = nullptr;
+    }
+
 }
 
 void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)

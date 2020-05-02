@@ -106,10 +106,12 @@ public:
         double E0(){ return coefs[3]; };
         double E1(){ return coefs[4]; };
         double Ltk(){ return coefs[5]; };
+
+        bool hasData = true;
     };
     void setThermalCoef(int index, double val);
     double dn_dT(double T, double lambdamicron);
-
+    ThermalData* thermalData(){ return _thermalData; }
 
     double index(double lambdamicron);
     double index(QString spectral);
