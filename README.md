@@ -21,7 +21,7 @@ Windows/Mac binaries can be downloaded in [Release page](https://github.com/hete
 1. Load AGF  
  What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desired AGF files.
 
-2. Plot
+2. Plot  
  Clicking an action in "Tools" menu creates a subwindow to plot maps or graphs.
  User defined curve in Abbe diagram is plotted using the following formula.  
    <img src="https://latex.codecogs.com/gif.latex?y=C_{0}&plus;C_{1}x&plus;C_{2}x^2&plus;C_{3}x^3" />
