@@ -52,7 +52,7 @@
     <addaction name="menuGlass_Map"/>
     <addaction name="action_DispersionPlot"/>
     <addaction name="action_TransmittancePlot"/>
-    <addaction name="separator"/>
+    <addaction name="action_Datasheet"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -126,6 +126,11 @@
   <action name="action_VdPCt">
    <property name="text">
     <string>Vd-PCt</string>
+   </property>
+  </action>
+  <action name="action_Datasheet">
+   <property name="text">
+    <string>Datasheet</string>
    </property>
   </action>
  </widget>

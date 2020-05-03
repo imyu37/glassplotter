@@ -40,7 +40,6 @@ public:
     GlassCatalog();
     ~GlassCatalog();
 
-    //getter
     QString supplyer() const { return _supplyer;}
     int glassCount() const {return _glasses.size();}
     Glass* glass(int index) const {return _glasses.at(index);}

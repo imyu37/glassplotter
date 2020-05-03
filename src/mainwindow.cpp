@@ -41,12 +41,13 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->action_loadAGF,SIGNAL(triggered()), this, SLOT(loadAGF()));
 
     // Tools menu
-    QObject::connect(ui->action_NdVd,    SIGNAL(triggered()),this, SLOT(showGlassMapNdVd()));
-    QObject::connect(ui->action_NeVe,    SIGNAL(triggered()),this, SLOT(showGlassMapNeVe()));
-    QObject::connect(ui->action_VdPgF,   SIGNAL(triggered()),this, SLOT(showGlassMapVdPgF()));
-    QObject::connect(ui->action_VdPCt,   SIGNAL(triggered()),this, SLOT(showGlassMapVdPCt()));
+    QObject::connect(ui->action_NdVd,              SIGNAL(triggered()),this, SLOT(showGlassMapNdVd()));
+    QObject::connect(ui->action_NeVe,              SIGNAL(triggered()),this, SLOT(showGlassMapNeVe()));
+    QObject::connect(ui->action_VdPgF,             SIGNAL(triggered()),this, SLOT(showGlassMapVdPgF()));
+    QObject::connect(ui->action_VdPCt,             SIGNAL(triggered()),this, SLOT(showGlassMapVdPCt()));
     QObject::connect(ui->action_DispersionPlot,    SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
     QObject::connect(ui->action_TransmittancePlot, SIGNAL(triggered()),this, SLOT(showTransmittancePlot()));
+    QObject::connect(ui->action_Datasheet,         SIGNAL(triggered()),this, SLOT(showDatasheet()));
 
     // Window menu
     QObject::connect(ui->action_Tile,    SIGNAL(triggered()),this, SLOT(tileWindows()));
@@ -67,7 +68,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadAGF()
 {
-    m_catalogList.clear();
+
 
     QStringList filePaths = QFileDialog::getOpenFileNames(this,
                                                           tr("select AGF"),
@@ -77,6 +78,9 @@ void MainWindow::loadAGF()
         QMessageBox::information(this,tr("File"), tr("No AGF file loaded"));
         return;
     }
+
+    // clear before reload
+    m_catalogList.clear();
 
     GlassCatalog* catalog;
     for(int i = 0; i < filePaths.size(); i++){
@@ -98,7 +102,7 @@ void MainWindow::showGlassMapNdVd()
 
     GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
-
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Vd - Nd Map");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
@@ -115,7 +119,7 @@ void MainWindow::showGlassMapNeVe()
 
     GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
-
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Ve - Ne Map");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
@@ -132,7 +136,7 @@ void MainWindow::showGlassMapVdPgF()
 
     GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
-
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Vd - PgF Map");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
@@ -149,7 +153,7 @@ void MainWindow::showGlassMapVdPCt()
 
     GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
-
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Vd - PCt Map");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
@@ -164,6 +168,7 @@ void MainWindow::showDispersionPlot()
 
     DispersionPlotForm *subwindow = new DispersionPlotForm(m_catalogList, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Dispersion Plot");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
@@ -178,10 +183,35 @@ void MainWindow::showTransmittancePlot()
 
     TransmittancePlotForm *subwindow = new TransmittancePlotForm(m_catalogList, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
     subwindow->setWindowTitle("Transmittance Plot");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
 }
+
+void MainWindow::showDatasheet()
+{
+    if(m_catalogList.empty()){
+        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        return;
+    }
+
+    GlassSelectionDialog *dlg = new GlassSelectionDialog(m_catalogList, this);
+    if(dlg->exec() == QDialog::Accepted)
+    {
+        int catalogIndex = dlg->getCatalogIndex();
+        QString glassName = dlg->getGlassName();
+        Glass* glass = m_catalogList.at(catalogIndex)->glass(glassName);
+
+        GlassDataSheetForm* subwindow = new GlassDataSheetForm(glass, ui->mdiArea);
+        ui->mdiArea->addSubWindow(subwindow);
+        subwindow->setAttribute(Qt::WA_DeleteOnClose);
+        subwindow->parentWidget()->setGeometry(0,10, this->width()*1/2,this->height()*3/4);
+        subwindow->show();
+    }
+
+}
+
 
 void MainWindow::tileWindows()
 {

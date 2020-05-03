@@ -84,12 +84,6 @@ void DispersionPlotForm::addGraph()
         m_customPlot->replot();
     }
 
-    try {
-        delete dlg;
-    } catch (...) {
-        dlg = nullptr;
-    }
-
 }
 
 void DispersionPlotForm::setData(QCPGraph *graph, Glass *glass)

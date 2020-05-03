@@ -79,12 +79,6 @@ void TransmittancePlotForm::addGraph()
         m_customPlot->replot();
     }
 
-    try {
-        delete dlg;
-    } catch (...) {
-        dlg = nullptr;
-    }
-
 }
 
 void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)

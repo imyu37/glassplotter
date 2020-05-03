@@ -50,8 +50,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void showGlassDataSheet(Glass* glass);
-
 private slots:
     void loadAGF();
 
@@ -61,6 +59,7 @@ private slots:
     void showGlassMapVdPCt();
     void showDispersionPlot();
     void showTransmittancePlot();
+    void showDatasheet();
 
     void tileWindows();
     void cascadeWindows();

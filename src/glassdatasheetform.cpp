@@ -37,8 +37,8 @@ GlassDataSheetForm::GlassDataSheetForm(Glass* glass, QWidget *parent) :
     setWindowTitle("DataSheet - " + m_glass->name());
 
     // set names
-    ui->label_GlassName->setText( m_glass->name() );
-    ui->label_SupplyerName->setText( m_glass->supplyer() );
+    ui->label_GlassName->setText( m_glass->name() + " (" + m_glass->supplyer() + ")" );
+    ui->label_Fundamental->setText( "nd= " + QString::number(m_glass->nd()) + "   Vd= " + QString::number(m_glass->vd()) );
 
     // The layout is created with reference to Schott's website
     setUpIndicesTab();

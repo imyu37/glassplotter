@@ -29,11 +29,17 @@ GlassCatalog::GlassCatalog()
     _glasses.clear();
     _supplyer = "";
 }
+
 GlassCatalog::~GlassCatalog()
 {
     if(_glasses.size() > 0){
         for(int i = 0; i < _glasses.size(); i++){
-            delete _glasses[i];
+            try {
+                delete _glasses[i];
+            } catch (...) {
+                if(_glasses[i] != nullptr)
+                    delete _glasses[i];
+            }
         }
         _glasses.clear();
     }

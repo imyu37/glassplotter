@@ -23,13 +23,13 @@ Windows/Mac binaries can be downloaded in [Release page](https://github.com/hete
 
 2. Plot  
  Clicking an action in "Tools" menu creates a subwindow to plot maps or graphs.
- User defined curve in Abbe diagram is plotted using the following formula.  
+ User defined curve in Abbe diagram is plotted using the following cubic function.  
    <img src="https://latex.codecogs.com/gif.latex?y=C_{0}&plus;C_{1}x&plus;C_{2}x^2&plus;C_{3}x^3" />
 
 See also [image/demo.gif](image/demo.gif)
 
 ## Resources
-This application extracts glass property data from Zemax AGF file.  Each AGF file is available on the respective supplyer's web site. If Zemax has been installed, AGF files might be contained in the folder like Documents/Zemax/Glasscat.
+This application extracts glass property data from Zemax AGF files.  Each of them is available on the respective supplyer's web site. If Zemax has been installed, they might be contained in the folder like Documents/Zemax/Glasscat.
 
 Note that the AGF files included in this repository are not always up to date.
 
@@ -43,5 +43,5 @@ This application is built with:
 This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE.md) for details.
 
 ## Contribution
-Contributions and feedbacks are always welcome.
+Contributions and feedbacks are greatly appreciated.
 
