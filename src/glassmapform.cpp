@@ -61,8 +61,13 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     }
     setUpScrollArea();
 
+    // neighbors
+    m_listWidgetNeighbors = ui->listWidget_Neighbors;
+    QObject::connect(ui->pushButton_showDatasheet, SIGNAL(clicked()), this, SLOT(showGlassDataSheet()));
+
     //mouse
-    QObject::connect(m_customPlot,SIGNAL(customContextMenuRequested(QPoint)),this, SLOT(contextMenuRequest(QPoint)));
+    QObject::connect(m_customPlot, SIGNAL(itemClick(QCPAbstractItem*,QMouseEvent*)), this, SLOT(showNeighbors(QCPAbstractItem*,QMouseEvent*)));
+    QObject::connect(m_customPlot,SIGNAL(mousePress(QMouseEvent*)),this, SLOT(clearNeighbors(QMouseEvent*)));
 
     // reset view button
     QObject::connect(ui->pushButton_resetView, SIGNAL(clicked()), this, SLOT(resetView()));
@@ -84,11 +89,7 @@ GlassMapForm::~GlassMapForm()
 GlassMapForm::GlassMapCtrl::GlassMapCtrl(QCustomPlot *customPlot)
 {
     m_customPlot = customPlot;
-    catalog = new GlassCatalog;
-    glassmap = new QCPScatterChart(m_customPlot);
-    labelSupplyer = new QLabel;
-    checkBoxPlot = new QCheckBox;
-    checkBoxLabel = new QCheckBox;
+    glassmap = new QCPScatterChart(m_customPlot);   
 }
 
 GlassMapForm::GlassMapCtrl::~GlassMapCtrl()
@@ -98,18 +99,9 @@ GlassMapForm::GlassMapCtrl::~GlassMapCtrl()
         catalog = nullptr;
         delete glassmap;
         glassmap = nullptr;
-        delete labelSupplyer;
-        labelSupplyer = nullptr;
-        delete checkBoxPlot;
-        checkBoxPlot = nullptr;
-        delete checkBoxLabel;
-        checkBoxLabel = nullptr;
     } catch (...) {
         catalog = nullptr;
         glassmap = nullptr;
-        labelSupplyer = nullptr;
-        checkBoxPlot = nullptr;
-        checkBoxLabel = nullptr;
     }
     m_customPlot = nullptr;
 }
@@ -181,7 +173,7 @@ GlassMapForm::CurveCtrl::CurveCtrl(QCustomPlot* customPlot)
     graph = m_customPlot->addGraph();
 
     lineEditList.clear();
-    checkBox = new QGroupBox;
+    checkBox = new QCheckBox;
 }
 
 GlassMapForm::CurveCtrl::~CurveCtrl()
@@ -191,29 +183,6 @@ GlassMapForm::CurveCtrl::~CurveCtrl()
     coefs.clear();
     delete checkBox;
     m_customPlot = nullptr;
-}
-
-void GlassMapForm::contextMenuRequest(QPoint pos)
-{
-    if(m_customPlot->selectedItems().size() > 0){ //at least one text item should be selected
-        QMenu* contextMenu;
-        contextMenu = new QMenu(this);
-        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
-        contextMenu->addAction("Show Property",this,SLOT(showGlassDataSheet()));
-        contextMenu->popup(m_customPlot->mapToGlobal(pos));
-     }
-}
-
-void GlassMapForm::showGlassDataSheet()
-{
-    if(m_customPlot->selectedItems().size() > 0){
-        QString glassName = m_customPlot->selectedItems().first()->objectName();
-        Glass* glass = getGlassFromName(glassName);
-        GlassDataSheetForm* subwindow = new GlassDataSheetForm(glass, m_parentMdiArea);
-        m_parentMdiArea->addSubWindow(subwindow);
-        subwindow->parentWidget()->setGeometry(0,10, this->width()*1/2,this->height()*3/4);
-        subwindow->show();
-    }
 }
 
 void GlassMapForm::setUpScrollArea()
@@ -254,9 +223,9 @@ void GlassMapForm::setUpScrollArea()
 
 void GlassMapForm::setUpCurveCtrl()
 {
-    QObject::connect(ui->groupBox_UserDefinedCurve,SIGNAL(toggled(bool)),
+    QObject::connect(ui->checkBox_Curve,SIGNAL(toggled(bool)),
                          this, SLOT(update()));
-    m_curveCtrl->checkBox = ui->groupBox_UserDefinedCurve;
+    m_curveCtrl->checkBox = ui->checkBox_Curve;
 
     m_curveCtrl->lineEditList.clear();
     m_curveCtrl->lineEditList << ui->lineEdit_C0 << ui->lineEdit_C1 << ui->lineEdit_C2 << ui->lineEdit_C3;
@@ -264,6 +233,74 @@ void GlassMapForm::setUpCurveCtrl()
         QObject::connect(m_curveCtrl->lineEditList[i],SIGNAL(textEdited(QString)),
                              this, SLOT(update()));
     }
+}
+
+void GlassMapForm::showNeighbors(QCPAbstractItem* item, QMouseEvent *event)
+{
+    if(m_customPlot->selectedItems().size() > 0){
+        QString glassName = item->objectName();
+        Glass* targetGlass = getGlassFromName(glassName);
+
+        //search neighbors
+        GlassCatalog* cat;
+        Glass* currentGlass;
+        double dx,dy;
+        for(int i = 0;i<m_catalogList.size();i++){
+
+            if(m_glassMapCtrlList[i]->checkBoxPlot->checkState()){
+                cat = m_catalogList[i];
+                for(int j=0;j<cat->glassCount();j++){
+                    currentGlass = cat->glass(j);
+
+                    switch(m_plotType)
+                    {
+                    case NdVd:
+                        dx = (targetGlass->vd() - currentGlass->vd());
+                        dy = (targetGlass->nd() - currentGlass->nd())*100;
+                        break;
+                    case NeVe:
+                        dx = (targetGlass->ve() - currentGlass->ve());
+                        dy = (targetGlass->ne() - currentGlass->ne())*100;
+                        break;
+                    case PgFVd:
+                        dx = (targetGlass->vd() - currentGlass->vd());
+                        dy = (targetGlass->PgF() - currentGlass->PgF())*1000;
+                        break;
+                    case PCtVd:
+                        dx = (targetGlass->vd() - currentGlass->vd());
+                        dy = (targetGlass->Pxy("C","t") - currentGlass->Pxy("C","t"))*1000;
+                        break;
+                    default:
+                        dx = 0;
+                        dy = 0;
+                    }
+
+                    if(abs(dx) < m_neighborThreshold && abs(dy) < m_neighborThreshold){
+                        m_listWidgetNeighbors->addItem(currentGlass->name() + "_" + currentGlass->supplyer());
+                    }
+                }
+            }
+        }
+    }
+    m_listWidgetNeighbors->update();
+}
+
+void GlassMapForm::clearNeighbors(QMouseEvent* event)
+{
+    m_listWidgetNeighbors->clear();
+    m_listWidgetNeighbors->update();
+}
+
+void GlassMapForm::showGlassDataSheet()
+{
+    QString selectedText = m_listWidgetNeighbors->currentItem()->text();
+    QStringList splitedText = selectedText.split("_");
+    QString glassName = splitedText[0];
+    Glass* glass = getGlassFromName(glassName);
+    GlassDataSheetForm* subwindow = new GlassDataSheetForm(glass, m_parentMdiArea);
+    m_parentMdiArea->addSubWindow(subwindow);
+    subwindow->parentWidget()->setGeometry(0,10, this->width()*1/2,this->height()*3/4);
+    subwindow->show();
 }
 
 QColor GlassMapForm::getColorFromIndex(int index)
@@ -336,25 +373,25 @@ void GlassMapForm::setDefault()
     // Coefs
     m_curveCtrl->coefs.clear();
     switch (m_plotType) {
-    case 0:
+    case NdVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("nd");
 
         m_curveCtrl->coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
         break;
-    case 1:
+    case NeVe:
         m_customPlot->xAxis->setLabel("ve");
         m_customPlot->yAxis->setLabel("ne");
 
         m_curveCtrl->coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
         break;
-    case 2:
+    case PgFVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("PgF");
 
         m_curveCtrl->coefs << 7.278e-1 << -5.656e-3 << 5.213e-5 << -1.665e-7;
         break;
-    case 3:
+    case PCtVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("PCt");
 
@@ -372,28 +409,30 @@ void GlassMapForm::setDefault()
 
      switch(m_plotType)
      {
-     case 0: // vd-nd
+     case NdVd: // vd-nd
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 1.4;
          yrange.upper = 2.1;
          break;
-     case 1: // ve-ne
+     case NeVe: // ve-ne
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 1.4;
          yrange.upper = 2.1;
          break;
-     case 2: //vd-PgF
+     case PgFVd: //vd-PgF
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 0.5;
          yrange.upper = 0.7;
-     case 3:
+         break;
+     case PCtVd:
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 0.6;
          yrange.upper = 0.9;
+         break;
      default:
          break;
      }

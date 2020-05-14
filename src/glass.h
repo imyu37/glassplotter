@@ -37,11 +37,6 @@
 
 class Glass
 {
-    /**
-      @short Glass data container
-      @brief Class to handle glass property data
-      @author Hiiragi
-      */
 public:
     Glass();
     ~Glass();

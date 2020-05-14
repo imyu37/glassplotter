@@ -68,8 +68,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadAGF()
 {
-
-
     QStringList filePaths = QFileDialog::getOpenFileNames(this,
                                                           tr("select AGF"),
                                                           QApplication::applicationDirPath(),
@@ -80,6 +78,7 @@ void MainWindow::loadAGF()
     }
 
     // clear before reload
+    ui->mdiArea->closeAllSubWindows();
     m_catalogList.clear();
 
     GlassCatalog* catalog;

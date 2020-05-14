@@ -40,6 +40,13 @@ namespace Ui {
 class GlassMapForm;
 }
 
+enum{
+    NdVd,
+    NeVe,
+    PgFVd,
+    PCtVd
+};
+
 class GlassMapForm : public QWidget
 {
     Q_OBJECT
@@ -73,7 +80,7 @@ public:
         ~CurveCtrl();
         QCPGraph* graph;
         QList<QLineEdit*> lineEditList;
-        QGroupBox* checkBox; //User defined curve is controled with checkbox inside of groupbox
+        QCheckBox* checkBox;
         QList<double> coefs;
         void setData();
         void setVisible(bool state);
@@ -87,12 +94,14 @@ public:
     void setUpScrollArea();
     void setUpCurveCtrl();
 
+
     void setDefault();
 
     QColor getColorFromIndex(int index);
 
 private slots:
-    void contextMenuRequest(QPoint pos);
+    void showNeighbors(QCPAbstractItem* item, QMouseEvent *event);
+    void clearNeighbors(QMouseEvent* event);
     void showGlassDataSheet();
 
     void update();
@@ -108,6 +117,10 @@ private:
     QList<GlassMapCtrl*> m_glassMapCtrlList;
 
     CurveCtrl *m_curveCtrl;
+
+    QListWidget* m_listWidgetNeighbors;
+
+    const double m_neighborThreshold = 0.5;
 
     int m_plotType;
 
