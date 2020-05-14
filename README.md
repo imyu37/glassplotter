@@ -26,7 +26,6 @@ Executable binaries for Windows/Mac can be downloaded in [Release page](https://
  User defined curve in glass maps is plotted using the following cubic function.  
    <img src="https://latex.codecogs.com/gif.latex?y=C_{0}&plus;C_{1}x&plus;C_{2}x^2&plus;C_{3}x^3" />
 
-See also [image/demo.gif](image/demo.gif)
 
 ## Resources
 This application extracts glass data from Zemax AGF files.  Each of AGF files is available on the respective supplyer's web site. If Zemax has been installed to the computer, they might be contained in the folder like Documents/Zemax/Glasscat.
