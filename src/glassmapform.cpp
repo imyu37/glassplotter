@@ -117,7 +117,7 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
 
         switch(plotType)
         {
-        case 0: //vd-nd
+        case NdVd: //vd-nd
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->vd());
@@ -125,7 +125,7 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
                 str.append(catalog->glass(i)->name());
             }
             break;
-        case 1:
+        case NeVe:
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->ve());
@@ -133,7 +133,7 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
                 str.append(catalog->glass(i)->name());
             }
             break;
-        case 2:
+        case PgFVd:
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->vd());
@@ -141,7 +141,7 @@ void GlassMapForm::GlassMapCtrl::setGlassMap(int plotType, QColor color)
                 str.append(catalog->glass(i)->name());
             }
             break;
-        case 3:
+        case PCtVd:
             for(int i = 0; i < catalog->glassCount(); i++)
             {
                 x.append(catalog->glass(i)->vd());
@@ -219,6 +219,7 @@ void GlassMapForm::setUpScrollArea()
         gridLayout->addWidget(checkBox, i, 2, 1, 1);
         m_glassMapCtrlList.at(i)->checkBoxLabel = checkBox;
     }
+    ui->scrollArea->setWidgetResizable(true);
 }
 
 void GlassMapForm::setUpCurveCtrl()
@@ -293,14 +294,16 @@ void GlassMapForm::clearNeighbors(QMouseEvent* event)
 
 void GlassMapForm::showGlassDataSheet()
 {
-    QString selectedText = m_listWidgetNeighbors->currentItem()->text();
-    QStringList splitedText = selectedText.split("_");
-    QString glassName = splitedText[0];
-    Glass* glass = getGlassFromName(glassName);
-    GlassDataSheetForm* subwindow = new GlassDataSheetForm(glass, m_parentMdiArea);
-    m_parentMdiArea->addSubWindow(subwindow);
-    subwindow->parentWidget()->setGeometry(0,10, this->width()*1/2,this->height()*3/4);
-    subwindow->show();
+    if(m_listWidgetNeighbors->selectedItems().size() > 0){
+        QString selectedText = m_listWidgetNeighbors->currentItem()->text();
+        QStringList splitedText = selectedText.split("_");
+        QString glassName = splitedText[0];
+        Glass* glass = getGlassFromName(glassName);
+        GlassDataSheetForm* subwindow = new GlassDataSheetForm(glass, m_parentMdiArea);
+        m_parentMdiArea->addSubWindow(subwindow);
+        subwindow->parentWidget()->setGeometry(0,10, this->width()*1/2,this->height()*3/4);
+        subwindow->show();
+    }
 }
 
 QColor GlassMapForm::getColorFromIndex(int index)

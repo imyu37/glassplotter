@@ -27,7 +27,6 @@
 #include "ui_mainwindow.h"
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -73,7 +72,7 @@ void MainWindow::loadAGF()
                                                           QApplication::applicationDirPath(),
                                                           tr("AGF files(*.agf);;All Files(*.*)"));
     if(filePaths.empty()){
-        QMessageBox::information(this,tr("File"), tr("No AGF file loaded"));
+        QMessageBox::information(this,tr("File"), tr("No AGF file is loaded"));
         return;
     }
 
@@ -95,7 +94,7 @@ void MainWindow::showGlassMapNdVd()
     int plotType = 0;
 
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -112,7 +111,7 @@ void MainWindow::showGlassMapNeVe()
     int plotType = 1;
 
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -129,7 +128,7 @@ void MainWindow::showGlassMapVdPgF()
     int plotType = 2;
 
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -146,7 +145,7 @@ void MainWindow::showGlassMapVdPCt()
     int plotType = 3;
 
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -161,7 +160,7 @@ void MainWindow::showGlassMapVdPCt()
 void MainWindow::showDispersionPlot()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -176,7 +175,7 @@ void MainWindow::showDispersionPlot()
 void MainWindow::showTransmittancePlot()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -191,7 +190,7 @@ void MainWindow::showTransmittancePlot()
 void MainWindow::showDatasheet()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("catalog list empty"));
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
