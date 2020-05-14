@@ -9,9 +9,13 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
 
 
 ## Key Features
-- No specific programming environment are required to use
-- Multi Document Interface for flexible viewing
-- Good looking plots with intaractive mouse control
+- Overlay viewing of glassmaps
+  - We, optical designers, eager to find the best glass that satisfy our aims.  Although Abbe diagram is provided by respective supplyer, we always overlap them in our mind.  This application help us with easy comparing various glass from different supplyers, which would accelerate challenging designs.
+- Support User Defined Curve
+  - We sometimes see that some patent documents claim the limit on the glassmap using a simple formula.  This application helps us with checking the current design in terms of material selection.
+- No specific programming environment is required to use
+  - Optical engineer is not always good at programming.  This application will overcome the barriar between actual engineers and modules that requires to build specific programming environment.
+  
   
 ## Getting Started
 
