@@ -1,4 +1,4 @@
-# GlassPlotter - Simple Glass Map Viewer
+# GlassPlotter - Simple Glassmap Viewer
 
 ![MDI](image/Screenshot_MDI.png)
 
@@ -10,12 +10,11 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
 
 ## Key Features
 - Overlay viewing of glassmaps
-  - We, optical designers, eager to find the best glass that satisfy our aims.  Although Abbe diagram is provided by respective supplyer, we always overlap them in our mind.  This application help us with easy comparing various glass from different supplyers, which would accelerate challenging designs.
+  - We, optical designers, eager to find the best material that satisfies the target function.  This application helps us with easy comparing various glasses from different suppliers.
 - Support User Defined Curve
-  - We sometimes see that some patent documents claim the limit on the glassmap using a simple formula.  This application helps us with checking the current design in terms of material selection.
-- No specific programming environment is required to use
-  - Optical engineer is not always good at programming.  This application will overcome the barriar between actual engineers and modules that requires to build specific programming environment.
-  
+  - Each of the glass suppliers defines its own "normal line", which confuses us in comparing glasses.  This application enables to compare optical glasses on the same norm.
+- No specific programming environment is needed
+  - Optical engineer is not always good at programming.  This application does not require building specific environment.  Just double click to run the application.
   
 ## Getting Started
 
@@ -32,7 +31,7 @@ Executable binaries for Windows/Mac can be downloaded in [Release page](https://
 
 
 ## Resources
-This application extracts glass data from Zemax AGF files.  Each of AGF files is available on the respective supplyer's web site. If Zemax has been installed to the computer, they might be contained in the folder like Documents/Zemax/Glasscat.
+This application extracts glass data from Zemax AGF files.  Each of AGF files is available on the respective supplier's web site. If Zemax has been installed to the computer, they might be contained in the folder like Documents/Zemax/Glasscat.
 
 Note that the AGF files included in this repository are not always up to date.
 
