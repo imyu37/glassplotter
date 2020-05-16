@@ -2,8 +2,6 @@
 
 ![MDI](image/Screenshot_MDI.png)
 
-[日本語はこちら](README_ja.md)
-
 ## Overview
 GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing abbe diagram, other glass maps, plotting property curves and showing datasheets, enabling to search and compare optical glasses easily.  It aims to be useful for daily work of diverse optical engineers.
 
@@ -19,7 +17,7 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
 ## Getting Started 
 Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
-See also [Wiki](https://github.com/heterophyllus/glassplotter/wiki) to get how to use.
+See also [Wiki](https://github.com/heterophyllus/glassplotter/wiki) to get how to use and other information.
 
 ## Resources
 This application extracts glass data from Zemax AGF files.  Each of AGF files is available on the respective supplier's web site. If Zemax has been installed to the computer, they might be contained in the folder like Documents/Zemax/Glasscat.
