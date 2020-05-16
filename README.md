@@ -10,25 +10,16 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
 
 ## Key Features
 - Overlay viewing of glassmaps
-  - We, optical designers, eager to find the best material that satisfies the target function.  This application helps us with easy comparing various glasses from different suppliers.
+  - We, optical designers, eager to find the best material that satisfies the target function.  This application helps us with easy searching glasses from different suppliers.
 - Support User Defined Curve
   - Each of the glass suppliers defines its own "normal line", which confuses us in comparing glasses.  This application enables to compare optical glasses on the same norm.
 - No specific programming environment is needed
-  - Optical engineer is not always good at programming.  This application does not require building specific environment.  Just double click to run the application.
+  - Optical engineers are not always good at programming.  This application does not require building specific environment.  Just double click to run the application.
   
-## Getting Started
-
-0. Download  
+## Getting Started 
 Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
 
-1. Load AGF  
- What to do first after launching is to load AGF files. Go to "File->load AGF" and then select desired AGF files.
-
-2. Plot  
- Clicking an action in "Tools" menu creates a subwindow to plot maps or graphs.
- User defined curve in glass maps is plotted using the following cubic function.  
-   <img src="https://latex.codecogs.com/gif.latex?y=C_{0}&plus;C_{1}x&plus;C_{2}x^2&plus;C_{3}x^3" />
-
+See also [Wiki](https://github.com/heterophyllus/glassplotter/wiki) to get how to use.
 
 ## Resources
 This application extracts glass data from Zemax AGF files.  Each of AGF files is available on the respective supplier's web site. If Zemax has been installed to the computer, they might be contained in the folder like Documents/Zemax/Glasscat.

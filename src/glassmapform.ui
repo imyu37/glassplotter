@@ -67,6 +67,16 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="QCheckBox" name="checkBox_Legend">
+         <property name="text">
+          <string>Legend</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -83,7 +93,7 @@
             <x>0</x>
             <y>0</y>
             <width>101</width>
-            <height>414</height>
+            <height>391</height>
            </rect>
           </property>
          </widget>
@@ -216,7 +226,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>280</width>
+        <width>155</width>
         <height>440</height>
        </rect>
       </property>

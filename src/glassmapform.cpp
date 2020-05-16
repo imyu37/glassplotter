@@ -61,6 +61,10 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     }
     setUpScrollArea();
 
+    // Legend
+    m_checkBoxLegend = ui->checkBox_Legend;
+    QObject::connect(m_checkBoxLegend,SIGNAL(toggled(bool)), this, SLOT(setLegendVisible()));
+
     // neighbors
     m_listWidgetNeighbors = ui->listWidget_Neighbors;
     QObject::connect(ui->pushButton_showDatasheet, SIGNAL(clicked()), this, SLOT(showGlassDataSheet()));
@@ -72,6 +76,7 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     // reset view button
     QObject::connect(ui->pushButton_resetView, SIGNAL(clicked()), this, SLOT(resetView()));
 
+    setTitle();
     setDefault();
     update();
 }
@@ -84,6 +89,26 @@ GlassMapForm::~GlassMapForm()
     m_customPlot = nullptr;
 
     delete ui;
+}
+
+void GlassMapForm::setTitle()
+{
+    switch (m_plotType) {
+    case NdVd:
+        this->setWindowTitle("Nd-Vd Plot");
+        break;
+    case NeVe:
+        this->setWindowTitle("Ne - Ve Plot");
+        break;
+    case PgFVd:
+        this->setWindowTitle("Vd - PgF Plot");
+        break;
+    case PCtVd:
+        this->setWindowTitle("Vd - PCt Plot");
+        break;
+    default:
+        this->setWindowTitle("Plot");
+    }
 }
 
 GlassMapForm::GlassMapCtrl::GlassMapCtrl(QCustomPlot *customPlot)
@@ -162,7 +187,7 @@ void GlassMapForm::GlassMapCtrl::setVisible(bool pointstate, bool labelstate)
     glassmap->setVisibleTextLabels(labelstate);
 }
 
-void GlassMapForm::GlassMapCtrl::setVisible()
+void GlassMapForm::GlassMapCtrl::update()
 {
     setVisible(checkBoxPlot->checkState(), checkBoxLabel->checkState());
 }
@@ -234,6 +259,12 @@ void GlassMapForm::setUpCurveCtrl()
         QObject::connect(m_curveCtrl->lineEditList[i],SIGNAL(textEdited(QString)),
                              this, SLOT(update()));
     }
+}
+
+void GlassMapForm::setLegendVisible()
+{
+    m_customPlot->legend->setVisible(m_checkBoxLegend->checkState());
+    m_customPlot->replot();
 }
 
 void GlassMapForm::showNeighbors(QCPAbstractItem* item, QMouseEvent *event)
@@ -352,7 +383,7 @@ void GlassMapForm::CurveCtrl::setVisible(bool state)
     graph->setVisible(state);
 }
 
-void GlassMapForm::CurveCtrl::setVisible()
+void GlassMapForm::CurveCtrl::update()
 {
     setVisible(checkBox->isChecked());
 }
@@ -448,13 +479,13 @@ void GlassMapForm::setDefault()
 void GlassMapForm::update()
 {
     for(int i = 0; i < m_glassMapCtrlList.size(); i++){
-        m_glassMapCtrlList.at(i)->setVisible();
+        m_glassMapCtrlList.at(i)->update();
     }
 
     // replot curve
     m_curveCtrl->getCoefsFromUI();
     m_curveCtrl->setData();
-    m_curveCtrl->setVisible();
+    m_curveCtrl->update();
 
     m_customPlot->replot();
 }

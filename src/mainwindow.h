@@ -50,6 +50,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    enum{
+        NdVd,
+        NeVe,
+        PgFVd,
+        PCtVd
+    };
+
 private slots:
     void loadAGF();
 
@@ -69,8 +76,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
+    QString m_agfDir = "";
     QList<GlassCatalog*> m_catalogList;
+
+    void showGlassMap(int plotType);
+    void updateStatusBar();
 
 };
 #endif // MAINWINDOW_H

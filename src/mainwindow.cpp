@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //setAttribute(Qt::WA_DeleteOnClose);
     setUnifiedTitleAndToolBarOnMac(true);
+
 }
 
 MainWindow::~MainWindow()
@@ -65,20 +66,32 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::updateStatusBar()
+{
+    ui->statusbar->showMessage(m_agfDir);
+}
+
 void MainWindow::loadAGF()
 {
+    // clear before reload
+    ui->mdiArea->closeAllSubWindows();
+    m_catalogList.clear();
+
     QStringList filePaths = QFileDialog::getOpenFileNames(this,
                                                           tr("select AGF"),
                                                           QApplication::applicationDirPath(),
                                                           tr("AGF files(*.agf);;All Files(*.*)"));
     if(filePaths.empty()){
         QMessageBox::information(this,tr("File"), tr("No AGF file is loaded"));
+        m_agfDir = "";
+        updateStatusBar();
         return;
     }
 
-    // clear before reload
-    ui->mdiArea->closeAllSubWindows();
-    m_catalogList.clear();
+    // show path in statusbar
+    QFileInfo finfo(filePaths.first());
+    m_agfDir = finfo.absolutePath();
+    updateStatusBar();
 
     GlassCatalog* catalog;
     for(int i = 0; i < filePaths.size(); i++){
@@ -89,10 +102,9 @@ void MainWindow::loadAGF()
     QMessageBox::information(this,tr("Message"), tr("AGF files are successfully loaded"));
 }
 
-void MainWindow::showGlassMapNdVd()
-{
-    int plotType = 0;
 
+void MainWindow::showGlassMap(int plotType)
+{
     if(m_catalogList.empty()){
         QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
         return;
@@ -101,60 +113,29 @@ void MainWindow::showGlassMapNdVd()
     GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
     ui->mdiArea->addSubWindow(subwindow);
     subwindow->setAttribute(Qt::WA_DeleteOnClose);
-    subwindow->setWindowTitle("Vd - Nd Map");
+    //subwindow->setWindowTitle("Glass Map");
     subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
     subwindow->show();
+}
+
+void MainWindow::showGlassMapNdVd()
+{
+    showGlassMap(NdVd);
 }
 
 void MainWindow::showGlassMapNeVe()
 {
-    int plotType = 1;
-
-    if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
-        return;
-    }
-
-    GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
-    ui->mdiArea->addSubWindow(subwindow);
-    subwindow->setAttribute(Qt::WA_DeleteOnClose);
-    subwindow->setWindowTitle("Ve - Ne Map");
-    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
-    subwindow->show();
+    showGlassMap(NeVe);
 }
 
 void MainWindow::showGlassMapVdPgF()
 {
-    int plotType = 2;
-
-    if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
-        return;
-    }
-
-    GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
-    ui->mdiArea->addSubWindow(subwindow);
-    subwindow->setAttribute(Qt::WA_DeleteOnClose);
-    subwindow->setWindowTitle("Vd - PgF Map");
-    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
-    subwindow->show();
+    showGlassMap(PgFVd);
 }
 
 void MainWindow::showGlassMapVdPCt()
 {
-    int plotType = 3;
-
-    if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
-        return;
-    }
-
-    GlassMapForm *subwindow = new GlassMapForm(m_catalogList, plotType, ui->mdiArea);
-    ui->mdiArea->addSubWindow(subwindow);
-    subwindow->setAttribute(Qt::WA_DeleteOnClose);
-    subwindow->setWindowTitle("Vd - PCt Map");
-    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
-    subwindow->show();
+    showGlassMap(PCtVd);
 }
 
 void MainWindow::showDispersionPlot()

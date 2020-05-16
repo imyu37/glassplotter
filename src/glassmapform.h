@@ -40,12 +40,6 @@ namespace Ui {
 class GlassMapForm;
 }
 
-enum{
-    NdVd,
-    NeVe,
-    PgFVd,
-    PCtVd
-};
 
 class GlassMapForm : public QWidget
 {
@@ -54,6 +48,13 @@ class GlassMapForm : public QWidget
 public:
     explicit GlassMapForm(QList<GlassCatalog*> catalogList, int plotType = 0, QMdiArea *parent = nullptr);
     ~GlassMapForm();
+
+    enum{
+        NdVd,
+        NeVe,
+        PgFVd,
+        PCtVd
+    };
 
     class GlassMapCtrl
     {
@@ -68,7 +69,8 @@ public:
         QCheckBox* checkBoxLabel;
         void setGlassMap(int plotType, QColor color);
         void setVisible(bool pointState, bool labelState);
-        void setVisible();
+        void update();
+
     private:
         QCustomPlot* m_customPlot;
     };
@@ -84,7 +86,7 @@ public:
         QList<double> coefs;
         void setData();
         void setVisible(bool state);
-        void setVisible();
+        void update();
         void getCoefsFromUI();
         void setCoefsToUI();
     private:
@@ -94,12 +96,12 @@ public:
     void setUpScrollArea();
     void setUpCurveCtrl();
 
-
     void setDefault();
 
     QColor getColorFromIndex(int index);
 
 private slots:
+    void setLegendVisible();
     void showNeighbors(QCPAbstractItem* item, QMouseEvent *event);
     void clearNeighbors(QMouseEvent* event);
     void showGlassDataSheet();
@@ -113,6 +115,8 @@ private:
     QMdiArea* m_parentMdiArea;
     QCustomPlot* m_customPlot;
 
+    QCheckBox* m_checkBoxLegend;
+
     QList<GlassCatalog*> m_catalogList;
     QList<GlassMapCtrl*> m_glassMapCtrlList;
 
@@ -125,6 +129,7 @@ private:
     int m_plotType;
 
     Glass* getGlassFromName(QString glassName);
+    void setTitle();
 };
 
 #endif // GLASSMAPFORM_H
