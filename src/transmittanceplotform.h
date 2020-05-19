@@ -46,15 +46,15 @@ public:
 
     void setData(QCPGraph *graph, Glass *glass);
     void setColor(QCPGraph *graph, int index);
-
     void updateColor();
-
     void setDefault();
 
 private slots:
     void addGraph();
     void deleteGraph();
     void setAxis();
+    void setLegendVisible();
+    void clearAll();
 
 private:
 

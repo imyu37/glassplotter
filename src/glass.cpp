@@ -125,7 +125,7 @@ double Glass::transmittance(double lambdamicron, double thickness)
         sy.append(pow(_transmittanceData->transmittance.at(i), thickness/refThickness)); // T^(t/ref_t)
     }
 
-    tk::spline s; // c++ cubic spline library, Tino Kluge (ttk448 at gmail.com), https://github.com/ttk592/spline
+    tk::spline s;
     s.set_points(sx.toStdVector(), sy.toStdVector());
     return s(lambdamicron);
 }
@@ -141,7 +141,7 @@ QVector<double> Glass::transmittance(QVector<double> x, double thickness)
         sy.append(pow(_transmittanceData->transmittance.at(i), thickness/refThickness));
     }
 
-    tk::spline s; // c++ cubic spline library, Tino Kluge (ttk448 at gmail.com), https://github.com/ttk592/spline
+    tk::spline s;
     s.set_points(sx.toStdVector(), sy.toStdVector());
 
     QVector<double> y;

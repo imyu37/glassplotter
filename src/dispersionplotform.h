@@ -55,6 +55,8 @@ private slots:
     void addGraph();
     void deleteGraph();
     void setAxis();
+    void setLegendVisible();
+    void clearAll();
 
 private:
     class PlottedGraph
@@ -75,6 +77,7 @@ private:
     const int m_maxGraphCount = 5;
     QCPRange m_xrange;
     QCPRange m_yrange;
+
 };
 
 #endif // DISPERSIONPLOTFORM_H

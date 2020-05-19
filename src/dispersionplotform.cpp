@@ -37,10 +37,13 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     m_customPlot->setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     m_customPlot->xAxis->setLabel("Wavelength(nm)");
     m_customPlot->yAxis->setLabel("Refractive Index");
+    m_customPlot->legend->setVisible(true);
 
     QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()), this, SLOT(addGraph()));
     QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()), this, SLOT(deleteGraph()));
     QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()), this, SLOT(setAxis()));
+    QObject::connect(ui->pushButton_Clear,      SIGNAL(clicked()), this, SLOT(clearAll()));
+    QObject::connect(ui->checkBox_Legend,       SIGNAL(toggled(bool)), this, SLOT(setLegendVisible()));
 
     setDefault();
 }
@@ -104,7 +107,6 @@ void DispersionPlotForm::setData(QCPGraph *graph, Glass *glass)
     //graph->setName(glass->supplyer() + ":" + glass->name());
     graph->setName(glass->name());
     graph->setVisible(true);
-    m_customPlot->legend->setVisible(true);
 }
 
 void DispersionPlotForm::setColor(QCPGraph *graph, int index)
@@ -175,5 +177,24 @@ void DispersionPlotForm::setAxis()
         setData(m_plottedGraphList.at(i)->graph, m_plottedGraphList.at(i)->glass);
     }
     updateColor();
+    m_customPlot->replot();
+}
+
+void DispersionPlotForm::clearAll()
+{
+    for(int i = 0; i < m_plottedGraphList.size();i++){
+        try {
+            delete m_plottedGraphList[i];
+        } catch (...) {
+            m_plottedGraphList[i] = nullptr;
+        }
+    }
+    m_plottedGraphList.clear();
+    m_customPlot->clearGraphs();
+    m_customPlot->replot();
+}
+void DispersionPlotForm::setLegendVisible()
+{
+    m_customPlot->legend->setVisible(ui->checkBox_Legend->checkState());
     m_customPlot->replot();
 }

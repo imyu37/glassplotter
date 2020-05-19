@@ -3,16 +3,16 @@
 ![MDI](image/Screenshot_MDI.png)
 
 ## Overview
-GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing abbe diagram, other glass maps, plotting property curves and showing datasheets, enabling to search and compare optical glasses easily.  It aims to be useful for daily work of diverse optical engineers.
+GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing Abbe diagram, plotting property curves and showing datasheets. It aims to be useful for daily work of diverse optical engineers.
 
 
 ## Key Features
 - Overlay viewing of glassmaps
-  - We, optical designers, eager to find the best material that satisfies the target function.  This application helps us with easy searching glasses from different suppliers.
+  - We, optical designers, eager to find the best material to satisfy the target function.  This application helps us with searching optical glasses from different suppliers.
 - Support User Defined Curve
-  - Each of the glass suppliers defines its own "normal line", which confuses us in comparing glasses.  This application enables to compare optical glasses on the same norm.
-- No specific programming environment is needed
-  - Optical engineers are not always good at programming.  This application does not require building specific environment.  Just double click to run the application.
+  - Each of the suppliers defines its own "normal line", which confuses us in comparing glasses.  This application displays the glass properties on the same basis.
+- Easy to use
+  - Optical engineers are not always familiar with programming.  GlassPlotter is a stand-alone application with good-looking GUI.
   
 ## Getting Started 
 Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).

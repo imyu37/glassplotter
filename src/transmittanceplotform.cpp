@@ -38,10 +38,13 @@ TransmittancePlotForm::TransmittancePlotForm(QList<GlassCatalog*> catalogList, Q
     m_customPlot->setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     m_customPlot->xAxis->setLabel("Wavelength(nm)");
     m_customPlot->yAxis->setLabel("Internal Transmittance");
+    m_customPlot->legend->setVisible(true);
 
-    QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()), this, SLOT(addGraph()));
-    QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()), this, SLOT(deleteGraph()));
-    QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()), this, SLOT(setAxis()));
+    QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()),     this, SLOT(addGraph()));
+    QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()),     this, SLOT(deleteGraph()));
+    QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()),     this, SLOT(setAxis()));
+    QObject::connect(ui->pushButton_Clear,      SIGNAL(clicked()),     this, SLOT(clearAll()));
+    QObject::connect(ui->checkBox_Legend,       SIGNAL(toggled(bool)), this, SLOT(setLegendVisible()));
 
     setDefault();
 }
@@ -87,6 +90,9 @@ void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)
 
     double lambdamin = (double)m_xrange.lower/1000;
     double lambdamax = (double)m_xrange.upper/1000;
+
+    //double lambdamin = glass->lambdaMin();
+    //double lambdamax = glass->lambdaMax();
 
     for(int i = 0; i<101; i++)
     {
@@ -177,5 +183,25 @@ void TransmittancePlotForm::setAxis()
         setData(m_plottedGraphList.at(i)->graph, m_plottedGraphList.at(i)->glass);
     }
     updateColor();
+    m_customPlot->replot();
+}
+
+void TransmittancePlotForm::clearAll()
+{
+    for(int i = 0; i < m_plottedGraphList.size();i++){
+        try {
+            delete m_plottedGraphList[i];
+        } catch (...) {
+            m_plottedGraphList[i] = nullptr;
+        }
+    }
+    m_plottedGraphList.clear();
+    m_customPlot->clearGraphs();
+    m_customPlot->replot();
+}
+
+void TransmittancePlotForm::setLegendVisible()
+{
+    m_customPlot->legend->setVisible(ui->checkBox_Legend->checkState());
     m_customPlot->replot();
 }
