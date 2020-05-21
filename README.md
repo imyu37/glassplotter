@@ -15,7 +15,7 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
   - Optical engineers are not always familiar with programming.  GlassPlotter is a stand-alone application with good-looking GUI.
   
 ## Getting Started 
-Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases).
+Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases/latest).
 
 See also [Wiki](https://github.com/heterophyllus/glassplotter/wiki) to get how to use and other information.
 
