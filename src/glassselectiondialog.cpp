@@ -35,6 +35,7 @@ GlassSelectionDialog::GlassSelectionDialog(QList<GlassCatalog*> catalogList, QWi
 
     m_catalogList = catalogList;
     m_comboBoxSupplyer = ui->comboBox_Supplyer;
+    m_lineEditFilter   = ui->lineEdit_Filter;
     m_listWidgetGlass  = ui->listWidget_Glass;
 
     for(int i = 0; i < m_catalogList.size(); i++){
@@ -42,9 +43,14 @@ GlassSelectionDialog::GlassSelectionDialog(QList<GlassCatalog*> catalogList, QWi
     }
 
     QObject::connect(m_comboBoxSupplyer,SIGNAL(currentIndexChanged(int)),
-                         this, SLOT(showGlassList(int)));
+                         this, SLOT(onComboChanged(int)));
 
-    showGlassList(m_comboBoxSupplyer->currentIndex());
+    QObject::connect(m_lineEditFilter,SIGNAL(textEdited(QString)),
+                         this, SLOT(updateGlassList()));
+
+    createGlassNameList();
+    updateGlassList();
+
 }
 
 GlassSelectionDialog::~GlassSelectionDialog()
@@ -53,16 +59,40 @@ GlassSelectionDialog::~GlassSelectionDialog()
     delete ui;
 }
 
-void GlassSelectionDialog::showGlassList(int catalogIndex)
+void GlassSelectionDialog::onComboChanged(int index)
 {
-    m_listWidgetGlass->clear();
+    m_lineEditFilter->clear();
+    createGlassNameList();
+    updateGlassList();
+}
 
+void GlassSelectionDialog::createGlassNameList()
+{
+    m_glassNameList.clear();
+    int catalogIndex = m_comboBoxSupplyer->currentIndex();
     GlassCatalog* catalog = m_catalogList[catalogIndex];
     for(int i = 0; i < catalog->glassCount(); i++)
     {
-        m_listWidgetGlass->addItem(catalog->glass(i)->name());
+        m_glassNameList.append(catalog->glass(i)->name());
     }
+    catalog = nullptr;
 }
+
+void GlassSelectionDialog::updateGlassList()
+{
+    m_listWidgetGlass->clear();
+
+    QStringList glassNameList = m_glassNameList;
+    QString filter = m_lineEditFilter->text();
+    if(filter.length() > 0  ){
+        glassNameList = glassNameList.filter( m_lineEditFilter->text(), Qt::CaseInsensitive );
+    }
+
+    m_listWidgetGlass->addItems(glassNameList);
+    m_listWidgetGlass->setCurrentRow(0);  // avoid selection empty
+}
+
+
 
 int GlassSelectionDialog::getCatalogIndex()
 {

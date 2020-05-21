@@ -101,11 +101,15 @@ bool GlassCatalog::loadAGF(QString AGFpath)
             _glasses.last()->setName(lineparts[1]);
             _glasses.last()->setSupplyer(_supplyer);
             _glasses.last()->setDispForm(lineparts[2].toInt());
+            _glasses.last()->setMIL(lineparts[3]);
             _glasses.last()->setNd(lineparts[4].toDouble());
             _glasses.last()->setVd(lineparts[5].toDouble());
-            if(lineparts.size() > 8){
+            if(lineparts.size() > 7){
                 _glasses.last()->setStatus(lineparts[7].toUInt());
             }
+        }
+        else if (linetext.startsWith("GC")){
+            _glasses.last()->setComment(linetext.remove(0,2).simplified());
         }
         else if (linetext.startsWith("ED")) {
             lineparts = linetext.simplified().split(" ");

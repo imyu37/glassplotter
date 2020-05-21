@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->action_DispersionPlot,    SIGNAL(triggered()),this, SLOT(showDispersionPlot()));
     QObject::connect(ui->action_TransmittancePlot, SIGNAL(triggered()),this, SLOT(showTransmittancePlot()));
     QObject::connect(ui->action_Datasheet,         SIGNAL(triggered()),this, SLOT(showDatasheet()));
+    QObject::connect(ui->action_CatalogView,       SIGNAL(triggered()),this, SLOT(showCatalogViewForm()));
 
     // Window menu
     QObject::connect(ui->action_Tile,    SIGNAL(triggered()),this, SLOT(tileWindows()));
@@ -191,6 +192,20 @@ void MainWindow::showDatasheet()
 
 }
 
+void MainWindow::showCatalogViewForm()
+{
+    if(m_catalogList.empty()){
+        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        return;
+    }
+
+    CatalogViewForm *subwindow = new CatalogViewForm(m_catalogList, ui->mdiArea);
+    ui->mdiArea->addSubWindow(subwindow);
+    subwindow->setAttribute(Qt::WA_DeleteOnClose);
+    subwindow->setWindowTitle("Catalog");
+    subwindow->parentWidget()->setGeometry(0,10,this->width()*3/4,this->height()*3/4);
+    subwindow->show();
+}
 
 void MainWindow::tileWindows()
 {

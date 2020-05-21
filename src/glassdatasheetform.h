@@ -46,6 +46,7 @@ private:
     Ui::GlassDataSheetForm *ui;
     Glass* m_glass;
 
+    void setUpBasicTab();
     void setUpIndicesTab();
     void setUpPartialTab();
     void setUpDispersionTab();

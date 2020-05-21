@@ -19,17 +19,42 @@
  **  Author  : Hiiragi                                                      **
  **  Contact : heterophyllus.work@gmail.com                                 **
  **  Website : https://github.com/heterophyllus/glassplotter                **
- **  Date    : 2020-1-25                                                    **
+ **  Date    : 2020-5-20                                                    **
  *****************************************************************************/
 
-#include "mainwindow.h"
 
-#include <QApplication>
+#ifndef CATALOGVIEWFORM_H
+#define CATALOGVIEWFORM_H
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+#include <QWidget>
+#include <QMdiArea>
+#include <QComboBox>
+#include <QTableWidget>
+#include "glasscatalog.h"
+
+namespace Ui {
+class CatalogViewForm;
 }
+
+class CatalogViewForm : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit CatalogViewForm(QList<GlassCatalog*> catalogList, QMdiArea *parent = nullptr);
+    ~CatalogViewForm();
+
+private slots:
+    void setUpTable();
+
+private:
+    Ui::CatalogViewForm *ui;
+
+    QList<GlassCatalog*> m_catalogList;
+
+    QTableWidget* m_table;
+    QComboBox* m_comboBox;
+
+};
+
+#endif // CATALOGVIEWFORM_H

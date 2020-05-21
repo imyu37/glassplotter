@@ -53,6 +53,7 @@
     <addaction name="action_DispersionPlot"/>
     <addaction name="action_TransmittancePlot"/>
     <addaction name="action_Datasheet"/>
+    <addaction name="action_CatalogView"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -131,6 +132,11 @@
   <action name="action_Datasheet">
    <property name="text">
     <string>Datasheet</string>
+   </property>
+  </action>
+  <action name="action_CatalogView">
+   <property name="text">
+    <string>Catalog View</string>
    </property>
   </action>
  </widget>

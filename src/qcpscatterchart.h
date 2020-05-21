@@ -56,7 +56,7 @@ private:
     int m_pointCount;
     QCustomPlot* m_customPlot;
     QCPGraph* m_graphPoints; //points
-    QList<QCPItemText*> m_textlabels; // text labels for each point
+    QList<QCPItemText*> m_textlabels; // text label for each point
 };
 
 #endif // QCPSCATTERCHART_H

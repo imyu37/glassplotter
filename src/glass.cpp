@@ -37,6 +37,8 @@ Glass::Glass()
     _dPgF = 0;
     _status = "No Data";
 
+    _comment = "";
+
     _lambdaMax = 700;
     _lambdaMin = 400;
 

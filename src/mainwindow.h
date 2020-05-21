@@ -37,6 +37,7 @@
 #include "dispersionplotform.h"
 #include "transmittanceplotform.h"
 #include "glassdatasheetform.h"
+#include "catalogviewform.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -67,6 +68,7 @@ private slots:
     void showDispersionPlot();
     void showTransmittancePlot();
     void showDatasheet();
+    void showCatalogViewForm();
 
     void tileWindows();
     void cascadeWindows();

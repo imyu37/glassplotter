@@ -114,6 +114,7 @@ public:
     QString name() const { return _name;}
     QString supplyer() const { return _supplyer;}
     QString status() const { return _status;}
+    QString MIL() const {return _MIL;}
     double nd() const { return _nd;}
     double ne() const { return _ne;}
     double vd() const { return _vd;}
@@ -125,18 +126,22 @@ public:
     double lambdaMin() const {return _lambdaMin;} //micron
     double lambdaMax() const {return _lambdaMax;}
 
+    QString comment() const { return _comment; }
+
     void computeProperties();
 
     void setName(QString str){ _name = str;}
     void setSupplyer(QString str){ _supplyer = str;}
+    void setMIL(QString str) {_MIL = str;}
     void setStatus(QString str);
     void setStatus(int index);
 
     void setNd(double value){ _nd = value;}
     void setVd(double value){ _vd = value;}
     void setPgF(double value){_PgF = value;}
-
     void setdPgF(double value){_dPgF = value;}
+
+    void setComment(QString str){ _comment = str; }
 
     void setLambdaMin(double value){ _lambdaMin = value;}
     void setLambdaMax(double value){ _lambdaMax = value;}
@@ -165,12 +170,15 @@ private:
     QString _name;
     QString _supplyer;
     QString _status;
+    QString _MIL;
     double _nd;
     double _ne;   
     double _vd;
     double _ve;   
     double _PgF;
     double _dPgF;
+
+    QString _comment;
 
     double _lambdaMax;
     double _lambdaMin;

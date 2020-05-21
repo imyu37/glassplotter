@@ -28,6 +28,7 @@
 #include <QDialog>
 #include <QListWidget>
 #include <QComboBox>
+#include <QSortFilterProxyModel>
 #include "glasscatalog.h"
 
 namespace Ui {
@@ -47,15 +48,19 @@ public:
     QString getGlassName();
 
 private slots:
-    void showGlassList(int catalogIndex);
+    void updateGlassList();
+    void createGlassNameList();
+    void onComboChanged(int index);
 
 private:
     Ui::GlassSelectionDialog *ui;
 
     QComboBox *m_comboBoxSupplyer;
+    QLineEdit* m_lineEditFilter;
     QListWidget *m_listWidgetGlass;
 
     QList<GlassCatalog*> m_catalogList;
+    QStringList m_glassNameList;
 
 };
 

@@ -41,6 +41,7 @@ GlassDataSheetForm::GlassDataSheetForm(Glass* glass, QWidget *parent) :
     ui->label_Fundamental->setText( "nd= " + QString::number(m_glass->nd()) + "   Vd= " + QString::number(m_glass->vd()) );
 
     // The layout is created with reference to Schott's website
+    setUpBasicTab();
     setUpIndicesTab();
     setUpPartialTab();
     setUpDispersionTab();
@@ -50,6 +51,42 @@ GlassDataSheetForm::GlassDataSheetForm(Glass* glass, QWidget *parent) :
 GlassDataSheetForm::~GlassDataSheetForm()
 {
     delete ui;
+}
+
+void GlassDataSheetForm::setUpBasicTab()
+{
+    QWidget* scrollAreaContents = ui->scrollAreaWidgetContents_Basic;
+    QGridLayout* gridLayout = new QGridLayout(scrollAreaContents);
+    gridLayout->setObjectName(QString::fromUtf8("gridLayout_Basic"));
+
+    QLabel *label;
+
+    // name
+    label = new QLabel("Name", scrollAreaContents);
+    gridLayout->addWidget(label, 0, 0, 1, 1);
+    label = new QLabel(m_glass->name(), scrollAreaContents);
+    gridLayout->addWidget(label, 0, 1, 1, 1);
+
+    // Catalog
+    label = new QLabel("Catalog", scrollAreaContents);
+    gridLayout->addWidget(label, 1, 0, 1, 1);
+    label = new QLabel(m_glass->supplyer(), scrollAreaContents);
+    gridLayout->addWidget(label, 1, 1, 1, 1);
+
+    // MIL
+    label = new QLabel("MIL", scrollAreaContents);
+    gridLayout->addWidget(label, 2, 0, 1, 1);
+    label = new QLabel(m_glass->MIL(), scrollAreaContents);
+    gridLayout->addWidget(label, 2, 1, 1, 1);
+
+    // status
+    label = new QLabel("Status", scrollAreaContents);
+    gridLayout->addWidget(label, 3, 0, 1, 1);
+    label = new QLabel(m_glass->status(), scrollAreaContents);
+    gridLayout->addWidget(label, 3, 1, 1, 1);
+
+    label = nullptr;
+
 }
 
 void GlassDataSheetForm::setUpIndicesTab()

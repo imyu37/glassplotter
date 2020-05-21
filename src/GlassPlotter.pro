@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     aboutdialog.cpp \
+    catalogviewform.cpp \
     dispersionplotform.cpp \
     glass.cpp \
     glasscatalog.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
 
 HEADERS += \
     aboutdialog.h \
+    catalogviewform.h \
     dispersionplotform.h \
     glass.h \
     glasscatalog.h \
@@ -57,6 +59,7 @@ HEADERS += \
 
 FORMS += \
     aboutdialog.ui \
+    catalogviewform.ui \
     dispersionplotform.ui \
     glassdatasheetform.ui \
     glassmapform.ui \
