@@ -3,16 +3,16 @@
 ![MDI](image/Screenshot_MDI.png)
 
 ## Overview
-GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing Abbe diagram, plotting property curves and showing datasheets. It aims to be useful for daily work of diverse optical engineers.
+GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing Abbe diagram, plotting property curves and showing datasheets. It aims to be useful for daily work of diverse optical designers.
 
 
 ## Key Features
-- Overlay viewing of glassmaps
-  - We, optical designers, eager to find the best material to satisfy the target function.  This application helps us with searching optical glasses from different suppliers.
-- Support User Defined Curve
-  - Each of the suppliers defines its own "normal line", which confuses us in comparing glasses.  This application displays the glass properties on the same basis.
+- Interactive exploring of glassmaps
+  - Optical designers eager to find the best material to satisfy the target function.  This application helps with exploring various optical glasses from different suppliers.
+- Support user defined curve
+  - Each of the suppliers defines its own "normal line", which confuses us in comparing glasses.  This application displays the glass properties on the same basis by plotting user defined curve.
 - Easy to use
-  - Optical engineers are not always familiar with programming.  GlassPlotter is a stand-alone application with good-looking GUI.
+  - Optical designers are not always familiar with programming.  GlassPlotter is developed as a stand-alone application and serves reasonable GUI, which will support diverse optical designers.
   
 ## Getting Started 
 Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases/latest).
@@ -35,4 +35,4 @@ This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE.md)
 
 ## Contribution
 Contributions and feedbacks are greatly appreciated.
-
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
