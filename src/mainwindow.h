@@ -51,6 +51,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * indexes for type of glassmap
+     */
     enum{
         NdVd,
         NeVe,
@@ -59,6 +62,10 @@ public:
     };
 
 private slots:
+
+    /**
+     * @brief load AGF files
+     */
     void loadAGF();
 
     void showGlassMapNdVd();
@@ -81,6 +88,10 @@ private:
     QString m_agfDir = "";
     QList<GlassCatalog*> m_catalogList;
 
+    /**
+     * @brief base function to show glassmap
+     * @param plotType
+     */
     void showGlassMap(int plotType);
     void updateStatusBar();
 

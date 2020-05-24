@@ -39,11 +39,21 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     m_customPlot->yAxis->setLabel("Refractive Index");
     m_customPlot->legend->setVisible(true);
 
+    m_table = ui->tableWidget;
+
     QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()), this, SLOT(addGraph()));
     QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()), this, SLOT(deleteGraph()));
     QObject::connect(ui->pushButton_SetAxis,    SIGNAL(clicked()), this, SLOT(setAxis()));
     QObject::connect(ui->pushButton_Clear,      SIGNAL(clicked()), this, SLOT(clearAll()));
     QObject::connect(ui->checkBox_Legend,       SIGNAL(toggled(bool)), this, SLOT(setLegendVisible()));
+
+    m_curveCtrl = new CurveCtrl(this);
+    m_checkBox = ui->checkBox_Curve;
+    QObject::connect(ui->checkBox_Curve,       SIGNAL(toggled(bool)), this, SLOT(updateAll()));
+    QObject::connect(ui->lineEdit_C0,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
+    QObject::connect(ui->lineEdit_C1,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
+    QObject::connect(ui->lineEdit_C2,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
+    QObject::connect(ui->lineEdit_C3,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
 
     setDefault();
 }
@@ -59,10 +69,102 @@ DispersionPlotForm::~DispersionPlotForm()
     delete ui;
 }
 
+
+DispersionPlotForm::CurveCtrl::CurveCtrl(DispersionPlotForm *super)
+{
+    m_super = super;
+    m_super -> m_customPlot = super->m_customPlot;
+    graph = m_super->m_customPlot->addGraph();
+
+    coefs.clear();
+    for(int i = 0; i < 4; i++) coefs.append(0);
+}
+
+void DispersionPlotForm::CurveCtrl::setData()
+{
+    qDebug("Call DispersionPlotForm::CurveCtrl::setData()\n");
+    if(!graph) return;
+
+    coefs[0] = m_super->ui->lineEdit_C0->text().toDouble();
+    coefs[1] = m_super->ui->lineEdit_C1->text().toDouble();
+    coefs[2] = m_super->ui->lineEdit_C2->text().toDouble();
+    coefs[3] = m_super->ui->lineEdit_C3->text().toDouble();
+    //coefs[4] = m_super->ui->lineEdit_C4->text().toDouble();
+
+    QVector<double> x(101),y(101);
+    double xmin, xmax;
+
+    xmin = m_super->m_xrange.lower;
+    xmax = m_super->m_xrange.upper;
+
+    for(int i = 0; i < 101; i++)
+    {
+        x[i] = xmin + (xmax-xmin)*(double)i/100;
+
+        y[i] = 0;
+        for(int j = 0;j < coefs.size(); j ++)
+        {
+            y[i] += coefs[j]*pow(x[i],j);
+        }
+        qDebug("%f  %f\n", x[i], y[i]);
+    }
+    xdata = x;
+    ydata = y;
+
+    graph->setData(x,y);
+    graph->setName("curve");
+
+    QPen pen;
+    pen.setColor(Qt::black); //black
+    graph->setPen(pen);
+
+}
+
+void DispersionPlotForm::CurveCtrl::setVisible(bool state)
+{
+    graph->setVisible(state);
+}
+
+
+void DispersionPlotForm::PlottedGraph::setData(QCPRange xrange)
+{
+    QVector<double> x(101),y(101);
+
+    double lambdamin = xrange.lower/1000;
+    double lambdamax = xrange.upper/1000;
+
+    for(int i = 0; i<101; i++)
+    {
+        x[i] = lambdamin + (lambdamax - lambdamin)*(double)i/100;
+        y[i] = glass->index(x[i]);
+
+        x[i] *= 1000; //micron to nano
+    }
+    graph->setData(x,y);
+    graph->setName(glass->name() + "_" + glass->supplyer() );
+    //graph->setName(glass->name());
+    graph->setVisible(true);
+
+    xdata = x;
+    ydata = y;
+
+}
+void DispersionPlotForm::PlottedGraph::setColor(int index)
+{
+    QCPColorGradient colorgrad;
+    colorgrad.loadPreset(QCPColorGradient::gpHues);
+    QColor color = colorgrad.color(index, QCPRange(0, MAX_GRAPH_COUNT));
+
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(color);
+    graph->setPen(pen);
+}
+
 void DispersionPlotForm::addGraph()
 {
-    if(m_customPlot->graphCount() >= m_maxGraphCount-1){
-        QString message = "Up to " + QString::number(m_maxGraphCount) + " graphs can be plotted";
+    if(m_customPlot->graphCount() >= MAX_GRAPH_COUNT-1){
+        QString message = "Up to " + QString::number(MAX_GRAPH_COUNT) + " graphs can be plotted";
         QMessageBox::information(this,tr("Error"), message);
         return;
     }
@@ -75,58 +177,65 @@ void DispersionPlotForm::addGraph()
         Glass* newGlass = m_catalogList.at(catalogIndex)->glass(glassName);
         QCPGraph* newGraph = m_customPlot->addGraph();
 
-        setData(newGraph,newGlass);
-
         PlottedGraph *plottedGraph = new PlottedGraph;
         plottedGraph->name = glassName;
         plottedGraph->glass = newGlass;
         plottedGraph->graph = newGraph;
         m_plottedGraphList.append(plottedGraph);
 
-        updateColor();
-        m_customPlot->replot();
+        updateAll();
     }
 
 }
 
-void DispersionPlotForm::setData(QCPGraph *graph, Glass *glass)
+
+void DispersionPlotForm::updateAll()
 {
-    QVector<double> x(101),y(101);
-
-    double lambdamin = m_xrange.lower/1000;
-    double lambdamax = m_xrange.upper/1000;
-
-    for(int i = 0; i<101; i++)
+    // plot
+    for(int i = 0; i < m_plottedGraphList.size(); i++)
     {
-        x[i] = lambdamin + (lambdamax - lambdamin)*(double)i/100;
-        y[i] = glass->index(x[i]);
-
-        x[i] *= 1000; //micron to nano
+        m_plottedGraphList[i]->setData(m_xrange);
+        m_plottedGraphList[i]->setColor(i);
     }
-    graph->setData(x,y);
-    //graph->setName(glass->supplyer() + ":" + glass->name());
-    graph->setName(glass->name());
-    graph->setVisible(true);
-}
 
-void DispersionPlotForm::setColor(QCPGraph *graph, int index)
-{
-    QCPColorGradient colorgrad;
-    colorgrad.loadPreset(QCPColorGradient::gpHues);
-    QColor color = colorgrad.color(index, QCPRange(0, m_maxGraphCount));
+    m_curveCtrl->setData();
+    m_curveCtrl->setVisible(m_checkBox->checkState());
 
-    QPen pen;
-    pen.setWidth(2);
-    pen.setColor(color);
-    graph->setPen(pen);
-}
+    m_customPlot->replot();
 
-void DispersionPlotForm::updateColor()
-{
-    for(int i = 0; i < m_plottedGraphList.size(); i++){
-        setColor(m_plottedGraphList.at(i)->graph,i);
+    // table
+    int rowCount = m_plottedGraphList[0]->xdata.size();
+    int columnCount = m_plottedGraphList.size() + 1; // lambda + glasses
+    m_table->clear();
+    m_table->setRowCount(rowCount);
+    m_table->setColumnCount(columnCount);
+
+    QStringList header = QStringList() << "WVL";
+    for(int j = 0;j<m_plottedGraphList.size();j++)
+    {
+        header << m_plottedGraphList[j]->name;
     }
+    m_table->setHorizontalHeaderLabels(header);
+
+    QTableWidgetItem* item;
+    for(int i = 0; i< rowCount; i++)
+    {
+        // wavelength
+        item = new QTableWidgetItem;
+        item->setText(QString::number(m_plottedGraphList[0]->xdata[i]));
+        m_table->setItem(i, 0, item);
+
+        // refractive indices
+        for(int j = 1; j<columnCount; j++)
+        {
+            item = new QTableWidgetItem;
+            item->setText( QString::number(m_plottedGraphList[j-1]->ydata[i]) );
+            m_table->setItem(i, j, item);
+        }
+    }
+
 }
+
 
 void DispersionPlotForm::deleteGraph()
 {
@@ -142,8 +251,7 @@ void DispersionPlotForm::deleteGraph()
             }
         }
         m_customPlot->removeGraph(selectedGraph);
-        updateColor();
-        m_customPlot->replot();
+        updateAll();
     }
 }
 
@@ -171,13 +279,7 @@ void DispersionPlotForm::setAxis()
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);
 
-    //replot at new axis
-    for(int i = 0; i < m_plottedGraphList.size(); i++)
-    {
-        setData(m_plottedGraphList.at(i)->graph, m_plottedGraphList.at(i)->glass);
-    }
-    updateColor();
-    m_customPlot->replot();
+    updateAll();
 }
 
 void DispersionPlotForm::clearAll()

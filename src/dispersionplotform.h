@@ -22,6 +22,12 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Form class for dispersion plot
+  *
+  */
+
+
 #ifndef DISPERSIONPLOTFORM_H
 #define DISPERSIONPLOTFORM_H
 
@@ -32,6 +38,8 @@
 
 #include "glassselectiondialog.h"
 
+#define MAX_GRAPH_COUNT 5
+
 namespace Ui {
 class DispersionPlotForm;
 }
@@ -41,21 +49,42 @@ class DispersionPlotForm : public QWidget
     Q_OBJECT
 
 public:
+    /**
+     * @brief DispersionPlotForm
+     * @param catalogList Glass catalig list
+     * @param parent parent QWidget MDI area
+     */
     explicit DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget *parent = nullptr);
     ~DispersionPlotForm();
 
-    void setData(QCPGraph *graph, Glass *glass);
-    void setColor(QCPGraph *graph, int index);
+    /**
+     * @brief The inner class to manage user defined curve
+     */
+    class CurveCtrl
+    {
+    public:
+        CurveCtrl(DispersionPlotForm *super);
+        ~CurveCtrl();
+        QCPGraph* graph;
+        QVector<double> xdata;
+        QVector<double> ydata;
+        QList<double> coefs;
+        void setData();
+        void setVisible(bool state);
 
-    void updateColor();
+    private:
+        DispersionPlotForm *m_super;
+    };
 
-    void setDefault();
+    CurveCtrl* m_curveCtrl;
+
 
 private slots:
     void addGraph();
     void deleteGraph();
     void setAxis();
     void setLegendVisible();
+    void updateAll();
     void clearAll();
 
 private:
@@ -65,6 +94,11 @@ private:
         QString name;
         Glass* glass;
         QCPGraph* graph;
+        QVector<double> xdata;
+        QVector<double> ydata;
+
+        void setData(QCPRange xrange);
+        void setColor(int index);
     };
 
     QList<PlottedGraph*> m_plottedGraphList;
@@ -74,9 +108,16 @@ private:
     QList<GlassCatalog*> m_catalogList;
 
     QCustomPlot* m_customPlot;
-    const int m_maxGraphCount = 5;
+
     QCPRange m_xrange;
     QCPRange m_yrange;
+
+    QCheckBox* m_checkBox;
+    QTableWidget* m_table;
+
+private:
+
+    void setDefault();
 
 };
 

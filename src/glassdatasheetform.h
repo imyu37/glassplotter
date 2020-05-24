@@ -22,6 +22,9 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Qt Form Class for Glass Datasheet
+  */
 
 #ifndef GLASSDATASHEETFORM_H
 #define GLASSDATASHEETFORM_H
@@ -46,10 +49,29 @@ private:
     Ui::GlassDataSheetForm *ui;
     Glass* m_glass;
 
+    /**
+     * @brief set up Basic Tab
+     */
     void setUpBasicTab();
+
+    /**
+     * @brief set up Indices Tab
+     */
     void setUpIndicesTab();
+
+    /**
+     * @brief set up Partial Tab
+     */
     void setUpPartialTab();
+
+    /**
+     * @brief set up Dispersion Tab
+     */
     void setUpDispersionTab();
+
+    /**
+     * @brief set up Thermal Tab
+     */
     void setUpThermalTab();
 };
 

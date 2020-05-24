@@ -23,6 +23,10 @@
  *****************************************************************************/
 
 
+/**
+  * GlassCatalog Container Class
+  * */
+
 #ifndef GLASSCATALOGUE_H
 #define GLASSCATALOGUE_H
 
@@ -40,13 +44,45 @@ public:
     GlassCatalog();
     ~GlassCatalog();
 
+    /**
+     * @brief glass supplyer name
+     * @return
+     */
     QString supplyer() const { return _supplyer;}
+
+    /**
+     * @brief get number of glasses
+     * @return
+     */
     int glassCount() const {return _glasses.size();}
+
+    /**
+     * @brief get Glass object at the index of the list
+     * @param index number
+     * @return
+     */
     Glass* glass(int index) const {return _glasses.at(index);}
+
+    /**
+     * @brief get Glass object from the name
+     * @param glassname name
+     * @return
+     */
     Glass* glass(QString glassname) const;
 
+
+    /**
+     * @brief Check if the specified glass is contained
+     * @param glassname
+     * @return
+     */
     bool hasGlass(QString glassname);
 
+    /**
+     * @brief load AGF file
+     * @param AGF file path
+     * @return
+     */
     bool loadAGF(QString AGFpath);
 
 private:

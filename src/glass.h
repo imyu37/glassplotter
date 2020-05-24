@@ -22,6 +22,10 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Glass property container class
+  */
+
 
 
 
@@ -41,9 +45,15 @@ public:
     Glass();
     ~Glass();
 
+    /**
+     * @brief Inner class to contain dispersion data
+     */
     class DispersionData
     {
     public:
+        /**
+         * @brief DispersionData
+         */
         DispersionData(){
             coefs.clear();
             for(int i = 0;i<10;i++) coefs.append(0.0); //initialize
@@ -52,18 +62,54 @@ public:
             coefs.clear();
         };
 
+        /**
+         * @brief index value to express dispersion formula
+         */
         int formulaIndex;
+
+        /**
+         * @brief coefficients of dispersion formula
+         */
         QVector<double> coefs;
 
+        /**
+         * @brief get coefficient
+         * @param n coefficient index number
+         * @return coefficient value
+         */
         double coef(int n) const {
             return coefs.at(n);
         }
+
+        /**
+         * @brief dispersion formula name
+         * @return
+         */
         QString formulaName();
     };
+
+    /**
+     * @brief set dispersion formula index
+     * @param n index
+     */
     void setDispForm(int n){ _dispersionData->formulaIndex = n;}
+
+    /**
+     * @brief set dispersion coefficient value
+     * @param n coefficient index
+     * @param val value
+     */
     void setDispCoef(int index, double val);
+
+    /**
+     * @brief Dispersion class instance
+     */
     DispersionData* dispersion(){return _dispersionData;}
 
+
+    /**
+     * @brief The inner class to contain Transmittance Data
+     */
     class TransmittanceData
     {
     public:
@@ -73,18 +119,51 @@ public:
             transmittance.clear();
             thickness.clear();
         }
+
+        /**
+         * @brief wavelengths contained in IT line of AGF
+         */
         QVector<double> wavelength;
+
+        /**
+         * @brief transmittance data contained in IT line of AGF
+         */
         QVector<double> transmittance;
+
+        /**
+         * @brief thickness data contained in IT line of AGF
+         */
         QVector<double> thickness;
 
+        /**
+         * @brief count transmittance data
+         * @return count
+         */
         int size(){
           return wavelength.size();
         }
     };
 
+    /**
+     * @brief get internal transmittance
+     * @param lambdamicron wavelength in micron
+     * @param thickness
+     * @return internal transmittance
+     */
     double transmittance(double lambdamicron, double thickness = 25);
+
+    /**
+     * @brief get internal transmittance expressed as vector
+     * @param x wavelength vector
+     * @param thickness
+     * @return internal transmittance
+     */
     QVector<double> transmittance(QVector<double> x, double thickness = 25);
 
+
+    /**
+     * @brief The inner class to contain Thermal Data
+     */
     class ThermalData
     {
     public:
@@ -92,6 +171,11 @@ public:
             coefs.clear();
             for(int i = 0;i<6;i++) coefs.append(0.0); //initialize
         }
+
+
+        /**
+         * @brief coefficients of dn/dT
+         */
         QVector<double> coefs; //<D0> <D1> <D2> <E0> <E1> <Ltk>
 
         double coef(int n){return coefs.at(n);}
@@ -108,26 +192,104 @@ public:
     double dn_dT(double T, double lambdamicron);
     ThermalData* thermalData(){ return _thermalData; }
 
+    /**
+     * @brief get refractive index at the wavelength
+     * @param lambdamicron wavelength in micron
+     * @return refractive index
+     */
     double index(double lambdamicron);
+
+    /**
+     * @brief get refractive index at the wavelength
+     * @param spectral Fraunhofer line name
+     * @return refractive index
+     */
     double index(QString spectral);
 
+    /**
+     * @brief glass name
+     */
     QString name() const { return _name;}
+
+    /**
+     * @brief supplier name
+     */
     QString supplyer() const { return _supplyer;}
+
+    /**
+     * @brief status
+     * @return
+     */
     QString status() const { return _status;}
+
+    /**
+     * @brief MIL code
+     * @return
+     */
     QString MIL() const {return _MIL;}
+
+    /**
+     * @brief nd
+     * @return
+     */
     double nd() const { return _nd;}
+
+    /**
+     * @brief ne
+     * @return
+     */
     double ne() const { return _ne;}
+
+    /**
+     * @brief Abbe value at d line
+     * @return
+     */
     double vd() const { return _vd;}
+
+    /**
+     * @brief Abbe value at e line
+     * @return
+     */
     double ve() const { return _ve;}
+
+    /**
+     * @brief PgF
+     * @return
+     */
     double PgF() const {return _PgF;}
+
+    /**
+     * @brief Pxy: partial dispersion between x and y
+     * @param x Fraunhofer line
+     * @param y Fraunhofer line
+     * @return
+     */
     double Pxy(QString x, QString y);
     double Pxy_(QString x, QString y);
 
-    double lambdaMin() const {return _lambdaMin;} //micron
+    /**
+     * @brief minimum wavelength in micron
+     * @return
+     */
+    double lambdaMin() const {return _lambdaMin;}
+
+    /**
+     * @brief maximum wavelength in micron
+     * @return
+     */
     double lambdaMax() const {return _lambdaMax;}
 
+
+    /**
+     * @brief individual glass comment
+     * @return
+     */
     QString comment() const { return _comment; }
 
+
+    /**
+     * @brief compute properties
+     */
     void computeProperties();
 
     void setName(QString str){ _name = str;}
@@ -146,6 +308,13 @@ public:
     void setLambdaMin(double value){ _lambdaMin = value;}
     void setLambdaMax(double value){ _lambdaMax = value;}
 
+
+    /**
+     * @brief append Transmittance Data expressed in IT line
+     * @param lambdamicron wavelength in micron
+     * @param trans transmittance
+     * @param thick thickness
+     */
     void appendTransmittanceData(double lambdamicron, double trans, double thick);
 
 

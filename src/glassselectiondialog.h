@@ -22,6 +22,11 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Qt Dialog Class for glass selection
+  */
+
+
 #ifndef GLASSSELECTIONDIALOG_H
 #define GLASSSELECTIONDIALOG_H
 
@@ -43,8 +48,22 @@ public:
     explicit GlassSelectionDialog(QList<GlassCatalog*> catalogList, QWidget *parent = nullptr);
     ~GlassSelectionDialog();
 
+    /**
+     * @brief get selected catalog index
+     * @return
+     */
     int getCatalogIndex();
+
+    /**
+     * @brief get selected supplyer name
+     * @return
+     */
     QString getSupplyerName();
+
+    /**
+     * @brief get selected glass name
+     * @return
+     */
     QString getGlassName();
 
 private slots:

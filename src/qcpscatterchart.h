@@ -22,6 +22,9 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Class for scatter chart using QCustomPlot
+  */
 
 #ifndef QCPSCATTERCHART_H
 #define QCPSCATTERCHART_H
@@ -30,20 +33,42 @@
 
 class QCPScatterChart
 {
-    /**
-      @short QCPScatterChart
-      @brief Class to handle scatter chart with QCustomPlot by combining QCPGraph and QCPItemText list
-      @author Hiiragi
-      */
+
 public:
     QCPScatterChart(QCustomPlot *customPlot);
     ~QCPScatterChart();
     QCPScatterChart(QCPScatterChart &other);
 
+    /**
+     * @brief parent QCustomPlot
+     * @return
+     */
     QCustomPlot* parentPlot();
+
+    /**
+     * @brief get QCPGraph that expresses scatter points
+     * @return
+     */
     QCPGraph* graphPoints();
+
+    /**
+     * @brief get QCPItemText list of glass name labels
+     * @return
+     */
     QList<QCPItemText*> textLabels();
+
+    /**
+     * @brief chart name
+     * @return
+     */
     QString name();
+
+    /**
+     * @brief set data to scatter chart
+     * @param x x coordinates of the point
+     * @param y y coordinates of the point
+     * @param str label text for every point
+     */
     void setData(QVector<double> x, QVector<double> y, QVector<QString> str);
     void setName(QString name);
     void setColor(QColor color);

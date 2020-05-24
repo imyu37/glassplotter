@@ -46,6 +46,7 @@ TransmittancePlotForm::TransmittancePlotForm(QList<GlassCatalog*> catalogList, Q
     QObject::connect(ui->pushButton_Clear,      SIGNAL(clicked()),     this, SLOT(clearAll()));
     QObject::connect(ui->checkBox_Legend,       SIGNAL(toggled(bool)), this, SLOT(setLegendVisible()));
 
+    m_table = ui->tableWidget;
     setDefault();
 }
 
@@ -69,7 +70,6 @@ void TransmittancePlotForm::addGraph()
         QString glassName = dlg->getGlassName();
         Glass* newGlass = m_catalogList.at(catalogIndex)->glass(glassName);
         QCPGraph* newGraph = m_customPlot->addGraph();
-        setData(newGraph,newGlass);
 
         PlottedGraph *plottedGraph = new PlottedGraph;
         plottedGraph->name = glassName;
@@ -78,18 +78,18 @@ void TransmittancePlotForm::addGraph()
 
         m_plottedGraphList.append(plottedGraph);
 
-        updateColor();
+        updateAll();
         m_customPlot->replot();
     }
 
 }
 
-void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)
+void TransmittancePlotForm::PlottedGraph::setData(QCPRange xrange)
 {
     QVector<double> x(101),y(101), xmicron(101);
 
-    double lambdamin = (double)m_xrange.lower/1000;
-    double lambdamax = (double)m_xrange.upper/1000;
+    double lambdamin = (double)xrange.lower/1000;
+    double lambdamax = (double)xrange.upper/1000;
 
     //double lambdamin = glass->lambdaMin();
     //double lambdamax = glass->lambdaMax();
@@ -102,18 +102,21 @@ void TransmittancePlotForm::setData(QCPGraph *graph, Glass *glass)
 
     y = glass->transmittance(xmicron, m_thickness);
 
+    xdata = x;
+    ydata = y;
+
     graph->setData(x,y);
-    //graph->setName(glass->supplyer() + ": " + glass->name());
-    graph->setName(glass->name());
+    graph->setName(glass->name() + "_" + glass->supplyer());
+    //graph->setName(glass->name());
     graph->setVisible(true);
-    m_customPlot->legend->setVisible(true);
+    //m_customPlot->legend->setVisible(true);
 }
 
-void TransmittancePlotForm::setColor(QCPGraph *graph, int index)
+void TransmittancePlotForm::PlottedGraph::setColor(int index)
 {
     QCPColorGradient colorgrad;
     colorgrad.loadPreset(QCPColorGradient::gpHues);
-    QColor color = colorgrad.color(index, QCPRange(0, m_maxGraphCount));
+    QColor color = colorgrad.color(index, QCPRange(0, MAX_GRAPH_COUNT));
 
     QPen pen;
     pen.setWidth(2);
@@ -122,13 +125,46 @@ void TransmittancePlotForm::setColor(QCPGraph *graph, int index)
     graph->setPen(pen);
 }
 
-void TransmittancePlotForm::updateColor()
+void TransmittancePlotForm::updateAll()
 {
     for(int i = 0; i < m_plottedGraphList.size(); i++){
-        setColor(m_plottedGraphList.at(i)->graph, i);
+        m_plottedGraphList[i]->m_thickness = ui->lineEdit_Thickness->text().toDouble();
+        m_plottedGraphList[i]->setData(m_xrange);
+        m_plottedGraphList[i]->setColor(i);
     }
-}
 
+    // table
+    int rowCount = m_plottedGraphList[0]->xdata.size();
+    int columnCount = m_plottedGraphList.size() + 1; // lambda + glasses
+    m_table->clear();
+    m_table->setRowCount(rowCount);
+    m_table->setColumnCount(columnCount);
+
+    QStringList header = QStringList() << "WVL";
+    for(int j = 0;j<m_plottedGraphList.size();j++)
+    {
+        header << m_plottedGraphList[j]->name;
+    }
+    m_table->setHorizontalHeaderLabels(header);
+
+    QTableWidgetItem* item;
+    for(int i = 0; i< rowCount; i++)
+    {
+        // wavelength
+        item = new QTableWidgetItem;
+        item->setText(QString::number(m_plottedGraphList[0]->xdata[i]));
+        m_table->setItem(i, 0, item);
+
+        // refractive indices
+        for(int j = 1; j<columnCount; j++)
+        {
+            item = new QTableWidgetItem;
+            item->setText( QString::number(m_plottedGraphList[j-1]->ydata[i]) );
+            m_table->setItem(i, j, item);
+        }
+    }
+
+}
 void TransmittancePlotForm::deleteGraph()
 {
     if(m_customPlot->selectedGraphs().size() > 0)
@@ -143,8 +179,7 @@ void TransmittancePlotForm::deleteGraph()
             }
         }
         m_customPlot->removeGraph(selectedGraph);
-        updateColor();
-        m_customPlot->replot();
+        updateAll();
     }
 }
 
@@ -152,7 +187,7 @@ void TransmittancePlotForm::setDefault()
 {
     m_xrange = QCPRange(300,2000);
     m_yrange = QCPRange(0.0,1.2);
-    m_thickness = 25;
+    //m_thickness = 25;
 
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);
@@ -162,7 +197,7 @@ void TransmittancePlotForm::setDefault()
     ui->lineEdit_Ymin->setText(QString::number(m_yrange.lower));
     ui->lineEdit_Ymax->setText(QString::number(m_yrange.upper));
 
-    ui->lineEdit_Thickness->setText(QString::number(m_thickness));
+    ui->lineEdit_Thickness->setText(QString::number(25));
 }
 
 void TransmittancePlotForm::setAxis()
@@ -172,17 +207,10 @@ void TransmittancePlotForm::setAxis()
     m_yrange.lower = ui->lineEdit_Ymin->text().toDouble();
     m_yrange.upper = ui->lineEdit_Ymax->text().toDouble();
 
-    m_thickness    = ui->lineEdit_Thickness->text().toDouble();
-
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);
 
-    //replot on new axis
-    for(int i = 0; i < m_plottedGraphList.size(); i++)
-    {
-        setData(m_plottedGraphList.at(i)->graph, m_plottedGraphList.at(i)->glass);
-    }
-    updateColor();
+    updateAll();
     m_customPlot->replot();
 }
 

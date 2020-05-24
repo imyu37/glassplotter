@@ -22,6 +22,10 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Qt Form Class for Glassmap
+  */
+
 #ifndef GLASSMAPFORM_H
 #define GLASSMAPFORM_H
 
@@ -49,6 +53,9 @@ public:
     explicit GlassMapForm(QList<GlassCatalog*> catalogList, int plotType = 0, QMdiArea *parent = nullptr);
     ~GlassMapForm();
 
+    /**
+     * indexes for glassmap type
+     */
     enum{
         NdVd,
         NeVe,
@@ -56,6 +63,10 @@ public:
         PCtVd
     };
 
+
+    /**
+     * @brief The inner class to manage glass map of the respective supplyer
+     */
     class GlassMapCtrl
     {
     public:
@@ -75,6 +86,10 @@ public:
         QCustomPlot* m_customPlot;
     };
 
+
+    /**
+     * @brief The inner class to manage user defined curve
+     */
     class CurveCtrl
     {
     public:
@@ -101,12 +116,40 @@ public:
     QColor getColorFromIndex(int index);
 
 private slots:
+
+    /**
+     * @brief set legend visible
+     * @name SLOT
+     */
     void setLegendVisible();
+
+    /**
+     * @brief show neighboring glass list
+     * @param item selected text item on the glassmap
+     * @param event mouse event
+     * @name SLOT
+     */
     void showNeighbors(QCPAbstractItem* item, QMouseEvent *event);
+
+    /**
+     * @brief clear neighboring glass list
+     * @param event mouse event
+     * @name SLOT
+     */
     void clearNeighbors(QMouseEvent* event);
+
+    /**
+     * @brief show GlassDataSheet form
+     * @name SLOT
+     */
     void showGlassDataSheet();
 
     void update();
+
+    /**
+     * @brief Reset axis of the glassmap
+     * @name SLOT
+     */
     void resetView();
 
 private:

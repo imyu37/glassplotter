@@ -22,6 +22,12 @@
  **  Date    : 2020-1-25                                                    **
  *****************************************************************************/
 
+/**
+  * Qt Form Class for Transmittance Plot
+  *
+  */
+
+
 #ifndef TRANSMITTANCEPLOTFORM_H
 #define TRANSMITTANCEPLOTFORM_H
 
@@ -31,6 +37,8 @@
 #include "glasscatalog.h"
 
 #include "glassselectiondialog.h"
+
+#define MAX_GRAPH_COUNT 5
 
 namespace Ui {
 class TransmittancePlotForm;
@@ -44,9 +52,6 @@ public:
     explicit TransmittancePlotForm(QList<GlassCatalog*> catalogList, QWidget *parent = nullptr);
     ~TransmittancePlotForm();
 
-    void setData(QCPGraph *graph, Glass *glass);
-    void setColor(QCPGraph *graph, int index);
-    void updateColor();
     void setDefault();
 
 private slots:
@@ -55,6 +60,7 @@ private slots:
     void setAxis();
     void setLegendVisible();
     void clearAll();
+    void updateAll();
 
 private:
 
@@ -64,6 +70,12 @@ private:
         QString name;
         Glass* glass;
         QCPGraph* graph;
+        QVector<double> xdata;
+        QVector<double> ydata;
+
+        void setData(QCPRange xrange);
+        void setColor(int  index);
+        double m_thickness=25;
     };
 
     QList<PlottedGraph*> m_plottedGraphList;
@@ -75,7 +87,9 @@ private:
     const int m_maxGraphCount = 5;
     QCPRange m_xrange;
     QCPRange m_yrange;
-    double m_thickness;
+
+
+    QTableWidget* m_table;
 };
 
 #endif // TRANSMITTANCEPLOTFORM_H
