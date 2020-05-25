@@ -48,13 +48,13 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     m_customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
     m_customPlot->legend->setVisible(true);
 
-    m_curveCtrl = new CurveCtrl(m_customPlot);
+    m_curveCtrl = new CurveCtrl(this);
     setUpCurveCtrl();
 
     GlassMapCtrl* entry;
     for(int i = 0; i < catalogList.size(); i++)
     {
-        entry = new GlassMapCtrl(m_customPlot);
+        entry = new GlassMapCtrl(this);
         entry->catalog = catalogList.at(i);
         entry->setGlassMap(m_plotType, getColorFromIndex(i));
         m_glassMapCtrlList.append(entry);
@@ -69,9 +69,14 @@ GlassMapForm::GlassMapForm(QList<GlassCatalog*> catalogList, int plotType, QMdiA
     m_listWidgetNeighbors = ui->listWidget_Neighbors;
     QObject::connect(ui->pushButton_showDatasheet, SIGNAL(clicked()), this, SLOT(showGlassDataSheet()));
 
+    ui->toolBox->setCurrentIndex(0);
+
     //mouse
     QObject::connect(m_customPlot, SIGNAL(itemClick(QCPAbstractItem*,QMouseEvent*)), this, SLOT(showNeighbors(QCPAbstractItem*,QMouseEvent*)));
     QObject::connect(m_customPlot,SIGNAL(mousePress(QMouseEvent*)),this, SLOT(clearNeighbors(QMouseEvent*)));
+
+    // fitting
+    QObject::connect(ui->pushButton_Fitting, SIGNAL(clicked()), this, SLOT(showCurveFittingDlg()));
 
     // reset view button
     QObject::connect(ui->pushButton_resetView, SIGNAL(clicked()), this, SLOT(resetView()));
@@ -111,9 +116,9 @@ void GlassMapForm::setTitle()
     }
 }
 
-GlassMapForm::GlassMapCtrl::GlassMapCtrl(QCustomPlot *customPlot)
+GlassMapForm::GlassMapCtrl::GlassMapCtrl(GlassMapForm* super)
 {
-    m_customPlot = customPlot;
+    m_customPlot = super->m_customPlot;
     glassmap = new QCPScatterChart(m_customPlot);   
 }
 
@@ -192,21 +197,34 @@ void GlassMapForm::GlassMapCtrl::update()
     setVisible(checkBoxPlot->checkState(), checkBoxLabel->checkState());
 }
 
-GlassMapForm::CurveCtrl::CurveCtrl(QCustomPlot* customPlot)
+void GlassMapForm::showCurveFittingDlg()
 {
-    m_customPlot = customPlot;
-    graph = m_customPlot->addGraph();
+    CurveFittingDialog* dlg = new CurveFittingDialog(m_catalogList, this);
+    if(dlg->exec() == QDialog::Accepted)
+    {
+        if(!dlg->calculateFitting(m_plotType)) return;
+        QList<double> coefs = dlg->fittingResult();
+        ui->lineEdit_C0->setText(QString::number(coefs[0]));
+        ui->lineEdit_C1->setText(QString::number(coefs[1]));
+        ui->lineEdit_C2->setText(QString::number(coefs[2]));
+        ui->lineEdit_C3->setText(QString::number(coefs[3]));
+        update();
+    }
+}
 
+GlassMapForm::CurveCtrl::CurveCtrl(GlassMapForm* super)
+{
+    m_customPlot = super->m_customPlot;
+    graph = m_customPlot->addGraph();
+    checkBox = super->ui->checkBox_Curve;
     lineEditList.clear();
-    checkBox = new QCheckBox;
 }
 
 GlassMapForm::CurveCtrl::~CurveCtrl()
 {
     m_customPlot->removeGraph(graph);
     lineEditList.clear();
-    coefs.clear();
-    delete checkBox;
+    checkBox = nullptr;
     m_customPlot = nullptr;
 }
 
@@ -351,6 +369,8 @@ void GlassMapForm::CurveCtrl::setData()
 {
     if(!graph) return;
 
+    double c;
+
     QVector<double> x(101),y(101);
     double xmin, xmax;
 
@@ -362,11 +382,12 @@ void GlassMapForm::CurveCtrl::setData()
         x[i] = xmin + (xmax-xmin)*(double)i/100;
 
         y[i] = 0;
-        for(int j = 0;j < coefs.size(); j ++)
+        for(int j = 0;j < lineEditList.size(); j ++)
         {
-            y[i] += coefs[j]*pow(x[i],j);
+            c = lineEditList[j]->text().toDouble();
+            y[i] += c*pow(x[i],j);
+            //y[i] += coefs[j]*pow(x[i],j);
         }
-        //qDebug("(x,y)= (%f, %f)", x[i], y[i]);
     }
 
     graph->setData(x,y);
@@ -385,77 +406,65 @@ void GlassMapForm::CurveCtrl::setVisible(bool state)
 
 void GlassMapForm::CurveCtrl::update()
 {
+    setData();
     setVisible(checkBox->isChecked());
 }
 
-void GlassMapForm::CurveCtrl::getCoefsFromUI()
-{
-    for (int i = 0; i < lineEditList.size(); i++) {
-        coefs[i] = lineEditList.at(i)->text().toDouble();
-    }
-}
-
-void GlassMapForm::CurveCtrl::setCoefsToUI()
-{
-    for (int i = 0; i < lineEditList.size(); i++) {
-        lineEditList[i]->setText(QString::number(coefs[i]));
-    }
-}
 
 void GlassMapForm::setDefault()
 {
     // Coefs
-    m_curveCtrl->coefs.clear();
+    QList<double> coefs;
+
     switch (m_plotType) {
     case NdVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("nd");
 
-        m_curveCtrl->coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
+        coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
         break;
     case NeVe:
         m_customPlot->xAxis->setLabel("ve");
         m_customPlot->yAxis->setLabel("ne");
 
-        m_curveCtrl->coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
+        coefs << 2.43 << -0.028 << 2.03e-4 << 2.9e-7;
         break;
     case PgFVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("PgF");
 
-        m_curveCtrl->coefs << 7.278e-1 << -5.656e-3 << 5.213e-5 << -1.665e-7;
+        coefs << 7.278e-1 << -5.656e-3 << 5.213e-5 << -1.665e-7;
         break;
     case PCtVd:
         m_customPlot->xAxis->setLabel("vd");
         m_customPlot->yAxis->setLabel("PCt");
 
-        m_curveCtrl->coefs << 0.53 << 0.005 << 0.0<< 0.0;
+        coefs << 0.53 << 0.005 << 0.0<< 0.0;
         break;
     }
 
     for(int i = 0; i < m_curveCtrl->lineEditList.size();i++){
-        m_curveCtrl->lineEditList[i]->setText(QString::number(m_curveCtrl->coefs[i]));
+        m_curveCtrl->lineEditList[i]->setText(QString::number(coefs[i]));
     }
-
 
     // Axis
     QCPRange xrange, yrange;
 
      switch(m_plotType)
      {
-     case NdVd: // vd-nd
+     case NdVd:
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 1.4;
          yrange.upper = 2.1;
          break;
-     case NeVe: // ve-ne
+     case NeVe:
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 1.4;
          yrange.upper = 2.1;
          break;
-     case PgFVd: //vd-PgF
+     case PgFVd:
          xrange.lower = 10;
          xrange.upper = 100;
          yrange.lower = 0.5;
@@ -483,7 +492,6 @@ void GlassMapForm::update()
     }
 
     // replot curve
-    m_curveCtrl->getCoefsFromUI();
     m_curveCtrl->setData();
     m_curveCtrl->update();
 

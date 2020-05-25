@@ -83,7 +83,7 @@ void MainWindow::loadAGF()
                                                           QApplication::applicationDirPath(),
                                                           tr("AGF files(*.agf);;All Files(*.*)"));
     if(filePaths.empty()){
-        QMessageBox::information(this,tr("File"), tr("No AGF file is loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No AGF file is loaded"));
         m_agfDir = "";
         updateStatusBar();
         return;
@@ -107,7 +107,7 @@ void MainWindow::loadAGF()
 void MainWindow::showGlassMap(int plotType)
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -142,7 +142,7 @@ void MainWindow::showGlassMapVdPCt()
 void MainWindow::showDispersionPlot()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -157,7 +157,7 @@ void MainWindow::showDispersionPlot()
 void MainWindow::showTransmittancePlot()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -172,7 +172,7 @@ void MainWindow::showTransmittancePlot()
 void MainWindow::showDatasheet()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 
@@ -195,7 +195,7 @@ void MainWindow::showDatasheet()
 void MainWindow::showCatalogViewForm()
 {
     if(m_catalogList.empty()){
-        QMessageBox::information(this,tr("File"), tr("No catalog has been loaded"));
+        QMessageBox::warning(this,tr("File"), tr("No catalog has been loaded"));
         return;
     }
 

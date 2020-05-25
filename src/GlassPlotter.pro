@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+
 SOURCES += \
     aboutdialog.cpp \
     catalogviewform.cpp \
+    curvefittingdialog.cpp \
     dispersionplotform.cpp \
     glass.cpp \
     glasscatalog.cpp \
@@ -44,6 +46,7 @@ SOURCES += \
 HEADERS += \
     aboutdialog.h \
     catalogviewform.h \
+    curvefittingdialog.h \
     dispersionplotform.h \
     glass.h \
     glasscatalog.h \
@@ -60,6 +63,7 @@ HEADERS += \
 FORMS += \
     aboutdialog.ui \
     catalogviewform.ui \
+    curvefittingdialog.ui \
     dispersionplotform.ui \
     glassdatasheetform.ui \
     glassmapform.ui \

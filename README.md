@@ -29,6 +29,7 @@ This application is built with:
 - [Qt and QtCreator](https://www.qt.io) : GUI library and IDE
 - [QCustomPlot](https://www.qcustomplot.com) : Graph plotting library
 - [spline](https://github.com/ttk592/spline) : Cubic spline interpolation library
+- [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) : Template library for linear algebra
   
 ## License
 This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE.md) for details.

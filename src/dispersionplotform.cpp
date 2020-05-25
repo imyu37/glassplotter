@@ -75,6 +75,7 @@ DispersionPlotForm::CurveCtrl::CurveCtrl(DispersionPlotForm *super)
     m_super = super;
     m_super -> m_customPlot = super->m_customPlot;
     graph = m_super->m_customPlot->addGraph();
+    graph->setName("curve");
 
     coefs.clear();
     for(int i = 0; i < 4; i++) coefs.append(0);

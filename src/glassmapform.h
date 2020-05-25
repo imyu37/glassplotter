@@ -39,6 +39,7 @@
 #include "qcpscatterchart.h"
 
 #include "glassdatasheetform.h"
+#include "curvefittingdialog.h"
 
 namespace Ui {
 class GlassMapForm;
@@ -70,7 +71,7 @@ public:
     class GlassMapCtrl
     {
     public:
-        GlassMapCtrl(QCustomPlot *customPlot);
+        GlassMapCtrl(GlassMapForm* super);
         ~GlassMapCtrl();
         QString name;
         GlassCatalog* catalog;
@@ -93,17 +94,15 @@ public:
     class CurveCtrl
     {
     public:
-        CurveCtrl(QCustomPlot* customPlot);
+        CurveCtrl(GlassMapForm* super);
         ~CurveCtrl();
         QCPGraph* graph;
         QList<QLineEdit*> lineEditList;
         QCheckBox* checkBox;
-        QList<double> coefs;
         void setData();
         void setVisible(bool state);
         void update();
-        void getCoefsFromUI();
-        void setCoefsToUI();
+
     private:
         QCustomPlot* m_customPlot;
     };
@@ -122,6 +121,12 @@ private slots:
      * @name SLOT
      */
     void setLegendVisible();
+
+    /**
+     * @brief show CurveFittingDlg
+     * @name SLOT
+     */
+    void showCurveFittingDlg();
 
     /**
      * @brief show neighboring glass list

@@ -19,42 +19,38 @@
  **  Author  : Hiiragi                                                      **
  **  Contact : heterophyllus.work@gmail.com                                 **
  **  Website : https://github.com/heterophyllus/glassplotter                **
- **  Date    : 2020-1-25                                                    **
+ **  Date    : 2020-5-25                                                    **
  *****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+/**
+  * Qt Form Class for Curve Fitting
+  */
 
-#include <QMainWindow>
-#include "glasscatalog.h"
+#ifndef CURVEFITTINGDIALOG_H
+#define CURVEFITTINGDIALOG_H
 
-#include <QFileDialog>
+#include <QDialog>
+#include <QComboBox>
+#include <QListWidget>
 #include <QMessageBox>
-#include <QDebug>
 
-#include "aboutdialog.h"
-#include "glassmapform.h"
-#include "dispersionplotform.h"
-#include "transmittanceplotform.h"
-#include "glassdatasheetform.h"
-#include "catalogviewform.h"
+#include "glasscatalog.h"
+#include "glassselectiondialog.h"
 
+#include "Eigen/Dense"
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+namespace Ui {
+class CurveFittingDialog;
+}
 
-class MainWindow : public QMainWindow
+class CurveFittingDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit CurveFittingDialog(QList<GlassCatalog*> catalogList, QWidget *parent = nullptr);
+    ~CurveFittingDialog();
 
-    /**
-     * indexes for type of glassmap
-     */
     enum{
         NdVd,
         NeVe,
@@ -62,39 +58,46 @@ public:
         PCtVd
     };
 
-private slots:
+    /**
+     * @brief Calculate coefficients of fitting curve. Called from the parent Glassmapform.
+     * @param plotType
+     * @return success/failed
+     * @note coefficients data are stored in m_fittingResult;
+     */
+    bool calculateFitting(int plotType);
 
     /**
-     * @brief load AGF files
+     * @brief get fitting result
+     * @return fitting result
      */
-    void loadAGF();
+    QList<double> fittingResult();
 
-    void showGlassMapNdVd();
-    void showGlassMapNeVe();
-    void showGlassMapVdPgF();
-    void showGlassMapVdPCt();
-    void showDispersionPlot();
-    void showTransmittancePlot();
-    void showDatasheet();
-    void showCatalogViewForm();
+private slots:
+    /**
+     * @brief add glass to the list
+     * @name SLOT
+     */
+    void addGlass();
 
-    void tileWindows();
-    void cascadeWindows();
-    void closeAll();
-
-    void showAbout();
+    /**
+     * @brief delete selected glass from the list
+     * @name SLOT
+     */
+    void deleteSelectedGlass();
 
 private:
-    Ui::MainWindow *ui;
-    QString m_agfDir = "";
+    Ui::CurveFittingDialog *ui;
+
+    QList<double> m_fittingResult;
     QList<GlassCatalog*> m_catalogList;
+    QList<Glass*> m_targetGlassList;
+    QComboBox* m_comboBoxOrder;
+    QListWidget* m_listWidget;
 
     /**
-     * @brief base function to show glassmap
-     * @param plotType
+     * @brief update m_targetGlassList from m_listWidget
      */
-    void showGlassMap(int plotType);
-    void updateStatusBar();
-
+    void updateGlassList();
 };
-#endif // MAINWINDOW_H
+
+#endif // CURVEFITTINGDIALOG_H
