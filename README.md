@@ -10,12 +10,12 @@ GlassPlotter is an open source, desktop glass map viewer.  This application is c
 - Interactive exploring of glassmaps
   - Optical designers eager to find the best material to satisfy the target function.  This application helps with exploring various optical glasses from different suppliers.
 - Support user defined curve
-  - Each of the suppliers defines its own "normal line", which confuses us in comparing glasses.  This application displays the glass properties on the same basis by plotting user defined curve.
+  - Each of the suppliers defines its own "normal line", which confuses us a lot in  comparing multiple glasses.  This application displays properties on tha same basis by plotting user defined curve.  In addition, a polynomial fitting curve can be calculated from multiple samples. 
 - Easy to use
-  - Optical designers are not always familiar with programming.  GlassPlotter is developed as a stand-alone application and serves reasonable GUI, which will support diverse optical designers.
+  - This application serves reasonable GUI, and no specific environment is needed.
   
 ## Getting Started 
-Executable binaries for Windows/Mac can be downloaded in [Release page](https://github.com/heterophyllus/glassplotter/releases/latest).
+Executable binaries for Windows/Mac can be downloaded from [Release page](https://github.com/heterophyllus/glassplotter/releases/latest).
 
 See also [Wiki](https://github.com/heterophyllus/glassplotter/wiki) to get how to use and other information.
 
