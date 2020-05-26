@@ -35,11 +35,11 @@
 #include <QCheckBox>
 #include <QScrollArea>
 
-#include "glasscatalog.h"
 #include "qcpscatterchart.h"
-
+#include "glasscatalog.h"
 #include "glassdatasheetform.h"
 #include "curvefittingdialog.h"
+#include "presetdialog.h"
 
 namespace Ui {
 class GlassMapForm;
@@ -82,7 +82,6 @@ public:
         void setGlassMap(int plotType, QColor color);
         void setVisible(bool pointState, bool labelState);
         void update();
-
     private:
         QCustomPlot* m_customPlot;
     };
@@ -101,6 +100,7 @@ public:
         QCheckBox* checkBox;
         void setData();
         void setVisible(bool state);
+        QList<double> getCoefs();
         void update();
 
     private:
@@ -111,6 +111,8 @@ public:
     void setUpCurveCtrl();
 
     void setDefault();
+
+    void saveSetting();
 
     QColor getColorFromIndex(int index);
 
@@ -157,6 +159,9 @@ private slots:
      */
     void resetView();
 
+
+    void showPresetDlg();
+
 private:
     Ui::GlassMapForm *ui;
 
@@ -178,6 +183,10 @@ private:
 
     Glass* getGlassFromName(QString glassName);
     void setTitle();
+
+    QSettings* m_settings;
+    QString m_settingFile;
+
 };
 
 #endif // GLASSMAPFORM_H

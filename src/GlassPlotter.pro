@@ -38,6 +38,7 @@ SOURCES += \
     glassselectiondialog.cpp \
     main.cpp \
     mainwindow.cpp \
+    presetdialog.cpp \
     qcpscatterchart.cpp \
     qcustomplot.cpp \
     spectralline.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     glassmapform.h \
     glassselectiondialog.h \
     mainwindow.h \
+    presetdialog.h \
     qcpscatterchart.h \
     qcustomplot.h \
     spectralline.h \
@@ -69,6 +71,7 @@ FORMS += \
     glassmapform.ui \
     glassselectiondialog.ui \
     mainwindow.ui \
+    presetdialog.ui \
     transmittanceplotform.ui
 
 # Default rules for deployment.
