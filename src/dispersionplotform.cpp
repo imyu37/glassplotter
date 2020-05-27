@@ -83,7 +83,6 @@ DispersionPlotForm::CurveCtrl::CurveCtrl(DispersionPlotForm *super)
 
 void DispersionPlotForm::CurveCtrl::setData()
 {
-    qDebug("Call DispersionPlotForm::CurveCtrl::setData()\n");
     if(!graph) return;
 
     coefs[0] = m_super->ui->lineEdit_C0->text().toDouble();
@@ -107,7 +106,7 @@ void DispersionPlotForm::CurveCtrl::setData()
         {
             y[i] += coefs[j]*pow(x[i],j);
         }
-        qDebug("%f  %f\n", x[i], y[i]);
+        //qDebug("%f  %f\n", x[i], y[i]);
     }
     xdata = x;
     ydata = y;
@@ -142,8 +141,8 @@ void DispersionPlotForm::PlottedGraph::setData(QCPRange xrange)
         x[i] *= 1000; //micron to nano
     }
     graph->setData(x,y);
-    graph->setName(glass->name() + "_" + glass->supplyer() );
-    //graph->setName(glass->name());
+    //graph->setName(glass->name() + "_" + glass->supplyer() );
+    graph->setName(glass->name());
     graph->setVisible(true);
 
     xdata = x;
@@ -164,7 +163,8 @@ void DispersionPlotForm::PlottedGraph::setColor(int index)
 
 void DispersionPlotForm::addGraph()
 {
-    if(m_customPlot->graphCount() >= MAX_GRAPH_COUNT-1){
+    if(m_customPlot->graphCount() >= MAX_GRAPH_COUNT+1) // 5 glass + 1 curve
+    {
         QString message = "Up to " + QString::number(MAX_GRAPH_COUNT) + " graphs can be plotted";
         QMessageBox::information(this,tr("Error"), message);
         return;
@@ -192,6 +192,7 @@ void DispersionPlotForm::addGraph()
 
 void DispersionPlotForm::updateAll()
 {
+
     // plot
     for(int i = 0; i < m_plottedGraphList.size(); i++)
     {

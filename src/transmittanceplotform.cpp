@@ -57,7 +57,8 @@ TransmittancePlotForm::~TransmittancePlotForm()
 
 void TransmittancePlotForm::addGraph()
 {
-    if(m_customPlot->graphCount() >= m_maxGraphCount-1){
+    if(m_customPlot->graphCount() >= m_maxGraphCount) // 5 glass
+    {
         QString message = "Up to " + QString::number(m_maxGraphCount) + " graphs can be plotted";
         QMessageBox::information(this,tr("Error"), message);
         return;
@@ -106,8 +107,8 @@ void TransmittancePlotForm::PlottedGraph::setData(QCPRange xrange)
     ydata = y;
 
     graph->setData(x,y);
-    graph->setName(glass->name() + "_" + glass->supplyer());
-    //graph->setName(glass->name());
+    //graph->setName(glass->name() + "_" + glass->supplyer());
+    graph->setName(glass->name());
     graph->setVisible(true);
     //m_customPlot->legend->setVisible(true);
 }
@@ -132,6 +133,7 @@ void TransmittancePlotForm::updateAll()
         m_plottedGraphList[i]->setData(m_xrange);
         m_plottedGraphList[i]->setColor(i);
     }
+    m_customPlot->replot();
 
     // table
     int rowCount = m_plottedGraphList[0]->xdata.size();
