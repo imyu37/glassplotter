@@ -3,7 +3,7 @@
 ![MDI](image/Screenshot_MDI.png)
 
 ## Overview
-GlassPlotter is an open source, desktop glass map viewer.  This application is capable of visualizing Abbe diagram, plotting property curves and showing datasheets. It aims to be useful for daily work of diverse optical designers.
+GlassPlotter is an open source, desktop glass map viewer which is capable of visualizing Abbe diagram, plotting property curves and showing datasheets, etc. It aims to be useful for daily work of diverse optical designers.
 
 
 ## Key Features
@@ -32,7 +32,7 @@ This application is built with:
 - [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) : Template library for linear algebra
   
 ## License
-This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE.md) for details.
+This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE.md) for details.
 
 ## Contribution
 Contributions and feedbacks are greatly appreciated.
