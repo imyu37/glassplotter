@@ -91,6 +91,8 @@ private:
     class PlottedGraph
     {
     public:
+        PlottedGraph(DispersionPlotForm *super);
+        ~PlottedGraph();
         QString name;
         Glass* glass;
         QCPGraph* graph;
@@ -99,6 +101,8 @@ private:
 
         void setData(QCPRange xrange);
         void setColor(int index);
+    private:
+        DispersionPlotForm *m_super;
     };
 
     QList<PlottedGraph*> m_plottedGraphList;
@@ -115,9 +119,12 @@ private:
     QCheckBox* m_checkBox;
     QTableWidget* m_table;
 
+    double plotStep = 5;
+
 private:
 
     void setDefault();
+
 
 };
 

@@ -26,7 +26,7 @@ This application can extract glass data from catalog files in two formats.
   AGF files are available on the respective manufacturers' web site. 
 
 2. CODE V XML  
-   CODE V XML files are avaulable on [Synopsys support page](https://www.synopsys.com/optical-solutions/support/support-glass-catalog.html)
+   CODE V XML files are available on [Synopsys support page](https://www.synopsys.com/optical-solutions/support/support-glass-catalog.html)
 
 If Zemax or CODE V has been installed, glass catalog files are assumed to be in the folder under the installation directory.
 

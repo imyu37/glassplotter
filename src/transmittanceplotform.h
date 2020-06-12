@@ -54,6 +54,8 @@ public:
 
     void setDefault();
 
+    double plotStep = 5;
+
 private slots:
     void addGraph();
     void deleteGraph();
@@ -67,6 +69,7 @@ private:
     class PlottedGraph
     {
     public:
+        PlottedGraph(TransmittancePlotForm *super);
         QString name;
         Glass* glass;
         QCPGraph* graph;
@@ -76,6 +79,8 @@ private:
         void setData(QCPRange xrange);
         void setColor(int  index);
         double m_thickness=25;
+    private:
+        TransmittancePlotForm* m_super;
     };
 
     QList<PlottedGraph*> m_plottedGraphList;
@@ -88,8 +93,10 @@ private:
     QCPRange m_xrange;
     QCPRange m_yrange;
 
-
     QTableWidget* m_table;
+
+
+
 };
 
 #endif // TRANSMITTANCEPLOTFORM_H

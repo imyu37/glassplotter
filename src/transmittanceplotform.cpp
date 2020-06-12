@@ -72,7 +72,7 @@ void TransmittancePlotForm::addGraph()
         Glass* newGlass = m_catalogList.at(catalogIndex)->glass(glassName);
         QCPGraph* newGraph = m_customPlot->addGraph();
 
-        PlottedGraph *plottedGraph = new PlottedGraph;
+        PlottedGraph *plottedGraph = new PlottedGraph(this);
         plottedGraph->name = glassName;
         plottedGraph->glass = newGlass;
         plottedGraph->graph = newGraph;
@@ -85,28 +85,34 @@ void TransmittancePlotForm::addGraph()
 
 }
 
+TransmittancePlotForm::PlottedGraph::PlottedGraph(TransmittancePlotForm *super)
+{
+    m_super = super;
+}
+
 void TransmittancePlotForm::PlottedGraph::setData(QCPRange xrange)
 {
-    QVector<double> x(101),y(101), xmicron(101);
+    xdata.clear();
+    ydata.clear();
 
-    double lambdamin = (double)xrange.lower/1000;
-    double lambdamax = (double)xrange.upper/1000;
+    double x,y;
 
-    //double lambdamin = glass->lambdaMin();
-    //double lambdamax = glass->lambdaMax();
+    double lambdamin = (double)xrange.lower;
+    double lambdamax = (double)xrange.upper;
+    double lambdanano = lambdamin;
 
-    for(int i = 0; i<101; i++)
+    while(lambdanano < lambdamax)
     {
-        xmicron[i] = lambdamin + (lambdamax - lambdamin)*(double)i/100;
-        x[i] = xmicron[i]*1000;
+        x = lambdanano;
+        y = glass->transmittance(x/1000, m_thickness);
+
+        xdata.append(x);
+        ydata.append(y);
+
+        lambdanano += m_super->plotStep;
     }
 
-    y = glass->transmittance(xmicron, m_thickness);
-
-    xdata = x;
-    ydata = y;
-
-    graph->setData(x,y);
+    graph->setData(xdata,ydata);
     //graph->setName(glass->name() + "_" + glass->supplyer());
     graph->setName(glass->name());
     graph->setVisible(true);
@@ -157,7 +163,7 @@ void TransmittancePlotForm::updateAll()
         item->setText(QString::number(m_plottedGraphList[0]->xdata[i]));
         m_table->setItem(i, 0, item);
 
-        // refractive indices
+        // transmittance
         for(int j = 1; j<columnCount; j++)
         {
             item = new QTableWidgetItem;
