@@ -39,6 +39,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     presetdialog.cpp \
+    pugixml.cpp \
     qcpscatterchart.cpp \
     qcustomplot.cpp \
     spectralline.cpp \
@@ -56,6 +57,8 @@ HEADERS += \
     glassselectiondialog.h \
     mainwindow.h \
     presetdialog.h \
+    pugiconfig.hpp \
+    pugixml.hpp \
     qcpscatterchart.h \
     qcustomplot.h \
     spectralline.h \

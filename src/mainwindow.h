@@ -68,6 +68,7 @@ private slots:
      * @brief load AGF files
      */
     void loadAGF();
+    void loadXML();
 
     void showGlassMapNdVd();
     void showGlassMapNeVe();

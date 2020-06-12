@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // File menu
     QObject::connect(ui->action_loadAGF,SIGNAL(triggered()), this, SLOT(loadAGF()));
+    QObject::connect(ui->action_loadXML,SIGNAL(triggered()), this, SLOT(loadXML()));
 
     // Tools menu
     QObject::connect(ui->action_NdVd,              SIGNAL(triggered()),this, SLOT(showGlassMapNdVd()));
@@ -76,7 +77,6 @@ void MainWindow::loadAGF()
 {
     // clear before reload
     ui->mdiArea->closeAllSubWindows();
-    m_catalogList.clear();
 
     QStringList filePaths = QFileDialog::getOpenFileNames(this,
                                                           tr("select AGF"),
@@ -89,18 +89,59 @@ void MainWindow::loadAGF()
         return;
     }
 
+
+
+    m_catalogList.clear();
+
+    GlassCatalog* catalog;
+    for(int i = 0; i < filePaths.size(); i++){
+        catalog = new GlassCatalog;
+        if(catalog->loadAGF(filePaths[i])){
+            m_catalogList.append(catalog);
+        }
+    }
+
     // show path in statusbar
     QFileInfo finfo(filePaths.first());
     m_agfDir = finfo.absolutePath();
     updateStatusBar();
 
+    QMessageBox::information(this,tr("Message"), tr("AGF files are successfully loaded"));
+}
+
+void MainWindow::loadXML()
+{
+    // clear before reload
+    ui->mdiArea->closeAllSubWindows();
+
+
+    QStringList filePaths = QFileDialog::getOpenFileNames(this,
+                                                          tr("select XML"),
+                                                          QApplication::applicationDirPath(),
+                                                          tr("XML files(*.xml);;All Files(*.*)"));
+    if(filePaths.empty()){
+        QMessageBox::warning(this,tr("File"), tr("No XML file is loaded"));
+        m_agfDir = "";
+        updateStatusBar();
+        return;
+    }
+
+    m_catalogList.clear();
+
     GlassCatalog* catalog;
     for(int i = 0; i < filePaths.size(); i++){
         catalog = new GlassCatalog;
-        catalog->loadAGF(filePaths[i]);
-        m_catalogList.append(catalog);
+        if(catalog->loadXml(filePaths[i])){
+            m_catalogList.append(catalog);
+        }
     }
-    QMessageBox::information(this,tr("Message"), tr("AGF files are successfully loaded"));
+
+    // show path in statusbar
+    QFileInfo finfo(filePaths.first());
+    m_agfDir = finfo.absolutePath();
+    updateStatusBar();
+
+    QMessageBox::information(this,tr("Message"), tr("XML files are successfully loaded"));
 }
 
 

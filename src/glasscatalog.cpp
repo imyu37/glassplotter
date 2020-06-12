@@ -24,6 +24,7 @@
 
 #include "glasscatalog.h"
 
+
 GlassCatalog::GlassCatalog()
 {
     _glasses.clear();
@@ -75,10 +76,9 @@ bool GlassCatalog::loadAGF(QString AGFpath)
 {
     QFile file(AGFpath);
     if (! file.open(QIODevice::ReadOnly)) {
-        qDebug() << "AGF File Open Error";
+        qDebug() << "AGF File Open Error : " << AGFpath;
         return false;
     }
-    qDebug("loading: %s",AGFpath.toUtf8().data());
 
     int linecount = 0;
     QTextStream in(&file);
@@ -156,4 +156,90 @@ bool GlassCatalog::loadAGF(QString AGFpath)
     }
 
     return true;
+}
+
+bool GlassCatalog::loadXml(QString xmlpath)
+{
+    pugi::xml_document doc;
+    if(!doc.load_file(xmlpath.toUtf8().data())) {
+        qDebug() << "XML file open error : " << xmlpath;
+        return false;
+    }
+
+    _supplyer = doc.first_child().first_child().child_value();
+
+    pugi::xml_node node_glasses = doc.child("Catalog").child("Glasses");
+
+    int k;
+    Glass *g;
+    _glasses.clear();
+    for (pugi::xml_node_iterator glass_it = node_glasses.begin(); glass_it != node_glasses.end(); glass_it++ )
+    {
+        g = new Glass;
+        g->setSupplyer(_supplyer);
+        g->setName(glass_it->child("GlassName").child_value());
+        g->setMIL(glass_it->child("NumericName").child_value());
+
+        QString eqname = glass_it->child("EquationType").child_value();
+        if(eqname.compare("Laurent")==0){
+            g->setDispForm(101);
+        }
+        else if(eqname.compare("Glass Manufacturer Laurent")==0){
+            g->setDispForm(102);
+        }
+        else if(eqname.compare("Glass Manufacturer Sellmeier")==0){
+            g->setDispForm(103);
+        }
+        else if(eqname.compare("Standard Sellmeier")==0){
+            g->setDispForm(104);
+        }
+        else if(eqname.compare("Cauchy")==0){
+            g->setDispForm(105);
+        }
+        else if(eqname.compare("Hartman")==0){
+            g->setDispForm(106);
+        }
+        else{
+            g->setDispForm(13); //unknown
+        }
+
+        // dispersion coefs
+        k = 0;
+        for(pugi::xml_node_iterator dc_it = glass_it->child("DispersionCoefficients").begin(); dc_it != glass_it->child("DispersionCoefficients").end(); dc_it++)
+        {
+            g->setDispCoef(k,dc_it->text().as_double());
+            k++;
+        }
+        g->computeProperties();
+
+        // transmittance
+        for(pugi::xml_node_iterator td_it = glass_it->child("TransmissionCurves").child("Curve").begin(); td_it != glass_it->child("TransmissionCurves").child("Curve").end(); td_it++)
+        {
+            double t=10;
+            QString nodename = td_it->name();
+            if(nodename.compare("Thickness")==0) {
+                t = td_it->text().as_double();
+            }
+            else if(nodename.compare("Transmission")==0){
+                double w = td_it->child("Wavelength").text().as_double();
+                double v = td_it->child("Value").text().as_double();
+                g->appendTransmittanceData(w/1000, v, t);
+            }
+        }
+
+        // DnDt data
+        g->thermalData()->hasData = true;
+        g->setThermalCoef( 0, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("DnDt_D0").text().as_double() );
+        g->setThermalCoef( 1, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("DnDt_D1").text().as_double() );
+        g->setThermalCoef( 2, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("DnDt_D2").text().as_double() );
+        g->setThermalCoef( 3, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("DnDt_E0").text().as_double() );
+        g->setThermalCoef( 4, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("DnDt_E1").text().as_double() );
+        g->setThermalCoef( 5, glass_it->child("DnDtData").child("DnDtForCategory").child("DnDtConstants").child("Lambda").text().as_double() );
+
+        _glasses.append(g);
+    }
+    g = nullptr;
+
+    return true;
+
 }

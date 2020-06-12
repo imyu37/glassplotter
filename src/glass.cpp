@@ -35,7 +35,7 @@ Glass::Glass()
     _ve  = 0;
     _PgF = 0;
     _dPgF = 0;
-    _status = "No Data";
+    _status = "-";
 
     _comment = "";
 
@@ -103,6 +103,18 @@ double Glass::index(double lambdamicron)
         }else{
             return 0;
         }
+    case 101: // Laurent
+        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,-10) + _dispcoefs[7]*pow(lambdamicron,-12) + _dispcoefs[8]*pow(lambdamicron,-14) + _dispcoefs[9]*pow(lambdamicron,-16) + _dispcoefs[10]*pow(lambdamicron,-18) + _dispcoefs[11]*pow(lambdamicron,-20) );
+    case 102: // Glass Manufacturer's Laurent
+        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4));
+    case 103: // Glass Manufacturer's Sellmeier
+        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) + _dispcoefs[10]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[11]));
+    case 104: // Standard Sellmeier
+        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[1],2)) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[3],2)) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[5],2)) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[7],2)) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[9],2)) + _dispcoefs[10]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[11],2)));
+    case 105: // Cauchy
+        return ( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,-2) + _dispcoefs[2]*pow(lambdamicron,-4) );
+    case 106: // Hartman
+        return ( _dispcoefs[0] + _dispcoefs[1]/pow((_dispcoefs[2]-lambdamicron), 1.2) );
     default:
         return 0;
     }
@@ -183,7 +195,19 @@ QString Glass::DispersionData::formulaName()
     case 12:
         return "Extended2";
     case 13:
-            return "Unknown";
+        return "Unknown";
+    case 101:
+        return "Laurent";
+    case 102:
+        return "Glass Manufacturer Laurent";
+    case 103:
+        return "Glass Manufacturer Sellmeier";
+    case 104:
+        return "Standard Sellmeier";
+    case 105:
+        return "Cauchy";
+    case 106:
+        return "Hartman";
     default:
         return "Unknown";
     }
@@ -208,9 +232,10 @@ double Glass::Pxy_(QString x, QString y)
 
 void Glass::computeProperties()
 {
+    _nd = index("d");
     _ne = index("e");
+    _vd = (index("d") - 1)/(index("F") - index("C"));
     _ve = (index("e") - 1)/(index("F_") - index("C_"));
-    //_vd = (index("d") - 1)/(index("F") - index("C"));
     _PgF = Pxy("g","F");
 }
 

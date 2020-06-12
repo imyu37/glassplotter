@@ -38,6 +38,7 @@
      <string>File</string>
     </property>
     <addaction name="action_loadAGF"/>
+    <addaction name="action_loadXML"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -140,6 +141,11 @@
   <action name="action_CatalogView">
    <property name="text">
     <string>Catalog View</string>
+   </property>
+  </action>
+  <action name="action_loadXML">
+   <property name="text">
+    <string>load XML</string>
    </property>
   </action>
  </widget>

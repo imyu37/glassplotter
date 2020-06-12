@@ -37,6 +37,7 @@
 #include <QDebug>
 
 #include "glass.h"
+#include "pugixml.hpp" //https://pugixml.org
 
 class GlassCatalog
 {
@@ -84,6 +85,14 @@ public:
      * @return
      */
     bool loadAGF(QString AGFpath);
+
+    /**
+     * @brief load CodeV Xml
+     * @param Xmlpath
+     * @return
+     * @note This function utilizes xml parser library by https://pugixml.org
+     */
+    bool loadXml(QString xmlpath);
 
 private:
     QString  _supplyer;

@@ -57,7 +57,7 @@ void CatalogViewForm::setUpTable()
 {
     GlassCatalog* catalog = m_catalogList[ m_comboBox->currentIndex() ];
 
-    QStringList headerLabels = QStringList() << tr("Glass") << tr("Nd" ) << tr("Vd") << tr("MIL") << tr("Status") << tr("Formula") << tr("C0") << tr("C1") << tr("C2") << tr("C3") <<tr("C4") << tr("C5") << tr("C6") << tr("C7") << tr("C8") << tr("C9") << tr("Comment") ;
+    QStringList headerLabels = QStringList() << tr("Glass") << tr("Nd" ) << tr("Vd") << tr("MIL") << tr("Status") << tr("Formula") << tr("C0") << tr("C1") << tr("C2") << tr("C3") <<tr("C4") << tr("C5") << tr("C6") << tr("C7") << tr("C8") << tr("C9") <<tr("C10") << tr("C11") << tr("Comment") ;
 
     m_table->setSortingEnabled(false);
 
@@ -100,7 +100,7 @@ void CatalogViewForm::setUpTable()
 
         //coefficients
         j++;
-        for(int k = 0;k<10;k++)
+        for(int k = 0;k<12;k++)
         {
             item = new QTableWidgetItem();
             item->setText(QString::number(glass->dispersion()->coefs[k]));

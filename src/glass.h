@@ -56,7 +56,7 @@ public:
          */
         DispersionData(){
             coefs.clear();
-            for(int i = 0;i<10;i++) coefs.append(0.0); //initialize
+            for(int i = 0;i<12;i++) coefs.append(0.0); //initialize
         };
         ~DispersionData(){
             coefs.clear();
@@ -78,7 +78,7 @@ public:
          * @return coefficient value
          */
         double coef(int n) const {
-            return coefs.at(n);
+            return coefs[n];
         }
 
         /**
@@ -320,7 +320,7 @@ public:
 
     // dispersion formulas
     /*
-    double Schott(double lambdamicron);   
+    double Schott(double lambdamicron, QList<double> c)
     double Sellmeier1(double lambdamicron);  
     double Sellmeier2(double lambdamicron);   
     double Sellmeier3(double lambdamicron);
