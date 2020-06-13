@@ -39,8 +39,8 @@ Glass::Glass()
 
     _comment = "";
 
-    _lambdaMax = 700;
-    _lambdaMin = 400;
+    _lambdaMax = 0;
+    _lambdaMin = 0;
 
     _dispersionData = new DispersionData;
     _transmittanceData = new TransmittanceData;
@@ -68,62 +68,60 @@ Glass::~Glass()
 
 double Glass::index(double lambdamicron)
 {
-    QVector<double> _dispcoefs = _dispersionData->coefs;
+    QList<double> c = _dispersionData->coefs;
 
     switch(_dispersionData->formulaIndex){
-    case 1: //Schott
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) );
-    case 2: //Sellmeier 1
-        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) );
-    case 3: //Herzberger
-        double L;
-        L = 1/(pow(lambdamicron,2)-0.028);
-        return _dispcoefs[0] + _dispcoefs[1]*L + _dispcoefs[2]*pow(L,2) + _dispcoefs[3]*pow(lambdamicron,2) + _dispcoefs[4]*pow(lambdamicron,4) + _dispcoefs[5]*pow(lambdamicron,6);
-    case 4: //Sellmeier 2
-        return sqrt( 1 + _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[2],2)) + _dispcoefs[3]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[4],2)) );
-    case 5: //Conrady
-        return ( _dispcoefs[0] + _dispcoefs[1]/lambdamicron + _dispcoefs[2]/pow(lambdamicron,3.5) );
-    case 6: //Sellmeier 3
-        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) );
-    case 7: //Handbook Of Optics 1
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]/(pow(lambdamicron,2)-_dispcoefs[2]) - _dispcoefs[3]*pow(lambdamicron,2) );
-    case 8: //Handbook Of Optics 2
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[2]) - _dispcoefs[3]*pow(lambdamicron,2) );
-    case 9: //Sellmeier 4
-        return sqrt( 1 + _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[2]) + _dispcoefs[3]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[4]) );
-    case 10: //Extended 1
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,-10) + _dispcoefs[7]*pow(lambdamicron,-12) );
-    case 11: //Sellmeier 5
-        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) );
-    case 12: //Extended 2
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4) + _dispcoefs[7]*pow(lambdamicron,6) );
-    case 13: //Unknown
-        if(_supplyer.contains("HIKARI")){  //Hikari https://www.hikari-g.co.jp/products/index2_2.htm
-            return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,4) + _dispcoefs[3]*pow(lambdamicron,-2) + _dispcoefs[4]*pow(lambdamicron,-4) + _dispcoefs[5]*pow(lambdamicron,-6) + _dispcoefs[6]*pow(lambdamicron,-8) + _dispcoefs[7]*pow(lambdamicron,-10) + _dispcoefs[8]*pow(lambdamicron,-12) );
-        }else{
-            return 0;
-        }
-    case 101: // Laurent
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,-10) + _dispcoefs[7]*pow(lambdamicron,-12) + _dispcoefs[8]*pow(lambdamicron,-14) + _dispcoefs[9]*pow(lambdamicron,-16) + _dispcoefs[10]*pow(lambdamicron,-18) + _dispcoefs[11]*pow(lambdamicron,-20) );
-    case 102: // Glass Manufacturer's Laurent
-        return sqrt( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,2) + _dispcoefs[2]*pow(lambdamicron,-2) + _dispcoefs[3]*pow(lambdamicron,-4) + _dispcoefs[4]*pow(lambdamicron,-6) + _dispcoefs[5]*pow(lambdamicron,-8) + _dispcoefs[6]*pow(lambdamicron,4));
-    case 103: // Glass Manufacturer's Sellmeier
-        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[1]) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[3]) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[5]) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[7]) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[9]) + _dispcoefs[10]*pow(lambdamicron,2)/(pow(lambdamicron,2)-_dispcoefs[11]));
-    case 104: // Standard Sellmeier
-        return sqrt( 1 + _dispcoefs[0]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[1],2)) + _dispcoefs[2]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[3],2)) + _dispcoefs[4]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[5],2)) + _dispcoefs[6]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[7],2)) + _dispcoefs[8]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[9],2)) + _dispcoefs[10]*pow(lambdamicron,2)/(pow(lambdamicron,2)-pow(_dispcoefs[11],2)));
-    case 105: // Cauchy
-        return ( _dispcoefs[0] + _dispcoefs[1]*pow(lambdamicron,-2) + _dispcoefs[2]*pow(lambdamicron,-4) );
-    case 106: // Hartman
-        return ( _dispcoefs[0] + _dispcoefs[1]/pow((_dispcoefs[2]-lambdamicron), 1.2) );
+
+    // ---> Zemax AGF
+    case 1:
+        return Schott(lambdamicron,c);
+    case 2:
+        return Sellmeier1(lambdamicron,c);
+    case 3:
+        return Herzberger(lambdamicron,c);
+    case 4:
+        return Sellmeier2(lambdamicron,c);
+    case 5:
+        return Conrady(lambdamicron,c);
+    case 6:
+        return Sellmeier3(lambdamicron,c);
+    case 7:
+        return HandbookOfOptics1(lambdamicron,c);
+    case 8:
+        return HandbookOfOptics2(lambdamicron,c);
+    case 9:
+        return Sellmeier4(lambdamicron,c);
+    case 10:
+        return Extended1(lambdamicron,c);
+    case 11:
+        return Sellmeier5(lambdamicron,c);
+    case 12:
+        return Extended2(lambdamicron,c);
+    case 13: // Unknown
+        return 0;
+
+    // ---> CODEV XML
+    case 101:
+        return Laurent(lambdamicron,c);
+    case 102:
+        return GlassManufacturerLaurent(lambdamicron,c);
+    case 103:
+        return GlassManufacturerSellmeier(lambdamicron,c);
+    case 104:
+        return StandardSellmeier(lambdamicron,c);
+    case 105:
+        return Cauchy(lambdamicron,c);
+    case 106:
+        return Hartman(lambdamicron,c);
     default:
         return 0;
     }
+
 }
 
 double Glass::index(QString spectral)
 {
-    double lambdanano = SpectralLine::wavelength(spectral);
-    double lambdamicron = lambdanano/1000;
+    double lambdamicron = SpectralLine::wavelength(spectral)/1000;
 
     return index(lambdamicron);
 }

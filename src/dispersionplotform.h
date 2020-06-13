@@ -38,8 +38,6 @@
 
 #include "glassselectiondialog.h"
 
-#define MAX_GRAPH_COUNT 5
-
 namespace Ui {
 class DispersionPlotForm;
 }
@@ -78,6 +76,8 @@ public:
 
     CurveCtrl* m_curveCtrl;
 
+    const double plotStep = 5;
+    const int maxGraphCount = 5;
 
 private slots:
     void addGraph();
@@ -119,7 +119,7 @@ private:
     QCheckBox* m_checkBox;
     QTableWidget* m_table;
 
-    double plotStep = 5;
+
 
 private:
 

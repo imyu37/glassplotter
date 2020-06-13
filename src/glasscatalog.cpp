@@ -134,8 +134,8 @@ bool GlassCatalog::loadAGF(QString AGFpath)
         }
         else if(linetext.startsWith("LD")){
             lineparts = linetext.simplified().split(" ");
-            _glasses.last()->setLambdaMin(lineparts[1].toDouble());
-            _glasses.last()->setLambdaMax(lineparts[2].toDouble());
+            _glasses.last()->setLambdaMin(lineparts[1].toDouble()*1000); // micron
+            _glasses.last()->setLambdaMax(lineparts[2].toDouble()*1000);
         }
         else if(linetext.startsWith("IT")){
             lineparts = linetext.simplified().split(" ");
@@ -180,6 +180,7 @@ bool GlassCatalog::loadXml(QString xmlpath)
         g->setName(glass_it->child("GlassName").child_value());
         g->setMIL(glass_it->child("NumericName").child_value());
 
+        // dispersion formula
         QString eqname = glass_it->child("EquationType").child_value();
         if(eqname.compare("Laurent")==0){
             g->setDispForm(101);
@@ -203,6 +204,7 @@ bool GlassCatalog::loadXml(QString xmlpath)
             g->setDispForm(13); //unknown
         }
 
+
         // dispersion coefs
         k = 0;
         for(pugi::xml_node_iterator dc_it = glass_it->child("DispersionCoefficients").begin(); dc_it != glass_it->child("DispersionCoefficients").end(); dc_it++)
@@ -212,7 +214,11 @@ bool GlassCatalog::loadXml(QString xmlpath)
         }
         g->computeProperties();
 
+
         // transmittance
+        g->setLambdaMin(glass_it->child("LowWavelength").text().as_double());
+        g->setLambdaMax(glass_it->child("HighWavelength").text().as_double());
+
         for(pugi::xml_node_iterator td_it = glass_it->child("TransmissionCurves").child("Curve").begin(); td_it != glass_it->child("TransmissionCurves").child("Curve").end(); td_it++)
         {
             double t=10;

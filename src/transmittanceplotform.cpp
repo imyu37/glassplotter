@@ -39,6 +39,7 @@ TransmittancePlotForm::TransmittancePlotForm(QList<GlassCatalog*> catalogList, Q
     m_customPlot->xAxis->setLabel("Wavelength(nm)");
     m_customPlot->yAxis->setLabel("Internal Transmittance");
     m_customPlot->legend->setVisible(true);
+    m_customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignRight|Qt::AlignBottom); // Legend position
 
     QObject::connect(ui->pushButton_AddGraph,   SIGNAL(clicked()),     this, SLOT(addGraph()));
     QObject::connect(ui->pushButton_DeleteGraph,SIGNAL(clicked()),     this, SLOT(deleteGraph()));
@@ -57,9 +58,9 @@ TransmittancePlotForm::~TransmittancePlotForm()
 
 void TransmittancePlotForm::addGraph()
 {
-    if(m_customPlot->graphCount() >= m_maxGraphCount) // 5 glass
+    if(m_customPlot->graphCount() >= maxGraphCount) // 5 glass
     {
-        QString message = "Up to " + QString::number(m_maxGraphCount) + " graphs can be plotted";
+        QString message = "Up to " + QString::number(maxGraphCount) + " graphs can be plotted";
         QMessageBox::information(this,tr("Error"), message);
         return;
     }
@@ -70,17 +71,14 @@ void TransmittancePlotForm::addGraph()
         int catalogIndex = dlg->getCatalogIndex();
         QString glassName = dlg->getGlassName();
         Glass* newGlass = m_catalogList.at(catalogIndex)->glass(glassName);
-        QCPGraph* newGraph = m_customPlot->addGraph();
 
         PlottedGraph *plottedGraph = new PlottedGraph(this);
-        plottedGraph->name = glassName;
+        plottedGraph->name = newGlass->name() + "_" + newGlass->supplyer();
         plottedGraph->glass = newGlass;
-        plottedGraph->graph = newGraph;
 
         m_plottedGraphList.append(plottedGraph);
 
         updateAll();
-        m_customPlot->replot();
     }
 
 }
@@ -88,6 +86,26 @@ void TransmittancePlotForm::addGraph()
 TransmittancePlotForm::PlottedGraph::PlottedGraph(TransmittancePlotForm *super)
 {
     m_super = super;
+    m_super -> m_customPlot = super->m_customPlot;
+    graph = m_super->m_customPlot->addGraph();
+
+    upperTracer = new QCPItemTracer(m_super->m_customPlot);
+    upperTracer->setGraph(graph);
+    upperTracer->setInterpolating(true);
+    upperTracer->setStyle(QCPItemTracer::tsCircle);
+    upperTracer->setSize(7);
+
+    lowerTracer = new QCPItemTracer(m_super->m_customPlot);
+    lowerTracer->setGraph(graph);
+    lowerTracer->setInterpolating(true);
+    lowerTracer->setStyle(QCPItemTracer::tsCircle);
+    lowerTracer->setSize(7);
+}
+
+TransmittancePlotForm::PlottedGraph::~PlottedGraph()
+{
+
+    m_super = nullptr;
 }
 
 void TransmittancePlotForm::PlottedGraph::setData(QCPRange xrange)
@@ -113,23 +131,35 @@ void TransmittancePlotForm::PlottedGraph::setData(QCPRange xrange)
     }
 
     graph->setData(xdata,ydata);
-    //graph->setName(glass->name() + "_" + glass->supplyer());
-    graph->setName(glass->name());
+    graph->setName(glass->name() + "_" + glass->supplyer());
+    //graph->setName(glass->name());
     graph->setVisible(true);
     //m_customPlot->legend->setVisible(true);
+
+
+    // wavelength range points
+    lowerTracer->setGraphKey(glass->lambdaMin());
+    upperTracer->setGraphKey(glass->lambdaMax());
+
+    lowerTracer->updatePosition();
+    upperTracer->updatePosition();
+
+
 }
 
 void TransmittancePlotForm::PlottedGraph::setColor(int index)
 {
     QCPColorGradient colorgrad;
     colorgrad.loadPreset(QCPColorGradient::gpHues);
-    QColor color = colorgrad.color(index, QCPRange(0, MAX_GRAPH_COUNT));
+    QColor color = colorgrad.color(index, QCPRange(0, m_super->maxGraphCount));
 
     QPen pen;
     pen.setWidth(2);
     pen.setColor(color);
 
     graph->setPen(pen);
+    lowerTracer->setPen(pen);
+    upperTracer->setPen(pen);
 }
 
 void TransmittancePlotForm::updateAll()
@@ -140,6 +170,11 @@ void TransmittancePlotForm::updateAll()
         m_plottedGraphList[i]->setColor(i);
     }
     m_customPlot->replot();
+
+    if(m_customPlot->graphCount() == 0){
+        m_table->clear();
+        return;
+    }
 
     // table
     int rowCount = m_plottedGraphList[0]->xdata.size();
@@ -182,11 +217,13 @@ void TransmittancePlotForm::deleteGraph()
 
         for(int i = 0;i < m_plottedGraphList.size(); i++){
             if(m_plottedGraphList.at(i)->name == glassName){
+                m_customPlot->removeGraph(m_plottedGraphList[i]->graph);
+                m_customPlot->removeItem(m_plottedGraphList[i]->lowerTracer);
+                m_customPlot->removeItem(m_plottedGraphList[i]->upperTracer);
                 m_plottedGraphList.removeAt(i);
                 break;
             }
         }
-        m_customPlot->removeGraph(selectedGraph);
         updateAll();
     }
 }
@@ -195,7 +232,6 @@ void TransmittancePlotForm::setDefault()
 {
     m_xrange = QCPRange(300,2000);
     m_yrange = QCPRange(0.0,1.2);
-    //m_thickness = 25;
 
     m_customPlot->xAxis->setRange(m_xrange);
     m_customPlot->yAxis->setRange(m_yrange);
@@ -233,7 +269,10 @@ void TransmittancePlotForm::clearAll()
     }
     m_plottedGraphList.clear();
     m_customPlot->clearGraphs();
+    m_customPlot->clearItems();
     m_customPlot->replot();
+    m_table->clear();
+    m_table->update();
 }
 
 void TransmittancePlotForm::setLegendVisible()

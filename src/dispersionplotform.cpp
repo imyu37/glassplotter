@@ -54,8 +54,8 @@ DispersionPlotForm::DispersionPlotForm(QList<GlassCatalog*> catalogList, QWidget
     QObject::connect(ui->lineEdit_C1,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
     QObject::connect(ui->lineEdit_C2,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
     QObject::connect(ui->lineEdit_C3,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
+    QObject::connect(ui->lineEdit_C4,          SIGNAL(textEdited(QString)), this, SLOT(updateAll()));
 
-    plotStep = 5;
     setDefault();
 }
 
@@ -79,7 +79,7 @@ DispersionPlotForm::CurveCtrl::CurveCtrl(DispersionPlotForm *super)
     graph->setName("curve");
 
     coefs.clear();
-    for(int i = 0; i < 4; i++) coefs.append(0);
+    for(int i = 0; i < 5; i++) coefs.append(0);
 }
 
 void DispersionPlotForm::CurveCtrl::setData()
@@ -90,7 +90,7 @@ void DispersionPlotForm::CurveCtrl::setData()
     coefs[1] = m_super->ui->lineEdit_C1->text().toDouble();
     coefs[2] = m_super->ui->lineEdit_C2->text().toDouble();
     coefs[3] = m_super->ui->lineEdit_C3->text().toDouble();
-    //coefs[4] = m_super->ui->lineEdit_C4->text().toDouble();
+    coefs[4] = m_super->ui->lineEdit_C4->text().toDouble();
 
     xdata.clear();
     ydata.clear();
@@ -160,19 +160,19 @@ void DispersionPlotForm::PlottedGraph::setData(QCPRange xrange)
         xdata.append(x);
         ydata.append(y);
         lambdanano += m_super->plotStep;
-        //qDebug("%d: %f,%f\n",k,x.last(), y.last());
     }
 
     graph->setData(xdata,ydata);
-    //graph->setName(glass->name() + "_" + glass->supplyer() );
-    graph->setName(glass->name());
+    graph->setName(glass->name() + "_" + glass->supplyer() );
+    //graph->setName(glass->name());
     graph->setVisible(true);
 }
+
 void DispersionPlotForm::PlottedGraph::setColor(int index)
 {
     QCPColorGradient colorgrad;
     colorgrad.loadPreset(QCPColorGradient::gpHues);
-    QColor color = colorgrad.color(index, QCPRange(0, MAX_GRAPH_COUNT));
+    QColor color = colorgrad.color(index, QCPRange(0, m_super->maxGraphCount));
 
     QPen pen;
     pen.setWidth(2);
@@ -182,9 +182,9 @@ void DispersionPlotForm::PlottedGraph::setColor(int index)
 
 void DispersionPlotForm::addGraph()
 {
-    if(m_customPlot->graphCount() >= MAX_GRAPH_COUNT+1) // 5 glass + 1 curve
+    if(m_customPlot->graphCount() >= maxGraphCount+1) // 5 glass + 1 curve
     {
-        QString message = "Up to " + QString::number(MAX_GRAPH_COUNT) + " graphs can be plotted";
+        QString message = "Up to " + QString::number(maxGraphCount) + " graphs can be plotted";
         QMessageBox::information(this,tr("Error"), message);
         return;
     }
@@ -198,7 +198,7 @@ void DispersionPlotForm::addGraph()
         QCPGraph* newGraph = m_customPlot->addGraph();
 
         PlottedGraph *plottedGraph = new PlottedGraph(this);
-        plottedGraph->name = glassName;
+        plottedGraph->name = newGlass->name() + "_" + newGlass->supplyer();
         plottedGraph->glass = newGlass;
         plottedGraph->graph = newGraph;
         m_plottedGraphList.append(plottedGraph);
@@ -223,6 +223,11 @@ void DispersionPlotForm::updateAll()
     m_curveCtrl->setVisible(m_checkBox->checkState());
 
     m_customPlot->replot();
+
+    if(m_customPlot->graphCount() == 1){ // only user defined curve
+        m_table->clear();
+        return;
+    }
 
     // table
     int rowCount = m_plottedGraphList[0]->xdata.size();
@@ -274,15 +279,16 @@ void DispersionPlotForm::deleteGraph()
     if(m_customPlot->selectedGraphs().size() > 0)
     {
         QCPGraph* selectedGraph = m_customPlot->selectedGraphs().first();
-        QString glassName = selectedGraph->name();
+        QString graphName = selectedGraph->name();
 
         for(int i = 0;i < m_plottedGraphList.size(); i++){
-            if(m_plottedGraphList.at(i)->name == glassName){
+            if(m_plottedGraphList.at(i)->name == graphName){
+                m_customPlot->removeGraph(m_plottedGraphList[i]->graph);
                 m_plottedGraphList.removeAt(i);
                 break;
             }
         }
-        m_customPlot->removeGraph(selectedGraph);
+
         updateAll();
     }
 }
@@ -326,6 +332,8 @@ void DispersionPlotForm::clearAll()
     m_plottedGraphList.clear();
     m_customPlot->clearGraphs();
     m_customPlot->replot();
+    m_table->clear();
+    m_table->update();
 }
 
 void DispersionPlotForm::setLegendVisible()

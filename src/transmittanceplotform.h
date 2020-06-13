@@ -38,7 +38,6 @@
 
 #include "glassselectiondialog.h"
 
-#define MAX_GRAPH_COUNT 5
 
 namespace Ui {
 class TransmittancePlotForm;
@@ -56,6 +55,8 @@ public:
 
     double plotStep = 5;
 
+    const int maxGraphCount = 5;
+
 private slots:
     void addGraph();
     void deleteGraph();
@@ -70,9 +71,12 @@ private:
     {
     public:
         PlottedGraph(TransmittancePlotForm *super);
+        ~PlottedGraph();
         QString name;
         Glass* glass;
         QCPGraph* graph;
+        QCPItemTracer* upperTracer;
+        QCPItemTracer* lowerTracer;
         QVector<double> xdata;
         QVector<double> ydata;
 
@@ -89,7 +93,7 @@ private:
     Ui::TransmittancePlotForm *ui;
 
     QCustomPlot* m_customPlot;
-    const int m_maxGraphCount = 5;
+
     QCPRange m_xrange;
     QCPRange m_yrange;
 
